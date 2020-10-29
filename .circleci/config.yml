@@ -1,0 +1,72 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    working_directory: ~/code/
+    docker:
+      - image: circleci/python:3.9.0
+    steps:
+      - checkout
+      - run:
+          command: pipenv install --system --deploy
+          name: Install dependencies
+      - run:
+          command: pytest --cov-report html:test-reports/pytest/htmlcov --cov --junitxml=test-reports/pytest/junit.xml
+          name: Test
+      - store_test_results: #  Uploads test results to CircleCI. These results will display in the Test Summary section of the CircleCI application.
+          name: Store test results
+          path: test-reports
+      - store_artifacts:
+          name: Store artifacts
+          path: test-reports
+
+  flake8:
+    working_directory: ~/code/
+    docker:
+      - image: circleci/python:3.9.0
+    steps:
+      - checkout
+      - run: pip install flake8
+      - run:
+          name: flake8
+          command: flake8 --count
+
+  isort:
+    working_directory: ~/code/
+    docker:
+      - image: circleci/python:3.9.0
+    steps:
+      - checkout
+      - run: pipenv install --system --deploy --dev
+      - run:
+          name: isort
+          command: isort --check-only --diff quantum_web_services tests
+  mypy:
+    working_directory: ~/code/
+    docker:
+      - image: circleci/python:3.9.0
+    steps:
+      - checkout
+      - run: pip install mypy pydantic
+      - run:
+          name: mypy
+          command: mypy
+
+  black:
+    working_directory: ~/code/
+    docker:
+      - image: circleci/python:3.8.2
+    steps:
+      - checkout
+      - run: pip install black
+      - run:
+          name: black
+          command: black . --check
+workflows:
+  main:
+    jobs:
+      - build-and-test
+      - black
+      - flake8
+      - isort
+      - mypy
