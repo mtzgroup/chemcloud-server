@@ -8,7 +8,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: pipenv install --system --deploy
+          command: pipenv install --dev --system --deploy
           name: Install dependencies
       - run:
           command: pytest --cov-report html:test-reports/pytest/htmlcov --cov --junitxml=test-reports/pytest/junit.xml
@@ -55,7 +55,7 @@ jobs:
   black:
     working_directory: ~/code/
     docker:
-      - image: circleci/python:3.8.2
+      - image: circleci/python:3.9.0
     steps:
       - checkout
       - run: pip install black
