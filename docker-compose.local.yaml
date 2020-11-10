@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  # OPTIONAL (comment out if not desired) tcc if we want to run local development dockerized as well
+  web-server:
+    build:
+      context: .
+      dockerfile: server.dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - CELERY_BROKER_CONNECTION_STRING=amqp://mq
+      - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+    volumes:
+      - ./terachem_cloud:/code/terachem_cloud
+    command: uvicorn --host 0.0.0.0 --port 8000 terachem_cloud.main:app --reload
+  worker:
+    build:
+      context: .
+      dockerfile: celeryworker.dockerfile
+    environment:
+      - CELERY_BROKER_CONNECTION_STRING=amqp://mq
+      - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+    volumes:
+      - ./terachem_cloud:/code/terachem_cloud
+  mq:
+    ports:
+      - 5672:5672
+      - 15672:15672
+  redis:
+    ports:
+      - 6379:6379

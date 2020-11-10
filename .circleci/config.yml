@@ -40,7 +40,7 @@ jobs:
       - run: pipenv install --system --deploy --dev
       - run:
           name: isort
-          command: isort --check-only --diff quantum_web_services tests
+          command: isort --check-only --diff terachem_cloud tests
   mypy:
     working_directory: ~/code/
     docker:
