@@ -10,11 +10,14 @@ isort = "*"
 flake8 = "*"
 pytest = "*"
 pre-commit = "*"
+pytest-cov = "*"
+requests = "*"
 
 [packages]
 fastapi = "*"
 uvicorn = "*"
-pytest-cov = "*"
+qcelemental = "*"
+qcengine = "*"
 
 [requires]
 python_version = "3.9"
