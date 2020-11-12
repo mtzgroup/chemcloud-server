@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  worker:
+    image: mtzgroup/terachem-cloud-worker:latest
+    environment:
+      # NOTE: Since workers are likely on REMOTE machines that must sent connections over the open internet
+      # to our RabbitMQ and Redis instances we should use SECURE protocols and specify hosts and ports that
+      # correspond to the registered access points on our Traefik reverse proxy for these services.
+      # e.g. amqps://admin123:supersecret987@mq-connect.dev.mtzlab.com:5671
+      - CELERY_BROKER_CONNECTION_STRING=${CELERY_BROKER_CONNECTION_STRING}
+      # e.g. rediss://:password123@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE
+      - CELERY_BACKEND_CONNECTION_STRING=${CELERY_BACKEND_CONNECTION_STRING}
