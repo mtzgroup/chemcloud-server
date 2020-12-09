@@ -1,19 +1,21 @@
-from os import environ
-
 import qcengine as qcng
 from celery import Celery
 from kombu.serialization import register
 from qcelemental.models import AtomicInput, AtomicResult
 from qcelemental.util.serialization import json_dumps, json_loads
 
+from terachem_cloud.config import get_settings
+
+settings = get_settings()
+
 celery_app = Celery(
     # Name of current module is first argument
     # https://docs.celeryproject.org/en/stable/getting-started/first-steps-with-celery.html#application
     "tasks",
     # broker example: "amqps://admin123:supersecret987@mq-connect.dev.mtzlab.com:5671",
-    broker=environ.get("CELERY_BROKER_CONNECTION_STRING", "amqp://localhost"),
+    broker=settings.celery_broker_connection_string,
     # backend example: "rediss://:password123@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE"
-    backend=environ.get("CELERY_BACKEND_CONNECTION_STRING", "redis://localhost/0"),
+    backend=settings.celery_backend_connection_string,
 )
 
 # To serialize the more complex AtomicInput and AtomicResult data structure from QCElemental

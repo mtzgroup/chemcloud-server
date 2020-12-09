@@ -1,7 +1,6 @@
 # Dockerfile for TeraChem Cloud Worker
-# NOTE: This is running python3.7. There is no python3.9 code in tasks.py file so it works for now, but FYI
-# may need to upgrdae at some point it issues develop.
 FROM continuumio/miniconda3:4.8.2
+
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319
 ENV PYTHONUNBUFFERED=1
 LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"

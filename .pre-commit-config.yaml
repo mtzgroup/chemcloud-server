@@ -38,11 +38,10 @@ repos:
         types: [python]
         require_serial: true
 
-      - id: pytest
-        name: pytest
+      - id: tests
+        name: tests
         stages: [commit]
         language: system
-        entry: pytest
+        entry: pipenv run tests
         types: [python]
-        always_run: true
         pass_filenames: false
