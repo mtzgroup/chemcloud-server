@@ -1,53 +1,53 @@
-import re
-from enum import Enum
-from typing import Optional
+"""Main module for the FastAPI app. Also contains convenience paths that route """
+from fastapi import FastAPI, Security
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
-from celery.result import AsyncResult
-from fastapi import FastAPI, HTTPException
-from qcelemental.models.results import AtomicInput, AtomicResult
+from .auth import bearer_auth
+from .config import get_settings
+from .routes import compute, oauth, users
 
-from .tasks import celery_app
-from .tasks import compute as compute_task
+settings = get_settings()
+
+tags_metadata = [
+    {
+        "name": "auth",
+        "description": "Authentication endpoints to obtain JWTs to access API.",
+    },
+    {
+        "name": "compute",
+        "description": "Perform computations and obtain results using TeraChem Cloud.",
+    },
+]
 
 
-class SupportedEngines(Enum):
-    """Compute engines currently supported by TeraChem Cloud"""
+app = FastAPI(
+    title="TeraChem Cloud",
+    description="Quantum chemistry at cloud scale",
+    version="0.1.0",
+    openapi_tags=tags_metadata,
+)
 
-    PSI4 = "psi4"
-
-
-app = FastAPI()
+# Add routes
+app.include_router(oauth.router, prefix=f"{settings.api_v1_str}/oauth", tags=["auth"])
+app.include_router(
+    compute.router,
+    prefix=f"{settings.api_v1_str}/compute",
+    dependencies=[Security(bearer_auth, scopes=["compute:public"])],
+    tags=["compute"],
+)
+app.include_router(users.router, prefix="/users")
 
 
 @app.get("/")
-def hello_world():
-    """A test endpoint to make sure the app is working"""
-    return {"Hello": "World"}
+async def index():
+    return {"TeraChem": "Cloud"}
 
 
-@app.post("/compute")
-def compute(atomic_input: AtomicInput, engine: SupportedEngines) -> str:
-    """Endpoint to submit a computation"""
-    # TODO: Create custom task_id enabling caching. Will need to update task_id validation in /result.
-    # https://docs.celeryproject.org/en/latest/faq.html#can-i-specify-a-custom-task-id
-    # http://docs.qcarchive.molssi.org/projects/QCFractal/en/stable/results.html#results
-    task = compute_task.delay(atomic_input, engine)
-    return task.id
+@app.get("/signup", include_in_schema=False)
+def signup(redirect_path: str = "/users/dashboard"):
+    """Convenience URL to sign up for TCC"""
+    return RedirectResponse(f"login/?signup=true&redirect_path={redirect_path}")
 
 
-@app.get("/result")
-def result(task_id: str) -> tuple[str, Optional[AtomicResult]]:  # type: ignore
-    """Get a result back from a computation"""
-    # Notify user if task_id doesn't match celery naming convention
-    if not re.match(
-        "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$", task_id
-    ):
-        raise HTTPException(status_code=422, detail="Invalid task_id")
-
-    celery_task = AsyncResult(task_id, app=celery_app)
-    status = celery_task.status
-    if status == "SUCCESS":
-        result = AtomicResult(**celery_task.get())
-    else:
-        result = None
-    return (status, result)
+app.mount("/", StaticFiles(directory="static", html=True), name="static")

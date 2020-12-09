@@ -12,19 +12,30 @@ pytest = "*"
 pre-commit = "*"
 pytest-cov = "*"
 requests = "*"
+pytest-celery = "*"
+pytest-timeout = "*"
 
 [packages]
 fastapi = "*"
-uvicorn = "*"
-qcelemental = "*"
 qcengine = "*"
 celery = {extras = ["redis"], version = "*"}
+python-jose = {extras = ["cryptography"], version = "*"}
+python-multipart = "*"
+httpx = "*"
+python-dotenv = "*"
+gunicorn = "*"
+uvicorn = "*"
+qcelemental = "*"
+uvloop = "*"
+httptools = "*"
+typing-extensions = "*"
+aiofiles = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
 
 [scripts]
-tests = "pytest --cov-report html:htmlcov --cov"
+tests = "bash ./scripts/test.sh"

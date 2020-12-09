@@ -1,0 +1,70 @@
+from typing import Optional
+
+from numpy import ndarray
+from pydantic import AnyHttpUrl, BaseModel, Field
+from qcelemental.models import AtomicResult
+from qcelemental.util.serialization import json_dumps as qc_json_dumps
+from qcelemental.util.serialization import json_loads as qc_json_loads
+
+
+class CeleryAtomicResult(BaseModel):
+    status: str
+    atomic_result: Optional[AtomicResult] = None
+
+    class Config:
+        # These json_dumps and json_loads methods enable CeleryAtomicResult.json() to function correctly
+        def _qc_json_dumps(data, **kwargs):
+            """Use QCElemental encoders, accept default={default_encoder} argument"""
+            return qc_json_dumps(data)
+
+        def _qc_json_loads(data, **kwargs):
+            """Use QCElemental decoders, accept default={default_decoder} argument"""
+            return qc_json_loads(data)
+
+        json_dumps = _qc_json_dumps
+        json_loads = _qc_json_loads
+
+        def _np_encoder(ar: ndarray):
+            """Custom encoder taken from qcelemental.utils.serialization.JSONArrayEncoder
+
+            Need custom encoder for ndarray types, using qcelemental.utils.serialization.json_dumps
+            does not work. Unclear why? Not sure why fastapi doesn't use the serializer
+            for AtomicResult which works correctly if returned by a response directly.
+            The problem arises when an AtomicResult is a field of another object. The
+            fastapi.encoders.jsonable_encoder is the method that raises an exception without
+            this custom encoder defined.
+
+            https://pydantic-docs.helpmanual.io/usage/exporting_models/#json_encoders
+
+            Tracking this issue here:
+            https://github.com/tiangolo/fastapi/issues/2494
+
+            Don't love the duplicate code but moving on at this point...
+            """
+            if ar.shape:
+                return ar.ravel().tolist()
+            else:
+                return ar.tolist()
+
+        json_encoders = {
+            ndarray: _np_encoder,
+        }
+
+
+class OAuth2Base(BaseModel):
+    client_id: str
+    client_secret: str
+    audience: str = ""
+    scope: str = ""
+
+
+class OAuth2PasswordFlow(OAuth2Base):
+    grant_type: str = Field("password", regex="password")
+    username: str
+    password: str
+
+
+class OAuth2AuthorizationCodeFlow(OAuth2Base):
+    grant_type: str = "authorization_code"
+    code: str
+    redirect_uri: AnyHttpUrl

@@ -11,6 +11,8 @@ services:
     environment:
       - CELERY_BROKER_CONNECTION_STRING=amqp://mq
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+    env_file:
+      - .env
     volumes:
       - ./terachem_cloud:/code/terachem_cloud
     command: uvicorn --host 0.0.0.0 --port 8000 terachem_cloud.main:app --reload
@@ -18,9 +20,14 @@ services:
     build:
       context: .
       dockerfile: celeryworker.dockerfile
+    depends_on:
+      - mq
+      - redis
     environment:
       - CELERY_BROKER_CONNECTION_STRING=amqp://mq
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+    env_file:
+      - .env
     volumes:
       - ./terachem_cloud:/code/terachem_cloud
   mq:
