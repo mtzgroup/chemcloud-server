@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestFormStrict
+from starlette.responses import RedirectResponse
 
 from terachem_cloud import config, models
 from terachem_cloud.auth import _get_matching_rsa_key, _validate_jwt
@@ -18,7 +19,7 @@ async def token(
     https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
     https://auth0.com/docs/flows/resource-owner-password-flow
     """
-    # NOTE: Maybe add "compute:public" scope to all tokens by default initially?
+
     flow_model = models.OAuth2PasswordFlow(
         audience=settings.auth0_api_audience,
         client_id=settings.auth0_client_id,
@@ -30,26 +31,19 @@ async def token(
     return await _auth0_token_request(flow_model)
 
 
-@router.get("/auth0/callback", include_in_schema=False)
+@router.get("/auth0/callback", include_in_schema=False, response_class=RedirectResponse)
 async def auth0_callback(
     code: str,
-    request: Request,
-    response: Response,
     settings: config.Settings = Depends(config.get_settings),
-):
+) -> RedirectResponse:
     """Callback for Auth0 Authorization Code Flow"""
     # Trade username and password for token(s) from Auth0
-    redirect_uri = (
-        f"{request.scope['type']}"
-        f"://{request.scope['server'][0]}:{request.scope['server'][1]}"
-        f"{request.scope['path']}"
-    )
     flow_model = models.OAuth2AuthorizationCodeFlow(
         client_id=settings.auth0_client_id,
         client_secret=settings.auth0_client_secret,
         audience=settings.auth0_api_audience,
         code=code,
-        redirect_uri=redirect_uri,
+        redirect_uri=settings.base_url,
     )
     tokens = await _auth0_token_request(flow_model)
 
@@ -64,13 +58,13 @@ async def auth0_callback(
     )
 
     # Set tokens as cookies
-    response.set_cookie(key="id_token", value=tokens["id_token"], httponly=True)
+    response = RedirectResponse(url="/users/dashboard")
     response.set_cookie(
-        key="refresh_token", value=tokens["refresh_token"], httponly=True
+        key=settings.id_token_cookie_key, value=tokens["id_token"], httponly=True
     )
-
-    # Manually make redirect response
-    response.status_code = 307
-    response.headers["location"] = "/users/dashboard"
-
+    response.set_cookie(
+        key=settings.refresh_token_cookie_key,
+        value=tokens["refresh_token"],
+        httponly=True,
+    )
     return response

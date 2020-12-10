@@ -10,7 +10,7 @@ def test_compute_requires_auth(settings, client):
     assert response.status_code == 401
 
 
-@pytest.mark.timeout(25)
+@pytest.mark.timeout(45)
 def test_compute_and_result(settings, client, fake_auth, atomic_input):
     """Testings as one function so we don't submit excess compute jobs.
 

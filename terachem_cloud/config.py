@@ -30,16 +30,21 @@ class Settings(BaseSettings):
     """
 
     api_v1_str: str = "/api/v1"
+    api_compute_prefix: str = "/compute"
+    api_oauth_prefix: str = "/oauth"
+    users_prefix: str = "/users"
+    base_url: str = "http://localhost:8000"
+    id_token_cookie_key: str = "id_token"
+    refresh_token_cookie_key: str = "refresh_token"
 
     auth0_domain: Optional[str] = None
     auth0_client_id: Optional[str] = None
     auth0_client_secret: Optional[str] = None
     auth0_api_audience: Optional[str] = None
+    auth0_default_logout_route: str = "/docs"
     auth0_algorithms: List[str] = ["RS256"]
     jwks: Optional[List[Dict[str, Any]]] = None
     jwt_issuer: Optional[str] = None
-    celery_broker_connection_string: str = "amqp://localhost"
-    celery_backend_connection_string: str = "redis://localhost/0"
 
     class Config:
         _docker_secrets_dir = "/run/secrets"

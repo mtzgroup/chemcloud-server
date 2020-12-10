@@ -1,5 +1,6 @@
-# Dockerfile for TeraChem Cloud Web Server
-FROM python:3.7-slim
+# Dockerfile for TeraChem Cloud Worker
+FROM continuumio/miniconda3:4.8.2
+
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319
 ENV PYTHONUNBUFFERED=1
 LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
@@ -7,16 +8,13 @@ LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 # Install system packages
 # Need gcc and python3-dev for python psutil package
 # https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
-RUN apt-get update && apt-get install -y gcc make python3-dev && pip install pipenv
+RUN conda install psi4 -c psi4 && apt-get update && apt-get install -y gcc python3-dev && pip install pipenv
 
 # Install application
 WORKDIR /code/
 COPY Pipfile Pipfile.lock ./
 # Install to system python, no need for pipenv virtual env
 RUN pipenv install --system --deploy
-COPY static ./static
-COPY terachem_cloud/ ./terachem_cloud
+COPY ./terachem_cloud/workers/ terachem_cloud/workers/
 
-EXPOSE 8000
-
-CMD ["sh", "-c", "gunicorn terachem_cloud.main:app -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --access-logfile -"]
+CMD ["sh", "-c", "celery -A terachem_cloud.workers.tasks worker --loglevel=INFO"]

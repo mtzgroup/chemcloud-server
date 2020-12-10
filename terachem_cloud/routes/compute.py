@@ -7,8 +7,8 @@ from fastapi import status as status_codes
 from qcelemental.models import AtomicInput
 
 from terachem_cloud.models import CeleryAtomicResult
-from terachem_cloud.tasks import celery_app
-from terachem_cloud.tasks import compute as compute_task
+from terachem_cloud.workers.tasks import celery_app
+from terachem_cloud.workers.tasks import compute as compute_task
 
 
 class SupportedEngines(str, Enum):

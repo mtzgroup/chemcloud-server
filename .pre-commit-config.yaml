@@ -7,6 +7,12 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
         args: ["--maxkb=250"]
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v0.14.3
+    hooks:
+      - id: detect-secrets
+        stages: [commit]
+        exclude: Pipfile.lock
   - repo: local
     hooks:
       - id: isort
@@ -40,7 +46,7 @@ repos:
 
       - id: tests
         name: tests
-        stages: [commit]
+        stages: [push]
         language: system
         entry: pipenv run tests
         types: [python]

@@ -1,4 +1,5 @@
 """A simple script to exercise the web app and celery to compute a result."""
+import sys
 from getpass import getpass
 from time import sleep
 
@@ -6,17 +7,36 @@ import httpx
 from qcelemental.models import AtomicInput, AtomicResult, Molecule
 from qcelemental.models.common_models import Model
 
-HOST = "http://localhost:8000"
-# HOST = "https://tcc.dev.mtzlab.com"
+HOSTS = {
+    "local": "http://localhost:8000",
+    "dev": "https://tcc.dev.mtzlab.com",
+    "prod": "https://tcc.mtzlab.com",
+}
+
 API_PREFIX = "/api/v1"
 MOLECULE = "water"
 
 if __name__ == "__main__":
+    # Set environment
+    try:
+        env = sys.argv[1]
+    except IndexError:
+        env = ""
+    if env not in {"local", "dev", "prod"}:
+        print("You must call this script with [local | dev | prod] as an argument.")
+        sys.exit(1)
+
+    HOST = HOSTS[env]
     # Get auth token
     username = input("Please enter your username: ")
     password = getpass()
     print("Getting auth token...")
-    data = {"grant_type": "password", "username": username, "password": password}
+    data = {
+        "grant_type": "password",
+        "username": username,
+        "password": password,
+        "scope": "compute:public",
+    }
     r0 = httpx.post(
         f"{HOST}{API_PREFIX}/oauth/token",
         headers={"content-type": "application/x-www-form-urlencoded"},
@@ -32,7 +52,7 @@ if __name__ == "__main__":
     atomic_input = AtomicInput(molecule=molecule, model=model, driver=driver)
 
     # POST compute job
-    print("posting request...")
+    print("Sending job...")
     r1 = httpx.post(
         f"{HOST}{API_PREFIX}/compute",
         headers={"Authorization": f"Bearer {jwt}"},
@@ -40,6 +60,7 @@ if __name__ == "__main__":
         params={"engine": "psi4"},
     )
     task_id = r1.json()
+    print(f"Job sent! Task ID: {task_id}")
 
     # Check job results
     def _get_result(task_id, token):
@@ -47,6 +68,7 @@ if __name__ == "__main__":
             f"{HOST}{API_PREFIX}/compute/result/{task_id}",
             headers={"Authorization": f"Bearer {token}"},
         )
+        print(result)
         response = result.json()
         return response["status"], response["atomic_result"]
 

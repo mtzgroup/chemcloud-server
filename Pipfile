@@ -39,3 +39,5 @@ allow_prereleases = true
 
 [scripts]
 tests = "bash ./scripts/test.sh"
+start = "docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml up -d --build"
+stop = "docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml down"
