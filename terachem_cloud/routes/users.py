@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, Cookie, Depends, Request
+from fastapi import APIRouter, Cookie, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jose import jwt
 
@@ -31,11 +31,11 @@ async def dashboard(
             )
         except (jwt.JWTClaimsError, jwt.ExpiredSignatureError):
             logger.exception("Could not validate token.")
-            return RedirectResponse("/users/login")
+            return RedirectResponse(f"{settings.users_prefix}/login")
 
     else:
         logger.info("User not logged in. Redirecting to login...")
-        return RedirectResponse("/users/login")
+        return RedirectResponse(f"{settings.users_prefix}/login")
 
     return f"""
         <html>
@@ -46,19 +46,21 @@ async def dashboard(
             </head>
             <body>
                 <h3>✨ You have signed up for TeraChem Cloud! Your username is: {id_payload['email']} ✨</h3>
+                <p>Check out the <a href="/docs">interactive docs</a> and get coding!</p>
             </body>
         </html>
     """
 
 
-@router.get("/login")
+@router.get(
+    "/login",
+    include_in_schema=False,
+)
 def login(
-    request: Request,
     redirect_path: str = "/api/v1/oauth/auth0/callback",
     signup: Optional[bool] = False,
     settings: config.Settings = Depends(config.get_settings),
     scope: str = "openid profile email offline_access",
-    include_in_schema=False,
 ):
     """Main login link"""
     url = (
@@ -66,9 +68,7 @@ def login(
         "?response_type=code"
         f"&client_id={settings.auth0_client_id}"
         f"&redirect_uri="
-        f"{request.scope['type']}"  # http(s)
-        f"://{request.scope['server'][0]}:{request.scope['server'][1]}"  # host:port
-        f"{redirect_path}"  # passed path for redirect
+        f"{settings.base_url}{redirect_path}"
         # f"&audience={settings.auth0_api_audience}" # No audience because no JWT needed
         f"&scope={scope}"
     )
@@ -77,8 +77,20 @@ def login(
     return RedirectResponse(url)
 
 
-@router.get("/logout", include_in_schema=False)
-def logout():
-    return RedirectResponse(
-        "https://dev-mtzlab.us.auth0.com/v2/logout?client_id=lQvfKdlfxLE0E9mVEIl58Wi9gX2AwWop&returnTo=http%3A%2F%2Flocalhost:8000"
+@router.get("/logout", include_in_schema=False, response_class=RedirectResponse)
+def logout(
+    settings: config.Settings = Depends(config.get_settings),
+    post_logout_redirect_route=None,
+) -> RedirectResponse:
+    redirect_route = post_logout_redirect_route or settings.auth0_default_logout_route
+    response = RedirectResponse(
+        url=(
+            f"https://{settings.auth0_domain}/v2/logout"
+            f"?client_id={settings.auth0_client_id}"
+            f"&returnTo={settings.base_url}{redirect_route}"
+        )
     )
+    response.delete_cookie(key=settings.id_token_cookie_key)
+    response.delete_cookie(key=settings.refresh_token_cookie_key)
+
+    return response
