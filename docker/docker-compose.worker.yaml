@@ -1,0 +1,15 @@
+# A bash-able template that will fill with variables if correct environment variables are loaded
+# source context.{dev | prod}
+# eval "echo \"$(cat $(pwd)/docker-compose.worker.yaml)\"" > output.yaml
+
+version: \"3.3\" # XStream has older docker version so 3.3 is necessary
+
+services:
+  worker:
+    image: ${FULL_IMAGE_NAME}
+    env_file: worker.env
+    deploy:
+      replicas: ${WORKER_REPLICAS}
+      update_config:
+        parallelism: 1
+        delay: 10s
