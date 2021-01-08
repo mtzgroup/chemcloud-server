@@ -66,4 +66,11 @@ def signup(redirect_path: str = None):
     return RedirectResponse(destination_url)
 
 
+@app.get("/buddy-groups")
+def buddy_groups():
+    "Buddy group method!"
+
+    return {"Buddy groups": "rock!"}
+
+
 app.mount("/", StaticFiles(directory="static", html=True), name="static")

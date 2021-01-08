@@ -1,6 +1,7 @@
 """A simple script to exercise the web app and celery to compute a result."""
 import sys
 from getpass import getpass
+from pprint import pprint
 from time import sleep
 
 import httpx
@@ -26,6 +27,12 @@ if __name__ == "__main__":
         print("You must call this script with [local | dev | prod] as an argument.")
         sys.exit(1)
 
+    # Get molecule from command line
+    try:
+        molecule = sys.argv[2]
+    except IndexError:
+        molecule = MOLECULE
+
     HOST = HOSTS[env]
     # Get auth token
     username = input("Please enter your username: ")
@@ -45,8 +52,8 @@ if __name__ == "__main__":
     jwt = r0.json()["access_token"]
 
     # Generate Inputs
-    print(f"Generating input for {MOLECULE}...")
-    molecule = Molecule.from_data(f"pubchem:{MOLECULE}")
+    print(f"Generating input for {molecule}...")
+    molecule = Molecule.from_data(f"pubchem:{molecule}")
     model = Model(method="B3LYP", basis="6-31g")
     driver = "energy"
     atomic_input = AtomicInput(molecule=molecule, model=model, driver=driver)
@@ -68,7 +75,6 @@ if __name__ == "__main__":
             f"{HOST}{API_PREFIX}/compute/result/{task_id}",
             headers={"Authorization": f"Bearer {token}"},
         )
-        print(result)
         response = result.json()
         return response["status"], response["atomic_result"]
 
@@ -81,5 +87,6 @@ if __name__ == "__main__":
 
     # Assure we can recreate models from results
     result = AtomicResult(**atomic_result)
+    pprint(result.stdout)
     print(result)
     print(result.return_result)
