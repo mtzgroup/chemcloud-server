@@ -154,7 +154,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          docker_layer_caching: true # must pay for this feature; would be nice!
+          docker_layer_caching: false # must pay for this feature; would be nice!
       - full_image_name:
           docker_repo: << parameters.docker_repo >>
       - run:
