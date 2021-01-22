@@ -37,7 +37,7 @@ async def _external_request(
 
 async def _auth0_token_request(
     flow_model: models.OAuth2Base, settings: config.Settings = config.get_settings()
-):
+) -> Dict[Any, Any]:
     """Main method for requesting tokens from Auth0
 
     Set audience to get back JWT instead of Opaque Token
@@ -48,25 +48,9 @@ async def _auth0_token_request(
         offline_access: get back refresh_token
         other scopes: whatever we want for permissions
     """
-    data = {
-        "grant_type": flow_model.grant_type,
-        "audience": flow_model.audience,
-        "client_id": flow_model.client_id,
-        "client_secret": flow_model.client_secret,
-        "scope": flow_model.scope,
-    }
-
-    if isinstance(flow_model, models.OAuth2PasswordFlow):
-        data["username"] = flow_model.username
-        data["password"] = flow_model.password
-
-    if isinstance(flow_model, models.OAuth2AuthorizationCodeFlow):
-        data["code"] = flow_model.code
-        data["redirect_uri"] = flow_model.redirect_uri
-
     return await _external_request(
         "post",
         f"https://{settings.auth0_domain}/oauth/token",
         headers={"content-type": "application/x-www-form-urlencoded"},
-        data=data,
+        data=dict(flow_model),
     )

@@ -54,17 +54,25 @@ class CeleryAtomicResult(BaseModel):
 class OAuth2Base(BaseModel):
     client_id: str
     client_secret: str
+
+
+class OAuth2LoginBase(OAuth2Base):
     audience: str = ""
     scope: str = ""
 
 
-class OAuth2PasswordFlow(OAuth2Base):
+class OAuth2PasswordFlow(OAuth2LoginBase):
     grant_type: str = Field("password", regex="password")
     username: str
     password: str
 
 
-class OAuth2AuthorizationCodeFlow(OAuth2Base):
-    grant_type: str = "authorization_code"
+class OAuth2AuthorizationCodeFlow(OAuth2LoginBase):
+    grant_type: str = Field("authorization_code", regex="authorization_code")
     code: str
     redirect_uri: AnyHttpUrl
+
+
+class OAuth2RefreshFlow(OAuth2Base):
+    grant_type: str = Field("refresh_token", regex="refresh_token")
+    refresh_token: str
