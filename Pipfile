@@ -17,7 +17,6 @@ pytest-timeout = "*"
 
 [packages]
 fastapi = "*"
-qcengine = "*"
 celery = {extras = ["redis"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
 python-multipart = "*"
@@ -30,6 +29,11 @@ uvloop = "*"
 httptools = "*"
 typing-extensions = "*"
 aiofiles = "*"
+qcengine = {ref = "feature-terachem-pbs-harness", git = "https://github.com/mtzgroup/QCEngine.git"}
+amqp = "==5.0.2"
+tcpb = {ref = "develop", git = "https://github.com/mtzgroup/tcpb-client.git"}
+google = "==1.9.3"
+protobuf = "*"
 
 [requires]
 python_version = "3.7"

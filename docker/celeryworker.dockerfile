@@ -1,4 +1,5 @@
 # Dockerfile for TeraChem Cloud Worker
+# Contains celery worker and all CPU-only QC Packages
 FROM continuumio/miniconda3:4.8.2
 
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319

@@ -16,7 +16,7 @@ services:
           memory: 512M
       update_config:
         parallelism: 1
-        delay: 10s
+        order: start-first
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public

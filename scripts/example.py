@@ -4,7 +4,7 @@ from getpass import getpass
 from time import sleep
 
 import httpx
-from qcelemental.models import AtomicInput, AtomicResult, Molecule
+from qcelemental.models import AtomicInput, AtomicResult, FailedOperation, Molecule
 from qcelemental.models.common_models import Model
 
 HOSTS = {
@@ -49,7 +49,11 @@ if __name__ == "__main__":
     molecule = Molecule.from_data(f"pubchem:{MOLECULE}")
     model = Model(method="B3LYP", basis="6-31g")
     driver = "energy"
-    atomic_input = AtomicInput(molecule=molecule, model=model, driver=driver)
+    atomic_input = AtomicInput(
+        molecule=molecule,
+        model=model,
+        driver=driver,  # keywords={"molden": True}
+    )
 
     # POST compute job
     print("Sending job...")
@@ -70,16 +74,20 @@ if __name__ == "__main__":
         )
         print(result)
         response = result.json()
-        return response["status"], response["atomic_result"]
+        return response["status"], response["result"]
 
-    status, atomic_result = _get_result(task_id, jwt)
+    status, result = _get_result(task_id, jwt)
     while status in {"PENDING", "STARTED"}:
         sleep(1)
-        status, atomic_result = _get_result(task_id, jwt)
+        status, result = _get_result(task_id, jwt)
         print(f"Status: {status}")
         print("Waiting for result...")
 
     # Assure we can recreate models from results
-    result = AtomicResult(**atomic_result)
+    if status == "SUCCESS":
+        result = AtomicResult(**result)
+    elif status == "FAILURE":
+        result = FailedOperation(**result)
+
     print(result)
-    print(result.return_result)
+    print(getattr(result, "return_result", "Operation Failed!"))

@@ -38,6 +38,18 @@ celery_app.conf.update(
     worker_concurrency=1,
 )
 
+# May need to set this for future amqp releases >5.0.2
+# NOTE: Setting this value means celery will change ports for AMPQ to 5671 by default
+# this means I should probably only set this value if I am not running locally
+# if "ampqs" in settings.celery_broker_connection_string:
+#     celery_app.conf.update(
+#         broker_use_ssl={
+#             # Do not verify broker certificate on client. Since Traefik is dynamically
+#             # assigning SSL certs, client-side verification is not possible
+#             "cert_reqs": ssl.CERT_NONE,
+#         },
+#     )
+
 
 @celery_app.task
 def compute(atomic_input: AtomicInput, engine: str) -> AtomicResult:

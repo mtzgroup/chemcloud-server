@@ -51,6 +51,18 @@ Run non-dockerized web server
 pipenv run uvicorn terachem_cloud.main:app --reload
 ```
 
+### Development on Fire (or any machine with GPUs)
+Developing on a machine with GPUs means you can run `TeraChem` in server mode inside the docker worker. For development purposes, it's easiest to startup the `docker-compose` stack sans worker and then run the worker with `docker run` directly since `docker-compose` lacks good GPU support.
+
+```sh
+docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml up -d --build web-server mq redis
+
+docker build -t tcc_celery_worker -f docker/celeryworker.dockerfile . && docker run -d --rm -v /data/coltonbh/license.key:/terachem/license.key -v /data/coltonbh:/scratch --net=host --gpus 2 -e TERACHEM_PBS_HOST='127.0.0.1' -e TERACHEM_PBS_PORT='11111'  --name tcc_worker tcc_celery_worker
+
+# To stop worker
+docker stop tcc_worker
+```
+
 ### Manage environment and Auth0 for local development
 
 Settings are managed in `terachem_cloud/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. If you need authentication to work for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly, though authentication-required endpoints will not work if hand-testing since a mocked auth system for local development has not been created.

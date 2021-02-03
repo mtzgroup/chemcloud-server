@@ -42,18 +42,18 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
             f"{settings.api_v1_str}/compute/result/{task_id}",
         )
         response = result.json()
-        return response["status"], response["atomic_result"]
+        return response["status"], response["result"]
 
-    status, atomic_result = _get_result(task_id)
+    status, result = _get_result(task_id)
 
     assert status == "PENDING" or status == "STARTED"
     # No result while computation is happening
-    assert atomic_result is None
+    assert result is None
 
     # Check that work gets done, AtomicResult-compatible data is returned
     while status in {"PENDING", "STARTED"}:
-        status, atomic_result = _get_result(task_id)
+        status, result = _get_result(task_id)
         sleep(1)
 
     assert status == "SUCCESS"
-    assert isinstance(AtomicResult(**atomic_result), AtomicResult)
+    assert isinstance(AtomicResult(**result), AtomicResult)

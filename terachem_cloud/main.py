@@ -1,4 +1,6 @@
 """Main module for the FastAPI app. Also contains convenience paths that route """
+from typing import Optional
+
 from fastapi import FastAPI, Security
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -19,7 +21,7 @@ tags_metadata = [
         "description": "Submit compute requests and obtain results.",
     },
     {
-        "name": "default",
+        "name": "hello world",
         "description": "Try out the interactive docs using this endpoint!",
     },
 ]
@@ -52,9 +54,9 @@ async def index():
     return RedirectResponse("/docs")
 
 
-@app.get("/hello-world")
-async def hello_world():
-    return {"Welcome to": "TeraChem Cloud"}
+@app.get("/hello-world", tags=["hello world"])
+async def hello_world(name: Optional[str] = None):
+    return f"Welcome to TeraChem Cloud, {name or 'friend'}"
 
 
 @app.get("/signup", include_in_schema=False)
