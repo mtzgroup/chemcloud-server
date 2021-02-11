@@ -23,7 +23,7 @@ def fake_auth():
             "aud": "https://terachemcloud.dev.mtzlab.com",
             "iat": 1606866842,
             "exp": 1606953242,
-            "azp": "lQvfKdlfxLE0E9mVEIl58Wi9gX2AwWop",
+            "azp": "lQvfKdlfxLE0E9mVEIl58Wi9gX2AwWop",  # pragma: allowlist secret
             "scope": "compute:public compute:private",
             "gty": "password",
         }
