@@ -3,7 +3,6 @@ from typing import Any, Dict
 
 import httpx
 from fastapi import HTTPException
-from qcelemental.models import Molecule
 
 from terachem_cloud import config, models
 
@@ -55,8 +54,3 @@ async def _auth0_token_request(
         headers={"content-type": "application/x-www-form-urlencoded"},
         data=dict(flow_model),
     )
-
-
-def pubchem_molecule_lookup(name: str) -> Molecule:
-    """Get a molecule from Pubchem given a name"""
-    return Molecule.from_data(f"pubchem:{name}")
