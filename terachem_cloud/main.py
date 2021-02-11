@@ -1,7 +1,9 @@
 """Main module for the FastAPI app. Also contains convenience paths that route """
+from terachem_cloud.utils import pubchem_molecule_lookup
 from fastapi import FastAPI, Security
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from qcelemental.models.molecule import Molecule
 
 from .auth import bearer_auth
 from .config import get_settings
@@ -64,6 +66,12 @@ def signup(redirect_path: str = None):
     if redirect_path:
         destination_url += f"&redirect_path={redirect_path}"
     return RedirectResponse(destination_url)
+
+
+@app.get("/molecule/{name}", response_model=Molecule)
+def molecule_lookup(name: str):
+    """Returns pubchem data about a molecule"""
+    return pubchem_molecule_lookup(name)
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
