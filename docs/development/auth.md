@@ -1,6 +1,8 @@
 # Authentication and Authorization
 
-## Choices and Justifications
+## Core Decisions and Justifications
+
+### Use Auth0 to provide auth
 
 - Auth is complicated. We do not want to roll our own auth servers. We are using [Auth0](https://auth0.com) as our Authentication Server and will follow [OAuth 2.0](https://oauth.net/2/) protocols for authentication.
 - Read up on FastAPI's [Security](https://fastapi.tiangolo.com/tutorial/security/) and [Advanced Security](https://fastapi.tiangolo.com/advanced/security/) documentation to better understand how to implement OAuth2 flows in FastAPI.

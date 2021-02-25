@@ -2,14 +2,32 @@
 # source context.{dev | prod}
 # eval "echo \"$(cat $(pwd)/docker-compose.worker.yaml)\"" > output.yaml
 
-version: \"3.3\" # XStream has older docker version so 3.3 is necessary
+version: \"3.7\" #XStream can only support up to 3.7. Using docker 18.06.1-ce
 
 services:
   worker:
     image: ${FULL_IMAGE_NAME}
     env_file: worker.env
+    secrets:
+      - source: terachem_licence
+        target: /terachem/license.key
+    # According to the docs it appears each service container will get its own, unshared docker volume.
+    # This is what we want since we don't want servers starting up at the same time and creating the
+    # same server directories and then having issues when each puts "job_1" in the same folder and
+    # begin colliding. Default docker directory is on /lstror on XStream which is a local scratch
+    # directory. Need to make sure that containers on the same host don't share the volume though...
+    # https://docs.docker.com/storage/volumes/#start-a-service-with-volumes
+    volumes:
+      - scratch:/scratch
     deploy:
       replicas: ${WORKER_REPLICAS}
       update_config:
         parallelism: 1
-        delay: 10s
+
+secrets:
+  terachem_licence:
+    external: true
+
+volumes:
+  scratch:
+

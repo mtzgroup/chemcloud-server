@@ -1,12 +1,13 @@
 import re
 from enum import Enum
 
+from celery import states
 from celery.result import AsyncResult
 from fastapi import APIRouter, HTTPException
 from fastapi import status as status_codes
 from qcelemental.models import AtomicInput
 
-from terachem_cloud.models import CeleryAtomicResult
+from terachem_cloud.models import TaskResult
 from terachem_cloud.workers.tasks import celery_app
 from terachem_cloud.workers.tasks import compute as compute_task
 
@@ -15,16 +16,19 @@ class SupportedEngines(str, Enum):
     """Compute engines currently supported by TeraChem Cloud"""
 
     PSI4 = "psi4"
+    TERACHEM_PBS = "terachem_pbs"
 
 
 router = APIRouter()
 
 
-@router.post("", response_model=str)
+@router.post(
+    "",  # NOTE: "/compute" prefix is prepended in top level main.py file
+    response_model=str,
+    response_description="Task ID for the requested computation.",
+)
 async def compute(atomic_input: AtomicInput, engine: SupportedEngines) -> str:
-    """Submit a computation using an
-    [AtomicInput](http://docs.qcarchive.molssi.org/projects/QCEngine/en/stable/single_compute.html)
-    object and a desired computation engine"""
+    """Submit a computation using an AtomicInput object and a desired computation engine"""
     # TODO: Create custom task_id enabling caching. Will need to update task_id validation in /result.
     # https://docs.celeryproject.org/en/latest/faq.html#can-i-specify-a-custom-task-id
     # http://docs.qcarchive.molssi.org/projects/QCFractal/en/stable/results.html#results
@@ -32,12 +36,12 @@ async def compute(atomic_input: AtomicInput, engine: SupportedEngines) -> str:
     return task.id
 
 
-@router.get("/result/{task_id}", response_model=CeleryAtomicResult)
+@router.get(
+    "/result/{task_id}",  # NOTE: "/compute" prefix is prepended in top level main.py file
+    response_model=TaskResult,
+)
 async def result(task_id: str):
-    """Retrieve a compute task's status and an
-    [AtomicResult](http://docs.qcarchive.molssi.org/projects/QCEngine/en/stable/single_compute.html#returned-fields)
-    object from a computation.
-    """
+    """Retrieve a compute task's status. Returns TaskResult."""
     # Notify user if task_id doesn't match celery naming convention
     if not re.match(
         "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$", task_id
@@ -48,10 +52,19 @@ async def result(task_id: str):
         )
 
     celery_task = AsyncResult(task_id, app=celery_app)
-    status = celery_task.status
-    if status == "SUCCESS":
-        atomic_result = celery_task.get()
+    status = celery_task.state
+    if status == states.SUCCESS:
+        # Should indicate that result is either AtomicResult or FailedOperation
+        result = celery_task.result
+        # Since I am currently swallowing exceptions in the qcengine layer using
+        # qcengine.compute(..., raise_error=False), Celery will report a "success"
+        # since Celery didn't handle any exceptions when indeed the compute task
+        # failed. This is because compute() will swallow exceptions and return a
+        # FailedOperation object instead. Hence I am relying upon compute()'s status
+        # reporting and passing along this value to the end users.
+        if result.get("success") is False:
+            status = states.FAILURE
     else:
-        atomic_result = None
+        result = None
 
-    return {"status": status, "atomic_result": atomic_result}
+    return {"status": status, "result": result}

@@ -1,4 +1,4 @@
-# bash-able variables for docker-compose.template.yaml
+# bash-able variables for docker-compose.web.yaml
 
 WEBSERVER_TRAEFIK_HOST=\`tcc.mtzlab.com\`
 
