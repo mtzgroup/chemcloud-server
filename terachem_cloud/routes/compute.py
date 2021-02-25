@@ -55,14 +55,18 @@ async def result(task_id: str):
     status = celery_task.state
     if status == states.SUCCESS:
         # Should indicate that result is either AtomicResult or FailedOperation
-        result = celery_task.result
+
+        # Calling .get() due to message re: backend resources. Not totally clear why
+        # this call must be made instead of celery_task.result but going on faith for now
+        # https://docs.celeryproject.org/en/stable/reference/celery.result.html#celery.result.AsyncResult.get
+        result = celery_task.get()
         # Since I am currently swallowing exceptions in the qcengine layer using
         # qcengine.compute(..., raise_error=False), Celery will report a "success"
         # since Celery didn't handle any exceptions when indeed the compute task
         # failed. This is because compute() will swallow exceptions and return a
         # FailedOperation object instead. Hence I am relying upon compute()'s status
         # reporting and passing along this value to the end users.
-        if result.get("success") is False:
+        if result.get("success") is not True:
             status = states.FAILURE
     else:
         result = None

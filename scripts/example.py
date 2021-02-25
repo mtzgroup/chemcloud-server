@@ -52,7 +52,8 @@ if __name__ == "__main__":
     atomic_input = AtomicInput(
         molecule=molecule,
         model=model,
-        driver=driver,  # keywords={"molden": True}
+        driver=driver,
+        # keywords={"molden": True}
     )
 
     # POST compute job
