@@ -158,13 +158,15 @@ jobs:
       - full_image_name:
           docker_repo: << parameters.docker_repo >>
       - run:
+          name: Docker login
+          command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin
+      - run:
           name: Build image
           command: |
             docker build -t ${FULL_IMAGE_NAME} -f docker/<< parameters.dockerfile_name >> .
       - run:
           name: Push image to Martinez Group Docker Hub
           command: |
-            echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin
             docker image push ${FULL_IMAGE_NAME}
             if [ ! -z $CIRCLE_TAG ]
             then
@@ -225,7 +227,7 @@ jobs:
     docker:
       - image: cimg/base:2020.01
         environment:
-          DOCKER_COMPOSE_FILENAME: docker-compose.worker.yaml
+          DOCKER_COMPOSE_FILENAME: docker-compose.xstream.<< parameters.stage >>.yaml
           SERVER_FILEPATH: << pipeline.parameters.server_stacks_directory >>/<< parameters.stage >>/tcc
           XSTREAM_LOGIN_HOST: xstream-login.stanford.edu
     steps:
@@ -244,7 +246,6 @@ jobs:
       - run:
           name: Fill docker-compose template with context
           command: |
-            source docker/context.<< parameters.stage >>
             eval "echo \"$(cat $(pwd)/docker/${DOCKER_COMPOSE_FILENAME})\"" > ${DOCKER_COMPOSE_FILENAME}
       - run:
           name: Login to XStream with kinit
@@ -259,8 +260,14 @@ jobs:
           name: Push docker-compose files to server
           command: scp -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${DOCKER_COMPOSE_FILENAME} ${STANFORD_UN}@xs7-0001:${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME}
       - run:
+          name: Login server to Martinez Group Docker Repo
+          command: |
+            ESCAPED_DOCKERHUB_PASSWORD=`printf "%q" ${DOCKERHUB_PASSWORD}` #  pragma: allowlist secret
+            ssh -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${STANFORD_UN}@xs7-0001 ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin" #  pragma: allowlist secret
+      - run:
           name: Deploy docker stack on server
-          command: ssh -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${STANFORD_UN}@xs7-0001 "docker stack deploy -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} << parameters.stage >>-tcc-worker"
+          command: |
+            ssh -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${STANFORD_UN}@xs7-0001 "docker stack deploy --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} << parameters.stage >>-tcc-worker"
 
 workflows:
   main:
@@ -274,110 +281,97 @@ workflows:
       - isort
       - mypy
 
-      - dev_deploy_web:
+      # Build Web
+      - build_web_approval:
           type: approval
-          requires:
-            - test_code
           filters:
             tags:
-              only: /.*/
+              only: /.*/ # required since prod_web_deploy requires this step and has tag filters
       - build:
-          name: dev_web_build
+          name: web_build
           requires:
-            - dev_deploy_web
+            - test_code
+            - build_web_approval
           docker_repo: terachem-cloud
           dockerfile_name: server.dockerfile
           filters:
             tags:
-              only: /.*/
-      - deploy_web:
-          name: dev_web_deploy
-          context: dev-mtzlab
-          ssh-fingerprint: 35:2d:cc:27:f9:79:bf:6c:c1:7f:24:1d:f4:07:8c:d3
-          requires:
-            - dev_web_build
-          stage: dev
+              only: /.*/ # required since prod_web_deploy requires this step and has tag filters
+
+      # Build Workers
+      - build_workers_approval:
+          type: approval
           filters:
             tags:
-              only: /.*/
-
-      - dev_deploy_workers:
-          type: approval
+              only: /.*/ # required since prod_workers_deploy requires this step and has tag filters
+      - build:
+          name: worker_build
           requires:
             - test_code
-          filters:
-            tags:
-              only: /.*/
-      - build:
-          name: dev_worker_build
-          requires:
-            - dev_deploy_workers
+            - build_workers_approval
           docker_repo: terachem-cloud-worker
           dockerfile_name: celeryworker.dockerfile
           filters:
             tags:
-              only: /.*/
+              only: /.*/ # required since prod_workers_deploy requires this step and has tag filters
+
+      # Deploy dev
+      - dev_deploy_web_approval:
+          type: approval
+      - deploy_web:
+          name: dev_web_deploy
+          context: dev-context
+          ssh-fingerprint: 35:2d:cc:27:f9:79:bf:6c:c1:7f:24:1d:f4:07:8c:d3
+          requires:
+            - dev_deploy_web_approval
+            - web_build
+          stage: dev
+
+      - dev_deploy_workers_approval:
+          type: approval
       - deploy_workers:
           name: dev_workers_deploy
           requires:
-            - dev_worker_build
+            - dev_deploy_workers_approval
+            - worker_build
           stage: dev
-          filters:
-            tags:
-              only: /.*/
 
-      - prod_deploy_web:
+      - prod_deploy_web_approval:
           type: approval
           filters: # Only run on x.x.x tagged branches
             tags:
               only: /\d*\.\d*\.\d*/
             branches:
               ignore: /.*/
-          requires:
-            - test_code
-      - build:
-          name: prod_web_build
-          requires:
-            - prod_deploy_web
-          filters:
-            tags:
-              only: /\d*\.\d*\.\d*/
-          docker_repo: terachem-cloud
-          dockerfile_name: server.dockerfile
       - deploy_web:
           name: prod_web_deploy
-          context: prod-mtzlab
+          context: prod-context
           ssh-fingerprint: fa:2a:8d:76:3f:41:e5:de:65:88:67:2a:9a:8a:11:ca
           filters:
             tags:
               only: /\d*\.\d*\.\d*/
+            branches:
+              ignore: /.*/
           requires:
-            - prod_web_build
+            - prod_deploy_web_approval
+            - web_build
           stage: prod
 
-      - prod_deploy_worker:
+      - prod_deploy_worker_approval:
           type: approval
           filters: # Only run on tagged branches
             tags:
               only: /\d*\.\d*\.\d*/
             branches:
               ignore: /.*/
-          requires:
-            - test_code
-      - build:
-          name: prod_worker_build
-          filters:
-            tags:
-              only: /\d*\.\d*\.\d*/
-          requires:
-            - prod_deploy_worker
-          docker_repo: terachem-cloud-worker
-          dockerfile_name: celeryworker.dockerfile
       - deploy_workers:
           name: prod_workers_deploy
           filters:
             tags:
               only: /\d*\.\d*\.\d*/
+            branches:
+              ignore: /.*/
           requires:
-            - prod_worker_build
+            - prod_deploy_worker_approval
+            - worker_build
           stage: prod

@@ -8,7 +8,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      # Connect to rabbit and redis over docker network instead of locahost
+      # Connect to rabbit and redis over docker network instead of localhost
       - CELERY_BROKER_CONNECTION_STRING=amqp://mq
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
     env_file:
@@ -29,16 +29,14 @@ services:
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
     env_file:
       - ../.env
-    volumes:
-      - ../terachem_cloud:/code/terachem_cloud
 
   mq:
     ports:
-      # Open rabbit to locahost for dev container access
+      # Open rabbit to localhost for dev container access
       - 5672:5672
       - 15672:15672
 
   redis:
     ports:
-      # Open redis to locahost for dev container access
+      # Open redis to localhost for dev container access
       - 6379:6379

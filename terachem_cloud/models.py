@@ -1,18 +1,42 @@
-from typing import Optional
+from enum import Enum
+from typing import Optional, Union
 
 from numpy import ndarray
 from pydantic import AnyHttpUrl, BaseModel, Field
-from qcelemental.models import AtomicResult
+from qcelemental.models import AtomicResult, FailedOperation
 from qcelemental.util.serialization import json_dumps as qc_json_dumps
 from qcelemental.util.serialization import json_loads as qc_json_loads
 
 
-class CeleryAtomicResult(BaseModel):
-    status: str
-    atomic_result: Optional[AtomicResult] = None
+class TaskStatus(str, Enum):
+    """Tasks status for a submitted compute job."""
+
+    # States from https://github.com/celery/celery/blob/master/celery/states.py
+    #: Task state is unknown (assumed pending since you know the id).
+    PENDING = "PENDING"
+    #: Task was received by a worker (only used in events).
+    RECEIVED = "RECEIVED"
+    #: Task was started by a worker (:setting:`task_track_started`).
+    STARTED = "STARTED"
+    #: Task succeeded
+    SUCCESS = "SUCCESS"
+    #: Task failed
+    FAILURE = "FAILURE"
+    #: Task was revoked.
+    REVOKED = "REVOKED"
+    #: Task was rejected (only used in events).
+    REJECTED = "REJECTED"
+    #: Task is waiting for retry.
+    RETRY = "RETRY"
+    IGNORED = "IGNORED"
+
+
+class TaskResult(BaseModel):
+    status: TaskStatus
+    result: Optional[Union[AtomicResult, FailedOperation]] = None
 
     class Config:
-        # These json_dumps and json_loads methods enable CeleryAtomicResult.json() to function correctly
+        # These json_dumps and json_loads methods enable TaskResult.json() to function correctly
         def _qc_json_dumps(data, **kwargs):
             """Use QCElemental encoders, accept default={default_encoder} argument"""
             return qc_json_dumps(data)
@@ -24,7 +48,8 @@ class CeleryAtomicResult(BaseModel):
         json_dumps = _qc_json_dumps
         json_loads = _qc_json_loads
 
-        def _np_encoder(ar: ndarray):
+        def _np_encoder(ar: ndarray):  # type: ignore
+            # NOTE: mypy wants this to be a staticmethod, hence # type: ignore comment
             """Custom encoder taken from qcelemental.utils.serialization.JSONArrayEncoder
 
             Need custom encoder for ndarray types, using qcelemental.utils.serialization.json_dumps
