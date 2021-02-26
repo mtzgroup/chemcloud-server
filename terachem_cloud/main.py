@@ -5,10 +5,11 @@ from fastapi import FastAPI, Security
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+from terachem_cloud import __version__
+
 from .auth import bearer_auth
 from .config import get_settings
 from .routes import compute, oauth, users
-from terachem_cloud import __version__
 
 settings = get_settings()
 
