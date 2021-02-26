@@ -45,8 +45,13 @@ async def dashboard(
                 <link rel="icon" href="/favicon.ico" type="image/icon">
             </head>
             <body>
-                <h3>✨ You have signed up for TeraChem Cloud! Your username is: {id_payload['email']} ✨</h3>
-                <p>Check out the <a href="/docs">interactive docs</a> and get coding!</p>
+                <h3>✨ You are registered for TeraChem Cloud! Your username is: {id_payload['email']} ✨</h3>
+                <ul>
+                    <li>Install the <a href="https://pypi.org/project/tccloud/" target="_blank">python client</a> and get coding!</li>
+                    <li>Check out the <a href="/docs">interactive docs</a> to learn more about TeraChem Cloud data types.</li>
+                    <li>If you need to change your password please logout, then click "Dashboard", then click "Forgot Password".</li>
+                    <li><a href="/users/logout">Logout</a></li>
+                </ul>
             </body>
         </html>
     """
