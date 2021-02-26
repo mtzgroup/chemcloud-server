@@ -29,7 +29,7 @@ tags_metadata = [
 
 app = FastAPI(
     title="TeraChem Cloud",
-    description="⚛ Quantum Chemistry at Cloud Scale ⚛ [Signup here!](/signup)",
+    description="⚛ Quantum Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)",
     version="0.2.1",
     openapi_tags=tags_metadata,
 )
