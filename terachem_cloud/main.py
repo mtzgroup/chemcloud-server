@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from .auth import bearer_auth
 from .config import get_settings
 from .routes import compute, oauth, users
+from terachem_cloud import __version__
 
 settings = get_settings()
 
@@ -30,7 +31,7 @@ tags_metadata = [
 app = FastAPI(
     title="TeraChem Cloud",
     description="⚛ Quantum Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)",
-    version="0.2.1",
+    version=__version__,
     openapi_tags=tags_metadata,
 )
 
