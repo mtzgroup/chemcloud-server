@@ -276,10 +276,22 @@ workflows:
           filters: # required since various deploy jobs have tag filters AND require test-code https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
             tags:
               only: /.*/
-      - black
-      - flake8
-      - isort
-      - mypy
+      - black:
+          filters:
+            tags:
+              only: /.*/
+      - flake8:
+          filters:
+            tags:
+              only: /.*/
+      - isort:
+          filters:
+            tags:
+              only: /.*/
+      - mypy:
+          filters:
+            tags:
+              only: /.*/
 
       # Build Web
       - build_web_approval:
@@ -318,10 +330,16 @@ workflows:
       # Deploy dev
       - dev_deploy_web_approval:
           type: approval
+          filters:
+            tags:
+              only: /.*/
       - deploy_web:
           name: dev_web_deploy
           context: dev-context
           ssh-fingerprint: 35:2d:cc:27:f9:79:bf:6c:c1:7f:24:1d:f4:07:8c:d3
+          filters:
+            tags:
+              only: /.*/
           requires:
             - dev_deploy_web_approval
             - web_build
@@ -329,8 +347,14 @@ workflows:
 
       - dev_deploy_workers_approval:
           type: approval
+          filters:
+            tags:
+              only: /.*/
       - deploy_workers:
           name: dev_workers_deploy
+          filters:
+            tags:
+              only: /.*/
           requires:
             - dev_deploy_workers_approval
             - worker_build
