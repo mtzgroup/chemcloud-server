@@ -31,9 +31,7 @@ typing-extensions = "*"
 aiofiles = "*"
 qcengine = {ref = "feature-terachem-pbs-harness", git = "https://github.com/mtzgroup/QCEngine.git"}
 amqp = "==5.0.2"
-google = "==1.9.3"
-protobuf = "*"
-tcpb = {ref = "develop", git = "https://github.com/mtzgroup/tcpb-client.git"}
+tcpb = "*"
 
 [requires]
 python_version = "3.7"

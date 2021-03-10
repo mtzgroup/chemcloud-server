@@ -13,29 +13,20 @@ repos:
       - id: detect-secrets
         stages: [commit]
         exclude: Pipfile.lock
-  - repo: local
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.7.0
     hooks:
       - id: isort
-        name: isort
-        stages: [commit]
-        language: python
-        entry: isort
-        types: [python]
-
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
       - id: black
-        name: black
-        stages: [commit]
-        language: python
-        entry: black
-        types: [python]
-
+  - repo: https://github.com/PyCQA/flake8
+    rev: 3.8.4
+    hooks:
       - id: flake8
-        name: flake8
-        stages: [commit]
-        language: python
-        entry: flake8
-        types: [python]
-
+  - repo: local
+    hooks:
       - id: mypy
         name: mypy
         stages: [commit]
