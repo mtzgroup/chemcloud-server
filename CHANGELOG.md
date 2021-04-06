@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Test assertions to check that results are deleted from celery backend after retrieval by client.
+
+### Changed
+
+- Added flags `--without-heartbeat --without-mingle --without-gossip` to celery workers to reduce network overhead chattiness.
+- Delete celery results from backend upon retrieval by client. This will prevent Redis from becoming a memory hog at times of high computational load.
+
 ## [0.3.1] - 2021-03-10
 
 ### Added
