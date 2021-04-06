@@ -29,9 +29,9 @@ uvloop = "*"
 httptools = "*"
 typing-extensions = "*"
 aiofiles = "*"
-qcengine = {ref = "feature-terachem-pbs-harness", git = "https://github.com/mtzgroup/QCEngine.git"}
 amqp = "==5.0.2"
 tcpb = "*"
+qcengine = {ref = "feature-terachem-pbs-harness", git = "https://github.com/mtzgroup/QCEngine.git"}
 
 [requires]
 python_version = "3.7"
