@@ -17,7 +17,8 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     Timeout is long because the worker instance may be waiting to connect to
     RabbitMQ if it just started up. Celery's exponential backoff means that
     it's possible a few early misses on worker -> MQ connection results in the
-    worker waiting up for 8 seconds (or longer) to retry connecting."""
+    worker waiting up for 8 seconds (or longer) to retry connecting.
+    """
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v1_str}/compute",
@@ -57,3 +58,8 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
 
     assert status == "SUCCESS"
     assert isinstance(AtomicResult(**result), AtomicResult)
+
+    # Assert result deleted from backend after retrieval
+    status, result = _get_result(task_id)
+    assert status == "PENDING"
+    assert result is None

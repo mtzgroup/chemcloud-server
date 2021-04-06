@@ -60,6 +60,10 @@ async def result(task_id: str):
         # this call must be made instead of celery_task.result but going on faith for now
         # https://docs.celeryproject.org/en/stable/reference/celery.result.html#celery.result.AsyncResult.get
         result = celery_task.get()
+        # Appears .get() does not remove result from Redis, so calling .forget() to
+        # specifically remove result. Don't want Redis to hold results in memory after
+        # retrieval and become a memory hog.
+        celery_task.forget()
         # Since I am currently swallowing exceptions in the qcengine layer using
         # qcengine.compute(..., raise_error=False), Celery will report a "success"
         # since Celery didn't handle any exceptions when indeed the compute task
