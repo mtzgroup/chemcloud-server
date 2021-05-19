@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -45,9 +45,7 @@ def _validate_jwt(
     return payload
 
 
-def _get_matching_rsa_key(
-    token: str, jwks: List[Dict[str, str]]
-) -> Optional[Dict[str, str]]:
+def _get_matching_rsa_key(token: str, jwks: List[Dict[str, str]]) -> Dict[str, str]:
     """Find matching key, return fields for JWT decode"""
     # Return JWT header as dict
     unverified_header = jwt.get_unverified_header(token)
@@ -61,7 +59,7 @@ def _get_matching_rsa_key(
                 "e": key["e"],
             }
         return rsa_key
-    return None
+    raise ValueError(f"No matching key found for token '{token}' in keys {jwks}")
 
 
 async def bearer_auth(

@@ -1,7 +1,15 @@
+from typing import Union
+
 import qcengine as qcng
 from celery import Celery
 from kombu.serialization import register
-from qcelemental.models import AtomicInput, AtomicResult
+from qcelemental.models import (
+    AtomicInput,
+    AtomicResult,
+    FailedOperation,
+    OptimizationInput,
+    OptimizationResult,
+)
 from qcelemental.util.serialization import json_dumps, json_loads
 
 from .config import get_settings
@@ -52,8 +60,19 @@ celery_app.conf.update(
 
 
 @celery_app.task
-def compute(atomic_input: AtomicInput, engine: str) -> AtomicResult:
+def compute(
+    atomic_input: AtomicInput, engine: str
+) -> Union[AtomicResult, FailedOperation]:
+    """Celery task wrapper around qcengine.compute"""
     return qcng.compute(atomic_input, engine)
+
+
+@celery_app.task
+def compute_procedure(
+    input: OptimizationInput, procedure: str
+) -> Union[OptimizationResult, FailedOperation]:
+    """Celery task wrapper around qcengine.compute_procedure"""
+    return qcng.compute_procedure(input, procedure)
 
 
 @celery_app.task
