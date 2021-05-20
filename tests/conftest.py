@@ -49,7 +49,7 @@ def water():
 
 @pytest.fixture(scope="function")
 def atomic_input(water):
-    model = Model(method="B3LYP", basis="3-21g")
+    model = Model(method="B3LYP", basis="sto-3g")
     return AtomicInput(molecule=water, model=model, driver="energy")
 
 
@@ -60,7 +60,7 @@ def optimization_input(atomic_input):
         protocols={"trajectory": "all"},
         initial_molecule=atomic_input.molecule,
         input_specification=qc_input_spec,
-        keywords={"program": "psi4", "maxsteps": 3},
+        keywords={"program": "psi4", "maxsteps": 2},
     )
     return input
 
