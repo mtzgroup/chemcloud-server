@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
+## [0.3.3]
+
+### Added
+
+- `compute_procedure` task for doing geometry optimizations using `pyberny`
+- VSCode settings file added to repo.
+
+### Changed
+
+- Combined two commands from the CI/CD pipeline used against XStream to get fewer auth errors
+- Updated `mypy` definitions on `Settings` object to pass `mypy` checks while still allowing tests to run on CircleCi without needing Auth0 configuration. I.e., the web application can be run without needing Auth0 config (for testing purposes).
+- pre-commit `mypy` now loads from GitHub repo instead of local `mypy` install.
+
 ## [0.3.2]
 
 ### Added
@@ -75,7 +88,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.2...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.3...HEAD
+[0.3.3]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.3
 [0.3.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.2
 [0.3.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.1
 [0.3.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.0

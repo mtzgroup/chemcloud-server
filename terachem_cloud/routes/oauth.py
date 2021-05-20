@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import APIRouter, Depends
 from fastapi.param_functions import Form
@@ -42,7 +42,11 @@ async def token(
     settings: config.Settings = Depends(config.get_settings),
 ):
     """Route for OAuth2 requests to TeraChem Cloud"""
+    flow_model: Union[models.OAuth2PasswordFlow, models.OAuth2RefreshFlow]
+
     if form_data.grant_type == "password":
+        assert form_data.username, "Must pass username"
+        assert form_data.password, "Must pass password"
         flow_model = models.OAuth2PasswordFlow(
             audience=settings.auth0_api_audience,
             client_id=settings.auth0_client_id,
@@ -52,6 +56,7 @@ async def token(
             scope=" ".join(form_data.scopes),
         )
     elif form_data.grant_type == "refresh_token":
+        assert form_data.refresh_token, "Must pass refresh_token"
         flow_model = models.OAuth2RefreshFlow(
             client_id=settings.auth0_client_id,
             client_secret=settings.auth0_client_secret,

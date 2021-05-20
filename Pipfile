@@ -14,6 +14,7 @@ pytest-cov = "*"
 requests = "*"
 pytest-celery = "*"
 pytest-timeout = "*"
+autoflake = "*"
 
 [packages]
 fastapi = "*"
@@ -31,7 +32,8 @@ typing-extensions = "*"
 aiofiles = "*"
 amqp = "==5.0.2"
 tcpb = "*"
-qcengine = {ref = "feature-terachem-pbs-harness", git = "https://github.com/mtzgroup/QCEngine.git"}
+pyberny = "*"
+qcengine = {ref = "feature-berny-handle-failed-operation", git = "https://github.com/mtzgroup/QCEngine.git"}
 
 [requires]
 python_version = "3.7"
