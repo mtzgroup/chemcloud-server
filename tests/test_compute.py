@@ -65,7 +65,7 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     assert result is None
 
 
-@pytest.mark.timeout(45)
+@pytest.mark.timeout(65)
 def test_compute_procedure_berny(settings, client, fake_auth, optimization_input):
     """Testings as one function so we don't submit excess compute jobs.
 
