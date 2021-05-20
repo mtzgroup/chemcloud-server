@@ -87,6 +87,7 @@ A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a
 ## Deployment
 
 - Full CI/CD is handled via [CircleCi](https://circleci.com). See `.circleci/config.yml` for details.
+- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/terachem-cloud-worker:testing` image that the CI/CD pipeline uses for tests.
 
 ### Web Services
 

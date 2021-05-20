@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from numpy import ndarray
 from pydantic import AnyHttpUrl, BaseModel, Field
-from qcelemental.models import AtomicResult, FailedOperation
+from qcelemental.models import AtomicResult, FailedOperation, OptimizationResult
 from qcelemental.util.serialization import json_dumps as qc_json_dumps
 from qcelemental.util.serialization import json_loads as qc_json_loads
 
@@ -33,7 +33,7 @@ class TaskStatus(str, Enum):
 
 class TaskResult(BaseModel):
     status: TaskStatus
-    result: Optional[Union[AtomicResult, FailedOperation]] = None
+    result: Optional[Union[AtomicResult, OptimizationResult, FailedOperation]] = None
 
     class Config:
         # These json_dumps and json_loads methods enable TaskResult.json() to function correctly

@@ -5,11 +5,12 @@ from celery import states
 from celery.result import AsyncResult
 from fastapi import APIRouter, HTTPException
 from fastapi import status as status_codes
-from qcelemental.models import AtomicInput
+from qcelemental.models import AtomicInput, OptimizationInput
 
 from terachem_cloud.models import TaskResult
 from terachem_cloud.workers.tasks import celery_app
 from terachem_cloud.workers.tasks import compute as compute_task
+from terachem_cloud.workers.tasks import compute_procedure as compute_procedure_task
 
 
 class SupportedEngines(str, Enum):
@@ -17,6 +18,12 @@ class SupportedEngines(str, Enum):
 
     PSI4 = "psi4"
     TERACHEM_PBS = "terachem_pbs"
+
+
+class SupportedProcedures(str, Enum):
+    """Procedures currently supported by TeraChem Cloud"""
+
+    BERNY = "berny"
 
 
 router = APIRouter()
@@ -36,12 +43,26 @@ async def compute(atomic_input: AtomicInput, engine: SupportedEngines) -> str:
     return task.id
 
 
+@router.post(
+    "-procedure",
+    response_model=str,
+    response_description="Task ID for the requested computation.",
+)
+async def compute_procedure(
+    input: OptimizationInput, procedure: SupportedProcedures
+) -> str:
+    """Submit a procedure computation using an OptimizationInput specification"""
+    task = compute_procedure_task.delay(input, procedure)
+    return task.id
+
+
 @router.get(
     "/result/{task_id}",  # NOTE: "/compute" prefix is prepended in top level main.py file
     response_model=TaskResult,
+    response_description="A compute task's status and (if complete) return value.",
 )
 async def result(task_id: str):
-    """Retrieve a compute task's status. Returns TaskResult."""
+    """Retrieve a compute task's status and result. Returns TaskResult."""
     # Notify user if task_id doesn't match celery naming convention
     if not re.match(
         "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$", task_id
