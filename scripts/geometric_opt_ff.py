@@ -1,6 +1,5 @@
-from os import environ
-
-from qcelemental.models import Molecule
+"""Quick example of how to perform a geomeTRIC optimization using force fields"""
+import qcengine as qcng
 from qcelemental.models.procedures import (
     OptimizationInput,
     OptimizationProtocols,
@@ -10,23 +9,20 @@ from qcelemental.models.procedures import (
 
 from terachem_cloud.workers.tasks import compute_procedure as cp_task
 
-environ["TERACHEM_PBS_HOST"] = "127.0.0.1"
-environ["TERACHEM_PBS_PORT"] = "11111"
-
-water = Molecule.from_data("pubchem:water")
+water = qcng.get_molecule("water")
 op = OptimizationProtocols(trajectory=TrajectoryProtocolEnum.all)
 input_spec = QCInputSpecification(
     driver="gradient",
-    model={"method": "b3lyp", "basis": "6-31g"},
+    model={"method": "UFF"},
 )
 
 inp = OptimizationInput(
     protocols=op,
     initial_molecule=water,
     input_specification=input_spec,
-    keywords={"program": "psi4", "maxsteps": 3},
+    keywords={"program": "rdkit"},
 )
 
-r = cp_task.delay(inp, "berny")
+r = cp_task.delay(inp, "geometric")
 r.status
 o = r.get()

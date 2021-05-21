@@ -8,7 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- `geomeTRIC` optimizer
+- `rdkit` engine (adds force fields which can be used for single point computations or in optimizers)
+
 ### Changed
+
+- Run compute tests on hydrogen instead of water for faster results
 
 ### Removed
 

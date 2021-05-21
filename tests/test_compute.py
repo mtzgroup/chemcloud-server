@@ -3,6 +3,7 @@ from time import sleep
 
 import pytest
 from qcelemental.models import AtomicResult, OptimizationResult
+from qcelemental.models.procedures import OptimizationInput, QCInputSpecification
 
 
 def test_compute_requires_auth(settings, client):
@@ -65,8 +66,28 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     assert result is None
 
 
-@pytest.mark.timeout(65)
-def test_compute_procedure_berny(settings, client, fake_auth, optimization_input):
+@pytest.mark.timeout(45)
+@pytest.mark.parametrize(
+    "optimizer,model,keywords",
+    (
+        (
+            "berny",
+            {"method": "B3LYP", "basis": "sto-3g"},
+            {"program": "psi4", "maxsteps": 2},
+        ),
+        ("geometric", {"method": "B3LYP", "basis": "sto-3g"}, {"program": "psi4"}),
+        ("geometric", {"method": "UFF"}, {"program": "rdkit"}),
+    ),
+)
+def test_compute_procedure_optimization(
+    settings,
+    client,
+    fake_auth,
+    hydrogen,
+    optimizer,
+    keywords,
+    model,
+):
     """Testings as one function so we don't submit excess compute jobs.
 
     Timeout is long because the worker instance may be waiting to connect to
@@ -74,11 +95,18 @@ def test_compute_procedure_berny(settings, client, fake_auth, optimization_input
     it's possible a few early misses on worker -> MQ connection results in the
     worker waiting up for 8 seconds (or longer) to retry connecting.
     """
+    optimization_input = OptimizationInput(
+        input_specification=QCInputSpecification(driver="gradient", model=model),
+        protocols={"trajectory": "all"},
+        initial_molecule=hydrogen,
+        keywords=keywords,
+    )
+
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v1_str}/compute-procedure",
         data=optimization_input.json(),
-        params={"procedure": "berny"},
+        params={"procedure": optimizer},
     )
     task_id = job_submission.json()
 
