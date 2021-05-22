@@ -34,6 +34,7 @@ amqp = "==5.0.2"
 tcpb = "*"
 pyberny = "*"
 qcengine = {ref = "feature-berny-handle-failed-operation", git = "https://github.com/mtzgroup/QCEngine.git"}
+geometric = {ref = "feature-logging-bug-fix", git = "https://github.com/coltonbh/geomeTRIC.git"}
 
 [requires]
 python_version = "3.7"

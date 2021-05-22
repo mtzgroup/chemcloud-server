@@ -1,9 +1,8 @@
 import pytest
-import qcelemental as qcel
+import qcengine as qcng
 from fastapi.testclient import TestClient
 from qcelemental.models import AtomicInput
 from qcelemental.models.common_models import Model
-from qcelemental.models.procedures import OptimizationInput, QCInputSpecification
 
 from terachem_cloud.auth import bearer_auth
 from terachem_cloud.config import get_settings
@@ -38,31 +37,18 @@ def fake_auth():
 
 @pytest.fixture(scope="function")
 def water():
-    return qcel.models.Molecule.from_data(
-        """
-        O 0 0 0
-        H 0.52421003 1.68733646 0.48074633
-        H 1.14668581 -0.45032174 -1.35474466
-        """
-    )
+    return qcng.get_molecule("water")
+
+
+@pytest.fixture
+def hydrogen():
+    return qcng.get_molecule("hydrogen")
 
 
 @pytest.fixture(scope="function")
-def atomic_input(water):
+def atomic_input(hydrogen):
     model = Model(method="B3LYP", basis="sto-3g")
-    return AtomicInput(molecule=water, model=model, driver="energy")
-
-
-@pytest.fixture(scope="function")
-def optimization_input(atomic_input):
-    qc_input_spec = QCInputSpecification(driver="gradient", model=atomic_input.model)
-    input = OptimizationInput(
-        protocols={"trajectory": "all"},
-        initial_molecule=atomic_input.molecule,
-        input_specification=qc_input_spec,
-        keywords={"program": "psi4", "maxsteps": 2},
-    )
-    return input
+    return AtomicInput(molecule=hydrogen, model=model, driver="energy")
 
 
 @pytest.fixture(scope="session")

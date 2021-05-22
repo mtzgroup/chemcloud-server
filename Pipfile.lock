@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e110153078df5662a8f6442df0a1142d51c66b42cff30176f226e66d1930d32b"
+            "sha256": "be0211a1a881a75a3af51d836ce2f556a09527f7086e4770020142d73abcbf54"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -164,6 +164,13 @@
             ],
             "version": "==3.4.7"
         },
+        "decorator": {
+            "hashes": [
+                "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760",
+                "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"
+            ],
+            "version": "==4.4.2"
+        },
         "ecdsa": {
             "hashes": [
                 "sha256:64c613005f13efec6541bb0a33290d0d03c27abab5f15fbab20fb0ee162bdd8e",
@@ -179,6 +186,10 @@
             ],
             "index": "pypi",
             "version": "==0.65.1"
+        },
+        "geometric": {
+            "git": "https://github.com/coltonbh/geomeTRIC.git",
+            "ref": "c3e38564ee67f6636fff9fb2fdabe819c4ee0238"
         },
         "google": {
             "hashes": [
@@ -255,6 +266,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==5.0.2"
+        },
+        "networkx": {
+            "hashes": [
+                "sha256:0635858ed7e989f4c574c2328380b452df892ae85084144c73d8cd819f0c4e06",
+                "sha256:109cd585cac41297f71103c3c42ac6ef7379f29788eb54cb751be5a663bb235a"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==2.5.1"
         },
         "numpy": {
             "hashes": [
@@ -526,7 +545,7 @@
         },
         "qcengine": {
             "git": "https://github.com/mtzgroup/QCEngine.git",
-            "ref": "364f9dfc902f5af4cbb69881ef7e7827b97badfa"
+            "ref": "04903620e396b10474160dedeec188f7920ae959"
         },
         "redis": {
             "hashes": [
@@ -550,7 +569,7 @@
                 "sha256:78f9a9bf4e7be0c5ded4583326e7461e3a3c5aae24073648b4bdfa797d78c9d2",
                 "sha256:9d689e6ca1b3038bc82bf8d23e944b6b6037bc02301a574935b2dd946e0353b9"
             ],
-            "markers": "python_version >= '3.5' and python_version < '4'",
+            "markers": "python_version >= '3.5' and python_version < '4.0'",
             "version": "==4.7.2"
         },
         "six": {

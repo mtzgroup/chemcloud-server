@@ -18,12 +18,14 @@ class SupportedEngines(str, Enum):
 
     PSI4 = "psi4"
     TERACHEM_PBS = "terachem_pbs"
+    RDKIT = "rdkit"
 
 
 class SupportedProcedures(str, Enum):
     """Procedures currently supported by TeraChem Cloud"""
 
     BERNY = "berny"
+    GEOMETRIC = "geometric"
 
 
 router = APIRouter()

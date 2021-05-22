@@ -8,9 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- `geomeTRIC` optimizer
+- `rdkit` engine (adds force fields which can be used for single point computations or in optimizers)
+
 ### Changed
 
+- Run compute tests on hydrogen instead of water for faster results
+
 ### Removed
+
+## [0.3.4]
+
+### Added
+
+- `geomeTRIC` optimizer
+- `rdkit` engine (adds force fields which can be used for single point computations or in optimizers)
+
+### Changed
+
+- Run compute tests on hydrogen instead of water for faster results
 
 ## [0.3.3]
 
@@ -88,7 +104,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.3...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.4...HEAD
+[0.3.4]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.4
 [0.3.3]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.3
 [0.3.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.2
 [0.3.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.1
