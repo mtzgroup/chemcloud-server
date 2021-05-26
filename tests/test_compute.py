@@ -4,6 +4,7 @@ from time import sleep
 import pytest
 from qcelemental.models import AtomicResult, OptimizationResult
 from qcelemental.models.procedures import OptimizationInput, QCInputSpecification
+from qcelemental.models.results import AtomicInput
 
 
 def test_compute_requires_auth(settings, client):
@@ -11,8 +12,18 @@ def test_compute_requires_auth(settings, client):
     assert response.status_code == 401
 
 
+@pytest.mark.parametrize(
+    "engine,model,keywords",
+    (
+        ("psi4", {"method": "HF", "basis": "sto-3g"}, {}),
+        ("rdkit", {"method": "UFF"}, {}),
+        ("xtb", {"method": "GFN2-xTB"}, {"accuracy": 1.0, "max_iterations": 20}),
+    ),
+)
 @pytest.mark.timeout(45)
-def test_compute_and_result(settings, client, fake_auth, atomic_input):
+def test_compute_and_result(
+    settings, client, fake_auth, hydrogen, engine, model, keywords
+):
     """Testings as one function so we don't submit excess compute jobs.
 
     Timeout is long because the worker instance may be waiting to connect to
@@ -20,11 +31,17 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     it's possible a few early misses on worker -> MQ connection results in the
     worker waiting up for 8 seconds (or longer) to retry connecting.
     """
+    atomic_input = AtomicInput(
+        molecule=hydrogen,
+        driver="energy",
+        model=model,
+        keywords=keywords,
+    )
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v1_str}/compute",
         data=atomic_input.json(),
-        params={"engine": "psi4"},
+        params={"engine": engine},
     )
     task_id = job_submission.json()
 
@@ -55,7 +72,7 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     # Check that work gets done, AtomicResult-compatible data is returned
     while status in {"PENDING", "STARTED"}:
         status, result = _get_result(task_id)
-        sleep(1)
+        sleep(0.2)
 
     assert status == "SUCCESS"
     assert isinstance(AtomicResult(**result), AtomicResult)
@@ -66,19 +83,23 @@ def test_compute_and_result(settings, client, fake_auth, atomic_input):
     assert result is None
 
 
-@pytest.mark.timeout(45)
 @pytest.mark.parametrize(
     "optimizer,model,keywords",
     (
         (
             "berny",
-            {"method": "B3LYP", "basis": "sto-3g"},
+            {"method": "HF", "basis": "sto-3g"},
             {"program": "psi4", "maxsteps": 2},
         ),
-        ("geometric", {"method": "B3LYP", "basis": "sto-3g"}, {"program": "psi4"}),
-        ("geometric", {"method": "UFF"}, {"program": "rdkit"}),
+        (
+            "geometric",
+            {"method": "HF", "basis": "sto-3g"},
+            {"program": "psi4", "maxiter": 2},
+        ),
+        ("geometric", {"method": "UFF"}, {"program": "rdkit", "maxiter": 2}),
     ),
 )
+@pytest.mark.timeout(65)
 def test_compute_procedure_optimization(
     settings,
     client,
