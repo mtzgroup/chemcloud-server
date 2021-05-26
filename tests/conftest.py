@@ -1,8 +1,6 @@
 import pytest
 import qcengine as qcng
 from fastapi.testclient import TestClient
-from qcelemental.models import AtomicInput
-from qcelemental.models.common_models import Model
 
 from terachem_cloud.auth import bearer_auth
 from terachem_cloud.config import get_settings
@@ -35,20 +33,9 @@ def fake_auth():
     app.dependency_overrides = {}
 
 
-@pytest.fixture(scope="function")
-def water():
-    return qcng.get_molecule("water")
-
-
 @pytest.fixture
 def hydrogen():
     return qcng.get_molecule("hydrogen")
-
-
-@pytest.fixture(scope="function")
-def atomic_input(hydrogen):
-    model = Model(method="B3LYP", basis="sto-3g")
-    return AtomicInput(molecule=hydrogen, model=model, driver="energy")
 
 
 @pytest.fixture(scope="session")
