@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [0.3.5] - 2021-05-26
+
+### Added
+
 - `xtb` to compute engines
 - Added `cached-property` package since `kombu` didn't install it by default as a dependency into the linux docker container.
 
@@ -105,7 +113,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.4...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.5...HEAD
+[0.3.5]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.5
 [0.3.4]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.4
 [0.3.3]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.3
 [0.3.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.2
