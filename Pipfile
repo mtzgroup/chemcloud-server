@@ -18,7 +18,6 @@ autoflake = "*"
 
 [packages]
 fastapi = "*"
-celery = {extras = ["redis"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
 python-multipart = "*"
 httpx = "*"
@@ -30,11 +29,12 @@ uvloop = "*"
 httptools = "*"
 typing-extensions = "*"
 aiofiles = "*"
-amqp = "==5.0.2"
-tcpb = "*"
 pyberny = "*"
 qcengine = {ref = "feature-berny-handle-failed-operation", git = "https://github.com/mtzgroup/QCEngine.git"}
 geometric = {ref = "feature-logging-bug-fix", git = "https://github.com/coltonbh/geomeTRIC.git"}
+tcpb = ">=0.8.0"
+celery = {extras = ["redis"], version = "*"}
+cached-property = "*"
 
 [requires]
 python_version = "3.7"

@@ -11,6 +11,7 @@ LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 # https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
 RUN conda install psi4 -c psi4 && \
     conda install -c conda-forge rdkit && \
+    conda install -c conda-forge xtb-python && \
     apt-get update && \
     apt-get install -y gcc python3-dev && \
     pip install pipenv

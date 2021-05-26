@@ -8,16 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- `geomeTRIC` optimizer
-- `rdkit` engine (adds force fields which can be used for single point computations or in optimizers)
+- `xtb` to compute engines
+- Added `cached-property` package since `kombu` didn't install it by default as a dependency into the linux docker container.
 
 ### Changed
 
-- Run compute tests on hydrogen instead of water for faster results
+- Updated `tcpb>=0.8.0`
+- Updated `celery` version
 
 ### Removed
 
-## [0.3.4]
+## [0.3.4] - 2021-05-21
 
 ### Added
 

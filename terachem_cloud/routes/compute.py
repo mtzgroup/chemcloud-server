@@ -19,6 +19,7 @@ class SupportedEngines(str, Enum):
     PSI4 = "psi4"
     TERACHEM_PBS = "terachem_pbs"
     RDKIT = "rdkit"
+    XTB = "xtb"
 
 
 class SupportedProcedures(str, Enum):
