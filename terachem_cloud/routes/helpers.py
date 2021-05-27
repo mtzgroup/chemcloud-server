@@ -1,10 +1,15 @@
 from json.decoder import JSONDecodeError
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
+import celery
 import httpx
+from celery import group
 from fastapi import HTTPException
+from fastapi import status as status_codes
 
 from terachem_cloud import config, models
+
+settings = config.get_settings()
 
 
 async def _external_request(
@@ -54,3 +59,30 @@ async def _auth0_token_request(
         headers={"content-type": "application/x-www-form-urlencoded"},
         data=dict(flow_model),
     )
+
+
+def validate_group_length(input_data: List[Any]) -> None:
+    """Validate length of input_data does not exceed limits"""
+    if len(input_data) > settings.max_batch_inputs:
+        raise HTTPException(
+            status_code=status_codes.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=f"Cannot submit more than {settings.max_batch_inputs} inputs at once",
+        )
+
+
+def compute_inputs_async(
+    input_data: Union[models.AtomicInputOrList, models.OptimizationInputOrList],
+    package: Union[models.SupportedEngines, models.SupportedProcedures],
+    celery_task: celery.Task,
+) -> Union[models.GroupTask, models.Task]:
+    """Accept inputs_data and celery_task, begins task, return Task models"""
+    task: Union[models.GroupTask, models.Task]
+
+    if isinstance(input_data, list):
+        validate_group_length(input_data)
+        c_task = group(celery_task.s(inp, package) for inp in input_data)()
+        task = models.GroupTask.from_celery(c_task)
+    else:
+        c_task = celery_task.delay(input_data, package)
+        task = models.Task.from_celery(c_task)
+    return task

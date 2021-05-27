@@ -6,7 +6,8 @@ from starlette.responses import RedirectResponse
 
 from terachem_cloud import config, models
 from terachem_cloud.auth import _get_matching_rsa_key, _validate_jwt
-from terachem_cloud.utils import _auth0_token_request
+
+from .helpers import _auth0_token_request
 
 router = APIRouter()
 

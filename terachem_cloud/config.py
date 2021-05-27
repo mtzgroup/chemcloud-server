@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     base_url: AnyHttpUrl = "http://localhost:8000"  # type: ignore
     id_token_cookie_key: str = "id_token"
     refresh_token_cookie_key: str = "refresh_token"
+    max_batch_inputs: int = 100
 
     # NOTE: Adding "" values as defaults so tests can run on CircleCi without having
     # to set these auth0 values
