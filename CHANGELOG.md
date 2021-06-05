@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.4.0]
+
 ### Added
+
+- Batch compute capabilities to `/compute` and `/compute-procedure`
 
 ### Changed
 
-### Removed
+- 🚨BREAKING CHANGE🚨: Updated `/compute*` endpoints to return `Task` objects including `GroupTask` objects that may contain subtasks instead of returning a single `str` of the `task_id`
+- 🚨BREAKING CHANGE🚨: Updated `/result` endpoint to accept `Task` objects instead of just a `str` of `task_id`. This included updating the endpoint to be a `POST` instead of `GET` endpoint.
 
 ## [0.3.5] - 2021-05-26
 
@@ -23,8 +28,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Updated `tcpb>=0.8.0`
 - Updated `celery` version
-
-### Removed
 
 ## [0.3.4] - 2021-05-21
 
@@ -89,8 +92,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - XStream stacks for dev/prod no longer derive from the same template file.
 - Changed `CeleryAtomicResult` to `TaskResult` and change `atomic_result` attribute to just `result` to note that `result` may now be an `AtomicResult` or a `FailedOperation` (a result could either of these data types).
 
-### Removed
-
 ## [0.2.1] - 2021-01-21
 
 ### Removed
@@ -113,7 +114,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.3.5...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.4.0
 [0.3.5]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.5
 [0.3.4]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.4
 [0.3.3]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.3
