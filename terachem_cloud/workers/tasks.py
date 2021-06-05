@@ -11,7 +11,8 @@ from qcelemental.models import (
     OptimizationInput,
     OptimizationResult,
 )
-from qcelemental.util.serialization import json_dumps, json_loads
+from qcelemental.util.serialization import json_dumps as qcel_json_dumps
+from qcelemental.util.serialization import json_loads as qcel_json_loads
 
 from .config import get_settings
 
@@ -28,8 +29,8 @@ celery_app = Celery(
 # To serialize the more complex AtomicInput and AtomicResult data structure from QCElemental
 register(
     "qceljson",
-    json_dumps,
-    json_loads,
+    qcel_json_dumps,
+    qcel_json_loads,
     content_type="application/x-qceljson",
     content_encoding="utf-8",
 )
@@ -47,7 +48,7 @@ celery_app.conf.update(
     worker_concurrency=1,
 )
 
-# NOTE: Setting this value means celery will change ports for AMPQ to 5671 by default
+# NOTE: Setting this value means celery will change ports for amqp to 5671 by default
 # this means I should probably only set this value if I am not running locally
 if "amqps" in settings.celery_broker_connection_string:
     celery_app.conf.update(
@@ -61,18 +62,18 @@ if "amqps" in settings.celery_broker_connection_string:
 
 @celery_app.task
 def compute(
-    atomic_input: AtomicInput, engine: str
+    atomic_input: AtomicInput, engine: str, raise_error: bool = False
 ) -> Union[AtomicResult, FailedOperation]:
     """Celery task wrapper around qcengine.compute"""
-    return qcng.compute(atomic_input, engine)
+    return qcng.compute(atomic_input, engine, raise_error=raise_error)
 
 
 @celery_app.task
 def compute_procedure(
-    input: OptimizationInput, procedure: str
+    input: OptimizationInput, procedure: str, raise_error: bool = False
 ) -> Union[OptimizationResult, FailedOperation]:
     """Celery task wrapper around qcengine.compute_procedure"""
-    return qcng.compute_procedure(input, procedure)
+    return qcng.compute_procedure(input, procedure, raise_error=raise_error)
 
 
 @celery_app.task
