@@ -1,5 +1,5 @@
 from json.decoder import JSONDecodeError
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import celery
 import httpx
@@ -74,15 +74,18 @@ def compute_inputs_async(
     input_data: Union[models.AtomicInputOrList, models.OptimizationInputOrList],
     package: Union[models.SupportedEngines, models.SupportedProcedures],
     celery_task: celery.Task,
+    queue: Optional[str] = None,
 ) -> Union[models.GroupTask, models.Task]:
     """Accept inputs_data and celery_task, begins task, return Task models"""
     task: Union[models.GroupTask, models.Task]
 
     if isinstance(input_data, list):
         validate_group_length(input_data)
-        c_task = group(celery_task.s(inp, package) for inp in input_data)()
+        c_task = group(celery_task.s(inp, package) for inp in input_data).apply_async(
+            queue=queue
+        )
         task = models.GroupTask.from_celery(c_task)
     else:
-        c_task = celery_task.delay(input_data, package)
+        c_task = celery_task.apply_async(args=[input_data, package], queue=queue)
         task = models.Task.from_celery(c_task)
     return task

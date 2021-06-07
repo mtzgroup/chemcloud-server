@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 
 from celery import states
 from fastapi import APIRouter
@@ -32,10 +32,12 @@ router = APIRouter()
     response_description="Task ID(s) for the requested computation.",
 )
 async def compute(
-    input_data: AtomicInputOrList, engine: SupportedEngines
+    input_data: AtomicInputOrList,
+    engine: SupportedEngines,
+    queue: Optional[str] = None,
 ) -> Union[GroupTask, Task]:
     """Submit a computation: AtomicInput (or list) and computation engine."""
-    return compute_inputs_async(input_data, engine, compute_task)
+    return compute_inputs_async(input_data, engine, compute_task, queue)
 
 
 @router.post(
@@ -47,9 +49,10 @@ async def compute(
 async def compute_procedure(
     input_data: OptimizationInputOrList,
     procedure: SupportedProcedures,
+    queue: Optional[str] = None,
 ) -> Union[GroupTask, Task]:
     """Submit a computation: OptimizationInput (or list) and procedure"""
-    return compute_inputs_async(input_data, procedure, compute_procedure_task)
+    return compute_inputs_async(input_data, procedure, compute_procedure_task, queue)
 
 
 @router.post(

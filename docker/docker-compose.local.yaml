@@ -29,6 +29,7 @@ services:
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
     env_file:
       - ../.env
+    command: celery -A terachem_cloud.workers.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
   mq:
     ports:

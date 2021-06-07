@@ -55,6 +55,7 @@ jobs:
       - image: rabbitmq:3.8-alpine
       - image: redis:6-alpine
       - image: mtzgroup/terachem-cloud-worker:testing
+        command: celery -A terachem_cloud.workers.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
     steps:
       - checkout
       - restore_cache:
