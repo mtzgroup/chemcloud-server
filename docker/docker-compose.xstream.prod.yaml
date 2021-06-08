@@ -92,7 +92,7 @@ x-xs7-0003-terachem: &xs7-0003-terachem
 # Deploy to xs7-0004 node
 x-xs7-0004-deploy: &xs7-0004
   placement:
-  constraints:
+    constraints:
       - "node.hostname==xs7-0004"
 
 # Celery workers on xs7-0004
