@@ -61,6 +61,24 @@ x-xs7-0002-terachem: &xs7-0002-terachem
   deploy:
     <<: *xs7-0002
 
+# Deploy to xs7-0100 node
+x-xs7-0100-deploy: &xs7-0100
+  placement:
+    constraints:
+      - "node.hostname==xs7-0100"
+
+# Celery workers on xs7-0100
+x-xs7-0100-worker: &xs7-0100-worker
+  <<: *default-worker
+  deploy:
+    <<: *xs7-0100
+
+# TeraChem servers on xs7-0100
+x-xs7-0100-terachem: &xs7-0100-terachem
+  <<: *default-terachem
+  deploy:
+    <<: *xs7-0100
+
 services:
   # Pod 1: xs7-0001, GPU 0
   xs7-0001-worker-0: # name specified via {hostname}-worker-{gpu_number}
@@ -81,6 +99,17 @@ services:
     <<: *xs7-0002-terachem
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
+
+  # Pod 3: xs7-0100, GPU 0,1
+  xs7-0100-worker-0:
+    <<: *xs7-0100-worker
+    environment:
+      - TERACHEM_PBS_HOST=xs7-0100-terachem-0
+    command: celery -A terachem_cloud.workers.tasks worker -Q real_time --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
+  xs7-0100-terachem-0:
+    <<: *xs7-0100-terachem
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0,1
 
 secrets:
   terachem_licence:
