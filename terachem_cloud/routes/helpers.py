@@ -1,13 +1,16 @@
 from json.decoder import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 
-import celery
 import httpx
 from celery import group
+from celery.canvas import Signature
 from fastapi import HTTPException
 from fastapi import status as status_codes
+from qcelemental.models.results import AtomicInput
 
 from terachem_cloud import config, models
+from terachem_cloud.workers import tasks
+from terachem_cloud.workers.task_canvas import compute_tcc
 
 settings = config.get_settings()
 
@@ -73,7 +76,6 @@ def validate_group_length(input_data: List[Any]) -> None:
 def compute_inputs_async(
     input_data: Union[models.AtomicInputOrList, models.OptimizationInputOrList],
     package: Union[models.SupportedEngines, models.SupportedProcedures],
-    celery_task: celery.Task,
     queue: Optional[str] = None,
 ) -> Union[models.GroupTask, models.Task]:
     """Accept inputs_data and celery_task, begins task, return Task models"""
@@ -81,11 +83,29 @@ def compute_inputs_async(
 
     if isinstance(input_data, list):
         validate_group_length(input_data)
-        c_task = group(celery_task.s(inp, package) for inp in input_data).apply_async(
-            queue=queue
-        )
+
+        c_task = group(
+            signature_from_input(inp, package) for inp in input_data
+        ).apply_async(queue=queue)
         task = models.GroupTask.from_celery(c_task)
+
     else:
-        c_task = celery_task.apply_async(args=[input_data, package], queue=queue)
+        c_task = signature_from_input(input_data, package).apply_async(queue=queue)
         task = models.Task.from_celery(c_task)
     return task
+
+
+def signature_from_input(
+    input_data: Union[AtomicInput, models.OptimizationInput],
+    package: Union[models.SupportedEngines, models.SupportedProcedures],
+) -> Signature:
+    """Return the celery signature for a compute task"""
+    if package == models.SupportedEngines.TCC:
+        tcc_kwargs = input_data.extras.pop(settings.tcc_kwargs_extras_key, {})
+        engine = tcc_kwargs.pop("gradient_engine", models.SupportedEngines.TERACHEM_PBS)
+        return compute_tcc(input_data, engine, **tcc_kwargs)
+
+    elif isinstance(input_data, AtomicInput):
+        return tasks.compute.s(input_data, package)
+    else:
+        return tasks.compute_procedure.s(input_data, package)

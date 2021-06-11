@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Added
+
+- "tcc" compute engine
+- Parallel hessian and parallel frequency analysis methods to tcc engine
+
+### Changed
+
+- Changed celery serializer from `json` to `pickle`. This allows chained methods to receive python data types directly, rather than serialized representations. Since users do not have direct access to the celery layer and can only submit json serialized (and validated) objects via the API I do not feel there are security risks.
+
 ## [0.4.1]
 
 ### Added
