@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     id_token_cookie_key: str = "id_token"
     refresh_token_cookie_key: str = "refresh_token"
     max_batch_inputs: int = 100
+    # Finite difference step
+    hessian_default_dh: float = 5.0e-3
+    tcc_kwargs_extras_key: str = "tcc_kwargs"
 
     # NOTE: Adding "" values as defaults so tests can run on CircleCi without having
     # to set these auth0 values

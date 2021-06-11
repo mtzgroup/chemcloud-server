@@ -5,6 +5,8 @@
 # XStream dev worker configuration
 # For notes on setup see docs/development/architecture.md#XStream-Architecture-Setup
 
+# NOTE: Reducing workload by 1/2 until scalability issues are figured out
+
 version: \"3.7\" #XStream can only support up to 3.7. Using docker 18.06.1-ce
 
 # Default images and setup for worker containers
@@ -13,45 +15,45 @@ x-default-worker: &default-worker
   env_file: worker.env
   environment:
     - TERACHEM_PBS_PORT=11111
+    - C_FORCE_ROOT=true # to run celery as root with pickle serializer
   volumes:
     - tcc-prod-scratch:/scratch
 
 # Default images and setup for real time worker containers
 x-realtime-worker: &realtime-worker
-  image: ${FULL_IMAGE_NAME}
-  env_file: worker.env
+  <<: *default-worker
   environment:
     - TERACHEM_PBS_PORT=11111
-  volumes:
-    - tcc-prod-scratch:/scratch
+    - C_FORCE_ROOT=true # to run celery as root with pickle serializer
   command: celery -A terachem_cloud.workers.tasks worker -Q real_time --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
 # Default images and setup for terachem containers
 x-default-terachem: &default-terachem
   image: mtzgroup/terachem:1.9-2021.02-dev-arch-sm_37-sm_52-sm_61-sm_70
   secrets:
-    - source: terachem_licence
+    - source: terachem_license
       target: /terachem/license.key
   volumes:
     - tcc-prod-scratch:/scratch
 
-# Deploy to xs7-0001 node
-x-xs7-0001-deploy: &xs7-0001
-  placement:
-    constraints:
-      - "node.hostname==xs7-0001"
+# NOTE: No xs7-0001 workloads according to Stephane
+# # Deploy to xs7-0001 node
+# x-xs7-0001-deploy: &xs7-0001
+#   placement:
+#     constraints:
+#       - "node.hostname==xs7-0001"
 
-# Celery workers on xs7-0001
-x-xs7-0001-worker: &xs7-0001-worker
-  <<: *default-worker
-  deploy:
-    <<: *xs7-0001
+# # Celery workers on xs7-0001
+# x-xs7-0001-worker: &xs7-0001-worker
+#   <<: *default-worker
+#   deploy:
+#     <<: *xs7-0001
 
-# TeraChem servers on xs7-0001
-x-xs7-0001-terachem: &xs7-0001-terachem
-  <<: *default-terachem
-  deploy:
-    <<: *xs7-0001
+# # TeraChem servers on xs7-0001
+# x-xs7-0001-terachem: &xs7-0001-terachem
+#   <<: *default-terachem
+#   deploy:
+#     <<: *xs7-0001
 
 # Deploy to xs7-0002 node
 x-xs7-0002-deploy: &xs7-0002
@@ -144,155 +146,155 @@ x-xs7-0100-terachem: &xs7-0100-terachem
     <<: *xs7-0100
 
 services:
-  # xs7-0001 Pod 1: GPU 1; NOTE: GPU 0 used by dev
-  xs7-0001-worker-1: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-1 # Must match TeraChem service name below
-  xs7-0001-terachem-1: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+  # # xs7-0001 Pod 1: GPU 1; NOTE: GPU 0 used by dev
+  # xs7-0001-worker-1: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-1 # Must match TeraChem service name below
+  # xs7-0001-terachem-1: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=1
 
-  # xs7-0001 Pod 2: GPU 2
-  xs7-0001-worker-2: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-2 # Must match TeraChem service name below
-  xs7-0001-terachem-2: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=2
+  # # xs7-0001 Pod 2: GPU 2
+  # xs7-0001-worker-2: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-2 # Must match TeraChem service name below
+  # xs7-0001-terachem-2: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=2
 
-  # xs7-0001 Pod 3: GPU 3
-  xs7-0001-worker-3: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-3 # Must match TeraChem service name below
-  xs7-0001-terachem-3: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=3
+  # # xs7-0001 Pod 3: GPU 3
+  # xs7-0001-worker-3: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-3 # Must match TeraChem service name below
+  # xs7-0001-terachem-3: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=3
 
-  # xs7-0001 Pod 4: GPU 4
-  xs7-0001-worker-4: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-4 # Must match TeraChem service name below
-  xs7-0001-terachem-4: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=4
+  # # xs7-0001 Pod 4: GPU 4
+  # xs7-0001-worker-4: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-4 # Must match TeraChem service name below
+  # xs7-0001-terachem-4: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=4
 
-  # xs7-0001 Pod 5: GPU 5
-  xs7-0001-worker-5: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-5 # Must match TeraChem service name below
-  xs7-0001-terachem-5: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=5
+  # # xs7-0001 Pod 5: GPU 5
+  # xs7-0001-worker-5: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-5 # Must match TeraChem service name below
+  # xs7-0001-terachem-5: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=5
 
-  # xs7-0001 Pod 6: GPU 6
-  xs7-0001-worker-6: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-6 # Must match TeraChem service name below
-  xs7-0001-terachem-6: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=6
+  # # xs7-0001 Pod 6: GPU 6
+  # xs7-0001-worker-6: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-6 # Must match TeraChem service name below
+  # xs7-0001-terachem-6: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=6
 
-  # xs7-0001 Pod 7: GPU 7
-  xs7-0001-worker-7: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-7 # Must match TeraChem service name below
-  xs7-0001-terachem-7: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=7
+  # # xs7-0001 Pod 7: GPU 7
+  # xs7-0001-worker-7: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-7 # Must match TeraChem service name below
+  # xs7-0001-terachem-7: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=7
 
-  # xs7-0001 Pod 8: GPU 8
-  xs7-0001-worker-8: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-8 # Must match TeraChem service name below
-  xs7-0001-terachem-8: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=8
+  # # xs7-0001 Pod 8: GPU 8
+  # xs7-0001-worker-8: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-8 # Must match TeraChem service name below
+  # xs7-0001-terachem-8: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=8
 
-  # xs7-0001 Pod 9: GPU 9
-  xs7-0001-worker-9: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-9 # Must match TeraChem service name below
-  xs7-0001-terachem-9: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=9
+  # # xs7-0001 Pod 9: GPU 9
+  # xs7-0001-worker-9: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-9 # Must match TeraChem service name below
+  # xs7-0001-terachem-9: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=9
 
-  # xs7-0001 Pod 10: GPU 10
-  xs7-0001-worker-10: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-10 # Must match TeraChem service name below
-  xs7-0001-terachem-10: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=10
+  # # xs7-0001 Pod 10: GPU 10
+  # xs7-0001-worker-10: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-10 # Must match TeraChem service name below
+  # xs7-0001-terachem-10: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=10
 
-  # xs7-0001 Pod 11: GPU 11
-  xs7-0001-worker-11: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-11 # Must match TeraChem service name below
-  xs7-0001-terachem-11: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=11
+  # # xs7-0001 Pod 11: GPU 11
+  # xs7-0001-worker-11: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-11 # Must match TeraChem service name below
+  # xs7-0001-terachem-11: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=11
 
-  # xs7-0001 Pod 12: GPU 12
-  xs7-0001-worker-12: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-12 # Must match TeraChem service name below
-  xs7-0001-terachem-12: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=12
+  # # xs7-0001 Pod 12: GPU 12
+  # xs7-0001-worker-12: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-12 # Must match TeraChem service name below
+  # xs7-0001-terachem-12: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=12
 
-  # xs7-0001 Pod 13: GPU 13
-  xs7-0001-worker-13: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-13 # Must match TeraChem service name below
-  xs7-0001-terachem-13: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=13
+  # # xs7-0001 Pod 13: GPU 13
+  # xs7-0001-worker-13: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-13 # Must match TeraChem service name below
+  # xs7-0001-terachem-13: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=13
 
-  # xs7-0001 Pod 14: GPU 14
-  xs7-0001-worker-14: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-14 # Must match TeraChem service name below
-  xs7-0001-terachem-14: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=14
+  # # xs7-0001 Pod 14: GPU 14
+  # xs7-0001-worker-14: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-14 # Must match TeraChem service name below
+  # xs7-0001-terachem-14: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=14
 
-  # xs7-0001 Pod 15: GPU 15
-  xs7-0001-worker-15: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-15 # Must match TeraChem service name below
-  xs7-0001-terachem-15: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=15
+  # # xs7-0001 Pod 15: GPU 15
+  # xs7-0001-worker-15: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-15 # Must match TeraChem service name below
+  # xs7-0001-terachem-15: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=15
 
   # xs7-0002 Pod 1: GPU 1; NOTE: GPU 0 used by dev
   xs7-0002-worker-1:
@@ -364,97 +366,87 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=7
 
-  # xs7-0002 Pod 8: GPU 8
-  xs7-0002-worker-8:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-8
-  xs7-0002-terachem-8:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=8
+  # # xs7-0002 Pod 8: GPU 8
+  # xs7-0002-worker-8:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-8
+  # xs7-0002-terachem-8:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=8
 
-  # xs7-0002 Pod 9: GPU 9
-  xs7-0002-worker-9:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-9
-  xs7-0002-terachem-9:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=9
+  # # xs7-0002 Pod 9: GPU 9
+  # xs7-0002-worker-9:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-9
+  # xs7-0002-terachem-9:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=9
 
-  # xs7-0002 Pod 10: GPU 10
-  xs7-0002-worker-10:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-10
-  xs7-0002-terachem-10:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=10
+  # # xs7-0002 Pod 10: GPU 10
+  # xs7-0002-worker-10:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-10
+  # xs7-0002-terachem-10:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=10
 
-  # xs7-0002 Pod 11: GPU 11
-  xs7-0002-worker-11:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-11
-  xs7-0002-terachem-11:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=11
+  # # xs7-0002 Pod 11: GPU 11
+  # xs7-0002-worker-11:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-11
+  # xs7-0002-terachem-11:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=11
 
-  # xs7-0002 Pod 12: GPU 12
-  xs7-0002-worker-12:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-12
-  xs7-0002-terachem-12:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=12
+  # # xs7-0002 Pod 12: GPU 12
+  # xs7-0002-worker-12:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-12
+  # xs7-0002-terachem-12:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=12
 
-  # xs7-0002 Pod 13: GPU 13
-  xs7-0002-worker-13:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-13
-  xs7-0002-terachem-13:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=13
+  # # xs7-0002 Pod 13: GPU 13
+  # xs7-0002-worker-13:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-13
+  # xs7-0002-terachem-13:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=13
 
-  # xs7-0002 Pod 14: GPU 14
-  xs7-0002-worker-14:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-14
-  xs7-0002-terachem-14:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=14
+  # # xs7-0002 Pod 14: GPU 14
+  # xs7-0002-worker-14:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-14
+  # xs7-0002-terachem-14:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=14
 
-  # xs7-0002 Pod 15: GPU 15
-  xs7-0002-worker-15:
-    <<: *xs7-0002-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0002-terachem-15
-  xs7-0002-terachem-15:
-    <<: *xs7-0002-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=15
+  # # xs7-0002 Pod 15: GPU 15
+  # xs7-0002-worker-15:
+  #   <<: *xs7-0002-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0002-terachem-15
+  # xs7-0002-terachem-15:
+  #   <<: *xs7-0002-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=15
 
-  # xs7-0003 Pod 0: GPU 0
-  xs7-0003-worker-0:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-0
-  xs7-0003-terachem-0:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=0
-
-  # xs7-0003 Pod 1: GPU 1;
+  # xs7-0003 Pod 1: GPU 1; GPU 0 used by dev
   xs7-0003-worker-1:
     <<: *xs7-0003-worker
     environment:
@@ -544,65 +536,65 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=9
 
-  # xs7-0003 Pod 10: GPU 10
-  xs7-0003-worker-10:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-10
-  xs7-0003-terachem-10:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=10
+  # # xs7-0003 Pod 10: GPU 10
+  # xs7-0003-worker-10:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-10
+  # xs7-0003-terachem-10:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=10
 
-  # xs7-0003 Pod 11: GPU 11
-  xs7-0003-worker-11:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-11
-  xs7-0003-terachem-11:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=11
+  # # xs7-0003 Pod 11: GPU 11
+  # xs7-0003-worker-11:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-11
+  # xs7-0003-terachem-11:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=11
 
-  # xs7-0003 Pod 12: GPU 12
-  xs7-0003-worker-12:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-12
-  xs7-0003-terachem-12:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=12
+  # # xs7-0003 Pod 12: GPU 12
+  # xs7-0003-worker-12:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-12
+  # xs7-0003-terachem-12:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=12
 
-  # xs7-0003 Pod 13: GPU 13
-  xs7-0003-worker-13:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-13
-  xs7-0003-terachem-13:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=13
+  # # xs7-0003 Pod 13: GPU 13
+  # xs7-0003-worker-13:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-13
+  # xs7-0003-terachem-13:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=13
 
-  # xs7-0003 Pod 14: GPU 14
-  xs7-0003-worker-14:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-14
-  xs7-0003-terachem-14:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=14
+  # # xs7-0003 Pod 14: GPU 14
+  # xs7-0003-worker-14:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-14
+  # xs7-0003-terachem-14:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=14
 
-  # xs7-0003 Pod 15: GPU 15
-  xs7-0003-worker-15:
-    <<: *xs7-0003-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0003-terachem-15
-  xs7-0003-terachem-15:
-    <<: *xs7-0003-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=15
+  # # xs7-0003 Pod 15: GPU 15
+  # xs7-0003-worker-15:
+  #   <<: *xs7-0003-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0003-terachem-15
+  # xs7-0003-terachem-15:
+  #   <<: *xs7-0003-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=15
 
   # xs7-0004 Pod 0: GPU 0
   xs7-0004-worker-0:
@@ -694,75 +686,75 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=8
 
-  # xs7-0004 Pod 9: GPU 9
-  xs7-0004-worker-9:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-9
-  xs7-0004-terachem-9:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=9
+  # # xs7-0004 Pod 9: GPU 9
+  # xs7-0004-worker-9:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-9
+  # xs7-0004-terachem-9:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=9
 
-  # xs7-0004 Pod 10: GPU 10
-  xs7-0004-worker-10:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-10
-  xs7-0004-terachem-10:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=10
+  # # xs7-0004 Pod 10: GPU 10
+  # xs7-0004-worker-10:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-10
+  # xs7-0004-terachem-10:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=10
 
-  # xs7-0004 Pod 11: GPU 11
-  xs7-0004-worker-11:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-11
-  xs7-0004-terachem-11:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=11
+  # # xs7-0004 Pod 11: GPU 11
+  # xs7-0004-worker-11:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-11
+  # xs7-0004-terachem-11:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=11
 
-  # xs7-0004 Pod 12: GPU 12
-  xs7-0004-worker-12:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-12
-  xs7-0004-terachem-12:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=12
+  # # xs7-0004 Pod 12: GPU 12
+  # xs7-0004-worker-12:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-12
+  # xs7-0004-terachem-12:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=12
 
-  # xs7-0004 Pod 13: GPU 13
-  xs7-0004-worker-13:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-13
-  xs7-0004-terachem-13:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=13
+  # # xs7-0004 Pod 13: GPU 13
+  # xs7-0004-worker-13:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-13
+  # xs7-0004-terachem-13:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=13
 
-  # xs7-0004 Pod 14: GPU 14
-  xs7-0004-worker-14:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-14
-  xs7-0004-terachem-14:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=14
+  # # xs7-0004 Pod 14: GPU 14
+  # xs7-0004-worker-14:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-14
+  # xs7-0004-terachem-14:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=14
 
-  # xs7-0004 Pod 15: GPU 15
-  xs7-0004-worker-15:
-    <<: *xs7-0004-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0004-terachem-15
-  xs7-0004-terachem-15:
-    <<: *xs7-0004-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=15
+  # # xs7-0004 Pod 15: GPU 15
+  # xs7-0004-worker-15:
+  #   <<: *xs7-0004-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0004-terachem-15
+  # xs7-0004-terachem-15:
+  #   <<: *xs7-0004-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=15
 
   # xs7-0005 Pod 0: GPU 0
   xs7-0005-worker-0:
@@ -854,75 +846,75 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=8
 
-  # xs7-0005 Pod 9: GPU 9
-  xs7-0005-worker-9:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-9
-  xs7-0005-terachem-9:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=9
+  # # xs7-0005 Pod 9: GPU 9
+  # xs7-0005-worker-9:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-9
+  # xs7-0005-terachem-9:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=9
 
-  # xs7-0005 Pod 10: GPU 10
-  xs7-0005-worker-10:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-10
-  xs7-0005-terachem-10:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=10
+  # # xs7-0005 Pod 10: GPU 10
+  # xs7-0005-worker-10:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-10
+  # xs7-0005-terachem-10:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=10
 
-  # xs7-0005 Pod 11: GPU 11
-  xs7-0005-worker-11:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-11
-  xs7-0005-terachem-11:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=11
+  # # xs7-0005 Pod 11: GPU 11
+  # xs7-0005-worker-11:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-11
+  # xs7-0005-terachem-11:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=11
 
-  # xs7-0005 Pod 12: GPU 12
-  xs7-0005-worker-12:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-12
-  xs7-0005-terachem-12:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=12
+  # # xs7-0005 Pod 12: GPU 12
+  # xs7-0005-worker-12:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-12
+  # xs7-0005-terachem-12:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=12
 
-  # xs7-0005 Pod 13: GPU 13
-  xs7-0005-worker-13:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-13
-  xs7-0005-terachem-13:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=13
+  # # xs7-0005 Pod 13: GPU 13
+  # xs7-0005-worker-13:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-13
+  # xs7-0005-terachem-13:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=13
 
-  # xs7-0005 Pod 14: GPU 14
-  xs7-0005-worker-14:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-14
-  xs7-0005-terachem-14:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=14
+  # # xs7-0005 Pod 14: GPU 14
+  # xs7-0005-worker-14:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-14
+  # xs7-0005-terachem-14:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=14
 
-  # xs7-0005 Pod 15: GPU 15
-  xs7-0005-worker-15:
-    <<: *xs7-0005-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0005-terachem-15
-  xs7-0005-terachem-15:
-    <<: *xs7-0005-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=15
+  # # xs7-0005 Pod 15: GPU 15
+  # xs7-0005-worker-15:
+  #   <<: *xs7-0005-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0005-terachem-15
+  # xs7-0005-terachem-15:
+  #   <<: *xs7-0005-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=15
 
   # Pod 1: xs7-0100, GPU 2,3 # Note GPUs 0,1 used by dev
   xs7-0100-worker-1:
@@ -955,7 +947,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=6,7
 
 secrets:
-  terachem_licence:
+  terachem_license:
     external: true
 
 volumes:

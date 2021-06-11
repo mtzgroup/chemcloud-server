@@ -28,6 +28,8 @@ class SupportedEngines(str, Enum):
     TERACHEM_PBS = "terachem_pbs"
     RDKIT = "rdkit"
     XTB = "xtb"
+    # TeraChem Cloud specific algorithms
+    TCC = "tcc"
 
 
 class SupportedProcedures(str, Enum):
