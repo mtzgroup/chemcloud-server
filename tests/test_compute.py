@@ -219,3 +219,58 @@ def test_compute_procedure_group_limits(
     )
 
     assert job_submission.status_code == status_codes.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+
+
+@pytest.mark.skip  # Comment out to run test
+# NOTE: Comment out and run when an available worker has access to terachem_pbs so it
+# doesn't take forever.
+@pytest.mark.parametrize(
+    "driver,model,extras,group",
+    (
+        (
+            "hessian",
+            {"method": "HF", "basis": "sto-3g"},
+            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            False,
+        ),
+        (
+            "hessian",
+            {"method": "HF", "basis": "sto-3g"},
+            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            True,
+        ),
+        (
+            "properties",
+            {"method": "HF", "basis": "sto-3g"},
+            {
+                "tcc_kwargs": {
+                    "gradient_engine": "psi4",
+                    "energy": 1.5,
+                    "temperature": 310,
+                    "pressure": 1.2,
+                }
+            },
+            False,
+        ),
+    ),
+)
+@pytest.mark.timeout(450)
+def test_compute_tcc_engine(
+    settings, client, fake_auth, water, driver, model, extras, group
+):
+    """Test TeraChem Cloud specific methods"""
+    atomic_input = AtomicInput(
+        molecule=water, driver=driver, model=model, extras=extras
+    )
+    if group:
+        atomic_input = [atomic_input, atomic_input]
+
+    # Submit Job
+    job_submission = client.post(
+        f"{settings.api_v1_str}/compute",
+        data=json_dumps(atomic_input),
+        params={"engine": "tcc"},
+    )
+    as_dict = job_submission.json()
+
+    _make_job_completion_assertions(as_dict, client, settings)

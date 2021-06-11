@@ -14,13 +14,10 @@ from terachem_cloud.models import (
     SupportedProcedures,
     Task,
 )
-from terachem_cloud.workers.tasks import compute as compute_task
-from terachem_cloud.workers.tasks import compute_procedure as compute_procedure_task
 
 from .helpers import compute_inputs_async
 
 settings = get_settings()
-
 
 router = APIRouter()
 
@@ -37,7 +34,7 @@ async def compute(
     queue: Optional[str] = None,
 ) -> Union[GroupTask, Task]:
     """Submit a computation: AtomicInput (or list) and computation engine."""
-    return compute_inputs_async(input_data, engine, compute_task, queue)
+    return compute_inputs_async(input_data, engine, queue)
 
 
 @router.post(
@@ -52,7 +49,7 @@ async def compute_procedure(
     queue: Optional[str] = None,
 ) -> Union[GroupTask, Task]:
     """Submit a computation: OptimizationInput (or list) and procedure"""
-    return compute_inputs_async(input_data, procedure, compute_procedure_task, queue)
+    return compute_inputs_async(input_data, procedure, queue)
 
 
 @router.post(

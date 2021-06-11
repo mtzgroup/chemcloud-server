@@ -13,6 +13,7 @@ x-default-worker: &default-worker
   env_file: worker.env
   environment:
       - TERACHEM_PBS_PORT=11111
+      - C_FORCE_ROOT=true # to run celery as root with pickle serializer
   volumes:
     - tcc-dev-scratch:/scratch
 
@@ -20,28 +21,29 @@ x-default-worker: &default-worker
 x-default-terachem: &default-terachem
   image: mtzgroup/terachem:1.9-2021.02-dev-arch-sm_37-sm_52-sm_61-sm_70
   secrets:
-    - source: terachem_licence
+    - source: terachem_license
       target: /terachem/license.key
   volumes:
     - tcc-dev-scratch:/scratch
 
-# Deploy to xs7-0001 node
-x-xs7-0001-deploy: &xs7-0001
-  placement:
-    constraints:
-      - "node.hostname==xs7-0001"
+# NOTE: No xs7-0001 workers accoriding to Stephane
+# # Deploy to xs7-0001 node
+# x-xs7-0001-deploy: &xs7-0001
+#   placement:
+#     constraints:
+#       - "node.hostname==xs7-0001"
 
-# Celery workers on xs7-0001
-x-xs7-0001-worker: &xs7-0001-worker
-  <<: *default-worker
-  deploy:
-    <<: *xs7-0001
+# # Celery workers on xs7-0001
+# x-xs7-0001-worker: &xs7-0001-worker
+#   <<: *default-worker
+#   deploy:
+#     <<: *xs7-0001
 
-# TeraChem servers on xs7-0001
-x-xs7-0001-terachem: &xs7-0001-terachem
-  <<: *default-terachem
-  deploy:
-    <<: *xs7-0001
+# # TeraChem servers on xs7-0001
+# x-xs7-0001-terachem: &xs7-0001-terachem
+#   <<: *default-terachem
+#   deploy:
+#     <<: *xs7-0001
 
 # Deploy to xs7-0002 node
 x-xs7-0002-deploy: &xs7-0002
@@ -60,6 +62,24 @@ x-xs7-0002-terachem: &xs7-0002-terachem
   <<: *default-terachem
   deploy:
     <<: *xs7-0002
+
+# Deploy to xs7-0003 node
+x-xs7-0003-deploy: &xs7-0003
+  placement:
+    constraints:
+      - "node.hostname==xs7-0003"
+
+# Celery workers on xs7-0003
+x-xs7-0003-worker: &xs7-0003-worker
+  <<: *default-worker
+  deploy:
+    <<: *xs7-0003
+
+# TeraChem servers on xs7-0003
+x-xs7-0003-terachem: &xs7-0003-terachem
+  <<: *default-terachem
+  deploy:
+    <<: *xs7-0003
 
 # Deploy to xs7-0100 node
 x-xs7-0100-deploy: &xs7-0100
@@ -80,15 +100,15 @@ x-xs7-0100-terachem: &xs7-0100-terachem
     <<: *xs7-0100
 
 services:
-  # Pod 1: xs7-0001, GPU 0
-  xs7-0001-worker-0: # name specified via {hostname}-worker-{gpu_number}
-    <<: *xs7-0001-worker
-    environment:
-      - TERACHEM_PBS_HOST=xs7-0001-terachem-0 # Must match TeraChem service name below
-  xs7-0001-terachem-0: # name specified via {hostname}-terachem-gpu_number}
-    <<: *xs7-0001-terachem
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+  # # Pod 1: xs7-0001, GPU 0
+  # xs7-0001-worker-0: # name specified via {hostname}-worker-{gpu_number}
+  #   <<: *xs7-0001-worker
+  #   environment:
+  #     - TERACHEM_PBS_HOST=xs7-0001-terachem-0 # Must match TeraChem service name below
+  # xs7-0001-terachem-0: # name specified via {hostname}-terachem-gpu_number}
+  #   <<: *xs7-0001-terachem
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=0
 
   # Pod 2: xs7-0002, GPU 0
   xs7-0002-worker-0:
@@ -97,6 +117,16 @@ services:
       - TERACHEM_PBS_HOST=xs7-0002-terachem-0
   xs7-0002-terachem-0:
     <<: *xs7-0002-terachem
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+  
+  # Pod 3: xs7-0003, GPU 0
+  xs7-0003-worker-0:
+    <<: *xs7-0003-worker
+    environment:
+      - TERACHEM_PBS_HOST=xs7-0003-terachem-0
+  xs7-0003-terachem-0:
+    <<: *xs7-0003-terachem
     environment:
       - NVIDIA_VISIBLE_DEVICES=0
 
@@ -112,7 +142,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=0,1
 
 secrets:
-  terachem_licence:
+  terachem_license:
     external: true
 
 volumes:

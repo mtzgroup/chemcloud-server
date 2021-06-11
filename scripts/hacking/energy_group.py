@@ -1,7 +1,6 @@
 """Quick example of how to perform a group of energy calculations"""
 
 from celery import group
-from celery.result import GroupResult
 from qcelemental.models import AtomicInput, Molecule
 
 from terachem_cloud.workers.tasks import compute
@@ -14,12 +13,14 @@ atomic_input = AtomicInput(
     # keywords={"bad": "fake"},
 )
 
-fr = group([compute.s(atomic_input, "psi4"), compute.s(atomic_input, "psi4")])()
+fr = group(
+    [compute.s(atomic_input, "terachem_pbs"), compute.s(atomic_input, "terachem_pbs")]
+)()
 
 print(fr.successful())
 print(fr.ready())
 print(fr.waiting())
 print(fr.completed_count())
 
-gr = GroupResult(id=fr.id, results=fr.results)
-ar = compute.delay(atomic_input, "psi4")
+# gr = GroupResult(id=fr.id, results=fr.results)
+# ar = compute.delay(atomic_input, "psi4")

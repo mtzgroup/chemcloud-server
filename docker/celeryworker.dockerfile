@@ -22,5 +22,7 @@ COPY Pipfile Pipfile.lock ./
 # Install to system python, no need for pipenv virtual env
 RUN pipenv install --system --deploy
 COPY ./terachem_cloud/workers/ terachem_cloud/workers/
+COPY ./terachem_cloud/models.py terachem_cloud/models.py
+
 
 CMD ["sh", "-c", "celery -A terachem_cloud.workers.tasks worker --without-heartbeat --without-mingle --without-gossip --loglevel=INFO"]

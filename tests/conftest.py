@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import qcengine as qcng
 from fastapi.testclient import TestClient
@@ -34,10 +36,24 @@ def fake_auth():
 
 
 @pytest.fixture
+def test_data_dir():
+    """Test data directory Path"""
+    return Path(__file__).parent / "test_data"
+
+
+@pytest.fixture
 def hydrogen():
+    """Hydrogen Molecule"""
     return qcng.get_molecule("hydrogen")
+
+
+@pytest.fixture
+def water():
+    """Water Molecule"""
+    return qcng.get_molecule("water")
 
 
 @pytest.fixture(scope="session")
 def settings():
+    """TeraChem Cloud application settings"""
     return get_settings()

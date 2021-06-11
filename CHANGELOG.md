@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.4.2]
+
+### Added
+
+- "tcc" compute engine
+- Parallel hessian and parallel frequency analysis methods to tcc engine
+
+### Changed
+
+- Changed celery serializer from `json` to `pickle`. This allows chained methods to receive python data types directly, rather than serialized representations. Since users do not have direct access to the celery layer and can only submit json serialized (and validated) objects via the API I do not feel there are security risks.
+
 ## [0.4.1]
 
 ### Added
@@ -120,7 +131,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.4.1...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.4.2
 [0.4.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.4.1
 [0.4.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.4.0
 [0.3.5]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.3.5
