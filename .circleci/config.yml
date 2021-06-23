@@ -220,7 +220,7 @@ jobs:
             ssh ec2-user@${MTZLAB_SWARM_HOST} ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin" #  pragma: allowlist secret
       - run:
           name: Deploy docker stack on server
-          command: ssh ec2-user@${MTZLAB_SWARM_HOST} "docker stack deploy --with-registry-auth -c ${SERVER_FILEPATH}/docker-compose.base.yaml -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} tcc"
+          command: ssh ec2-user@${MTZLAB_SWARM_HOST} "docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/docker-compose.base.yaml -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} tcc"
 
   deploy_workers:
     parameters:
@@ -267,7 +267,7 @@ jobs:
           name: Deploy docker stack on server
           command: |
             ESCAPED_DOCKERHUB_PASSWORD=`printf "%q" ${DOCKERHUB_PASSWORD}` #  pragma: allowlist secret
-            ssh -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${STANFORD_UN}@xs7-0001 ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin && docker stack deploy --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} << parameters.stage >>-tcc-worker" #  pragma: allowlist secret
+            ssh -o ProxyCommand="ssh -o GSSAPIAuthentication=yes -o GSSAPIDelegateCredentials=yes ${STANFORD_UN}@xstream-login.stanford.edu nc xs7-0001 22" -o StrictHostKeyChecking=no ${STANFORD_UN}@xs7-0001 ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin && docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} << parameters.stage >>-tcc-worker" #  pragma: allowlist secret
 
 workflows:
   main:
