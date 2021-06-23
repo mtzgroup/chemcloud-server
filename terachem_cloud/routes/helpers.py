@@ -101,8 +101,8 @@ def signature_from_input(
 ) -> Signature:
     """Return the celery signature for a compute task"""
     if package == models.SupportedEngines.TCC:
-        tcc_kwargs = input_data.extras.pop(settings.tcc_kwargs_extras_key, {})
-        engine = tcc_kwargs.pop("gradient_engine", models.SupportedEngines.TERACHEM_PBS)
+        tcc_kwargs = input_data.extras.get(settings.tcc_kwargs_extras_key, {})
+        engine = tcc_kwargs.get("gradient_engine", models.SupportedEngines.TERACHEM_PBS)
         return compute_tcc(input_data, engine, **tcc_kwargs)
 
     elif isinstance(input_data, AtomicInput):
