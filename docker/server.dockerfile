@@ -1,5 +1,5 @@
 # Dockerfile for TeraChem Cloud Web Server
-FROM python:3.7-slim
+FROM python:3.9-slim
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319
 ENV PYTHONUNBUFFERED=1
 LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
