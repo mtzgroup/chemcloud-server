@@ -17,14 +17,12 @@ pytest-timeout = "*"
 autoflake = "*"
 
 [packages]
-fastapi = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 python-multipart = "*"
 httpx = "*"
 python-dotenv = "*"
 gunicorn = "*"
 uvicorn = "*"
-qcelemental = "*"
 uvloop = "*"
 httptools = "*"
 typing-extensions = "*"
@@ -35,6 +33,8 @@ geometric = {ref = "feature-logging-bug-fix", git = "https://github.com/coltonbh
 tcpb = ">=0.8.0"
 celery = {extras = ["redis"], version = "*"}
 cached-property = "*"
+qcelemental = "==0.20.0"
+fastapi = "==0.65.1"
 
 [requires]
 python_version = "3.9"
