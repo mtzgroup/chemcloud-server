@@ -54,10 +54,12 @@ pipenv run uvicorn terachem_cloud.main:app --reload
 ### Development on Fire (or any machine with GPUs)
 Developing on a machine with GPUs means you can run `TeraChem` in server mode inside the docker worker. For development purposes, it's easiest to startup the `docker-compose` stack sans worker and then run the worker with `docker run` directly since `docker-compose` lacks good GPU support.
 
-```sh
-docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml up -d --build web-server mq redis
+The additional `docker-compose.fire.yaml` file places all services on an external `tcc` network. Then when starting terachem via the docker command below it is also added to the network. The .env variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
 
-docker build -t tcc_celery_worker -f docker/celeryworker.dockerfile . && docker run -d --rm -v /data/coltonbh/license.key:/terachem/license.key -v /data/coltonbh:/scratch --net=host --gpus 2 -e TERACHEM_PBS_HOST='127.0.0.1' -e TERACHEM_PBS_PORT='11111'  --name tcc_worker tcc_celery_worker
+```sh
+docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml -f docker/docker-compose.fire.yaml up -d --build web-server mq redis worker
+
+docker run -d --rm -v terachem-scratch:/scratch -v /home/coltonbh/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="tcc" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
 
 # To stop worker
 docker stop tcc_worker
@@ -87,7 +89,7 @@ A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a
 ## Deployment
 
 - Full CI/CD is handled via [CircleCi](https://circleci.com). See `.circleci/config.yml` for details.
-- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/terachem-cloud-worker:testing` image that the CI/CD pipeline uses for tests.
+- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/terachem-cloud-worker:testing` image that the CI/CD pipeline uses for tests. This worker image is a build of the `docker/celeryworker.dockerfile` image. CircleCi pulls this image from the `mtzgroup` Docker Hub account when it runs the CI/CD pipeline rather than building it from scratch each time since it takes ages to build the image on the small, free CircleCI servers.
 
 ### Web Services
 

@@ -1,16 +1,21 @@
 {
     "cSpell.words": [
-        "BERNY",
-        "RDKIT",
-        "UNPROCESSABLE",
-        "Umberto's",
         "amqp",
         "amqps",
+        "BERNY",
         "dtype",
         "freqs",
+        "httpx",
         "qcel",
+        "qcelemental",
         "qcengine",
         "qcng",
-        "reqs"
-    ]
+        "RDKIT",
+        "reqs",
+        "tcfe",
+        "terachem",
+        "Umberto's",
+        "UNPROCESSABLE"
+    ],
+    "python.formatting.provider": "black"
 }

@@ -28,12 +28,12 @@ httptools = "*"
 typing-extensions = "*"
 aiofiles = "*"
 pyberny = "*"
-qcengine = {ref = "feature-berny-handle-failed-operation", git = "https://github.com/mtzgroup/QCEngine.git"}
+qcengine = {ref = "feature-terachem-frontend-harness", git = "https://github.com/coltonbh/QCEngine.git"}
 geometric = {ref = "feature-logging-bug-fix", git = "https://github.com/coltonbh/geomeTRIC.git"}
-tcpb = ">=0.8.0"
+tcpb = ">=0.10.0"
 celery = {extras = ["redis"], version = "*"}
 cached-property = "*"
-qcelemental = "==0.20.0"
+qcelemental = "==0.24.0"
 fastapi = "==0.65.1"
 
 [requires]
@@ -44,5 +44,5 @@ allow_prereleases = true
 
 [scripts]
 tests = "bash ./scripts/test.sh"
-start = "docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml up -d --build"
+start = "docker-compose --env-file .env -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml up -d --build"
 stop = "docker-compose -f docker/docker-compose.base.yaml -f docker/docker-compose.local.yaml down"

@@ -9,7 +9,9 @@ LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 # https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
 RUN apt-get update && \
     apt-get install -y gcc git make python3-dev && \
+    python -m pip install --upgrade pip && \
     pip install pipenv
+    
 
 # Install application
 WORKDIR /code/
