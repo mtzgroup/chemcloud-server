@@ -81,10 +81,18 @@ def validate_group_length(input_data: List[Any]) -> None:
         )
 
 
+def _b64_encode_dict_values(d: Dict[str, Any]) -> None:
+    """Convert all bytes in dictionary values to b64 encoded string"""
+    bytes_keys = [key for key, value in d.items() if isinstance(value, bytes)]
+    for key in bytes_keys:
+        value_bytes = d.pop(key)
+        d[f"{key}{B64_POSTFIX}"] = b64encode(value_bytes).decode()
+
+
 def _bytes_to_b64(
     result: Union[models.PossibleResults, List[models.PossibleResults]]
 ) -> None:
-    """Convert binary native_files to b64 encoded strings
+    """Convert binary native_files and tcfe:keywords to b64 encoded strings
 
     Converts key for the file to {key}_b64 and encodes the bytes as b64 string
     """
@@ -101,19 +109,13 @@ def _bytes_to_b64(
             successful_results.extend(obj.trajectory)
         else:
             successful_results.append(obj)
-
     for res in successful_results:
-        # Collect binary native files keys
+        # Encode natives files
         if res.native_files:
-            binary_files = [
-                key
-                for key, value in res.native_files.items()
-                if isinstance(value, bytes)
-            ]
-            # Convert binary files to b64 encoded version of the bytes
-            for key in binary_files:
-                file_bytes = res.native_files.pop(key)
-                res.native_files[f"{key}{B64_POSTFIX}"] = b64encode(file_bytes).decode()
+            _b64_encode_dict_values(res.native_files)
+
+        # Encode any supplied bytes inputs
+        _b64_encode_dict_values(res.extras.get(tcpb_settings.tcfe_keywords, {}))
 
 
 def _b64_to_bytes(input_data: Union[AtomicInput, OptimizationInput]) -> None:

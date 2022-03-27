@@ -360,6 +360,7 @@ workflows:
             - worker_build
           stage: dev
 
+      # Prod deploy
       - prod_deploy_web_approval:
           type: approval
           filters: # Only run on x.x.x tagged branches
