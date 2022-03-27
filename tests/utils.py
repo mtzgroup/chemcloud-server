@@ -1,13 +1,8 @@
 from time import sleep
 from typing import Union
 
-from terachem_cloud.models import (
-    FutureResult,
-    FutureResultGroup,
-    GroupTask,
-    Task,
-    TaskStatus,
-)
+from terachem_cloud.models import FutureResult, FutureResultGroup, TaskStatus
+from terachem_cloud.task_models import GroupTask, Task
 
 
 def _get_result(client, settings, task) -> Union[FutureResult, FutureResultGroup]:
@@ -30,7 +25,6 @@ def _make_job_completion_assertions(task_as_dict, client, settings) -> None:
 
     """
     task: Union[Task, GroupTask]
-
     if task_as_dict.get("subtasks"):
         task = GroupTask(**task_as_dict)
     else:

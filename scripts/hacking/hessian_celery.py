@@ -206,7 +206,7 @@ p4hess = np.array(
     ]
 )
 
-hs = parallel_hessian(atomic_input, SupportedEngines.TERACHEM_PBS)
+hs = parallel_hessian(atomic_input, SupportedEngines.TERACHEM_FE)
 g = group([hs, hs])
 fr = hs()
 r = fr.get()

@@ -3,6 +3,12 @@ from pathlib import Path
 import pytest
 import qcengine as qcng
 from fastapi.testclient import TestClient
+from qcelemental.models import (
+    AtomicInput,
+    AtomicResult,
+    OptimizationInput,
+    OptimizationResult,
+)
 
 from terachem_cloud.auth import bearer_auth
 from terachem_cloud.config import get_settings
@@ -51,6 +57,49 @@ def hydrogen():
 def water():
     """Water Molecule"""
     return qcng.get_molecule("water")
+
+
+@pytest.fixture
+def atomic_input(water):
+    return AtomicInput(
+        molecule=water, driver="energy", model={"method": "HF", "basis": "sto-3g"}
+    )
+
+
+@pytest.fixture
+def opt_input(atomic_input):
+    ai_dict = atomic_input.dict()
+    ai_dict.pop("molecule")
+    return OptimizationInput(
+        input_specification={
+            "driver": atomic_input.driver,
+            "model": atomic_input.model,
+        },
+        initial_molecule=atomic_input.molecule,
+    )
+
+
+@pytest.fixture
+def atomic_result(atomic_input):
+    return AtomicResult(
+        **atomic_input.dict(),
+        return_result=123.4,
+        success=True,
+        properties={},
+    )
+
+
+@pytest.fixture
+def opt_result(atomic_result, opt_input):
+    opt_dict = opt_input.dict()
+    opt_dict.pop("schema_name")
+    return OptimizationResult(
+        **opt_dict,
+        final_molecule=atomic_result.molecule,
+        trajectory=[atomic_result],
+        energies=[atomic_result.return_result],
+        success=True,
+    )
 
 
 @pytest.fixture(scope="session")

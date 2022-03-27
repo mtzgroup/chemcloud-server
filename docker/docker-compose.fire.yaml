@@ -1,0 +1,28 @@
+# A version for local development on fire that mounts an external volume
+version: "3"
+
+services:
+  web-server:
+    networks:
+      - tcc
+  mq:
+    networks:
+      - tcc
+
+  redis:
+    networks:
+      - tcc
+
+  worker:
+    volumes:
+      - terachem-scratch:/scratch
+    networks:
+      - tcc
+
+volumes:
+  terachem-scratch:
+    external: true
+
+networks:
+  tcc:
+    external: true

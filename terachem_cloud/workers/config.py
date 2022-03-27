@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     celery_broker_connection_string: str = "amqp://localhost"
     # backend example: "rediss://:password123@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE"; #  pragma: allowlist secret
     celery_backend_connection_string: str = "redis://localhost/0"
+    file_server_host: str = "http://localhost"
 
     class Config:
         _docker_secrets_dir = "/run/secrets"
