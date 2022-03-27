@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
   web-server:
@@ -28,8 +28,13 @@ services:
       - CELERY_BROKER_CONNECTION_STRING=amqp://mq
       - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
       - C_FORCE_ROOT=true # to run celery as root with pickle serializer
+      - TERACHEM_FE_HOST=file-server
     env_file:
       - ../.env
+    volumes:
+      # Mount in code so service just has to be restarted instead of rebuilt
+      # when code changes
+      - ../terachem_cloud:/code/terachem_cloud
     command: celery -A terachem_cloud.workers.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
   mq:
@@ -42,3 +47,36 @@ services:
     ports:
       # Open redis to localhost for dev container access
       - 6379:6379
+
+  terachem:
+    image: mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80
+    ports:
+      - 11111:11111
+    volumes:
+      - terachem-scratch:/scratch
+      # NOTE: Set path to license in .env file
+      - ${TERACHEM_LICENSE_PATH:-/nothing/here}:/terachem/license.key
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [ "gpu" ]
+
+  file-server:
+    image: nginx:1.21.6-alpine
+    ports:
+      - 8080:80
+    volumes:
+      - terachem-scratch:/usr/share/nginx/html
+      - ./nginx.local.conf:/etc/nginx/nginx.conf
+
+volumes:
+  terachem-scratch:
+networks:
+  # This is just a hack so docker works while my VPN is on
+  # https://stackoverflow.com/questions/45692255/how-make-openvpn-work-with-docker
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.2.0/24

@@ -1,6 +1,5 @@
 from typing import Optional, Union
 
-from celery import states
 from fastapi import APIRouter
 
 from terachem_cloud.config import get_settings
@@ -8,14 +7,13 @@ from terachem_cloud.models import (
     AtomicInputOrList,
     FutureResult,
     FutureResultGroup,
-    GroupTask,
     OptimizationInputOrList,
     SupportedEngines,
     SupportedProcedures,
-    Task,
 )
+from terachem_cloud.task_models import GroupTask, Task
 
-from .helpers import compute_inputs_async
+from .helpers import _bytes_to_b64, compute_inputs_async
 
 settings = get_settings()
 
@@ -59,11 +57,30 @@ async def compute_procedure(
     response_description="A compute task's status and (if complete) return value.",
 )
 async def result(
-    task: Union[GroupTask, Task]
+    task: Union[GroupTask, Task],
+    # background_tasks: BackgroundTasks,
 ) -> Union[FutureResultGroup, FutureResult]:
     """Retrieve a compute task's status and result (if ready)."""
+    # import pdb; pdb.set_trace()
     result = task.to_result()
-    if result.compute_status in states.READY_STATES:
+
+    # Transform any binary native_files to b64 encoded string
+    if result.result:
+        _bytes_to_b64(result.result)
+
+        # if result.compute_status in states.READY_STATES:
         # Remove result from backend
+        # NOTE: Need to update to use background_task so only executes if task returned
+        # successfully.
+        # Will only execute if result returned successfully
+        # background_tasks.add_task(delete_task, task)
+        # TODO: Use background_tasks; currently having issues with AsyncResult.get()
+        # being called twice. the .get() call in GroupTask.to_result() hangs forever
+        # for reasons I don't fully understand
         task.forget()
     return result
+
+
+def delete_task(task: Union[Task, GroupTask]) -> None:
+    """Delete Celery result(s) from backend"""
+    task.forget()

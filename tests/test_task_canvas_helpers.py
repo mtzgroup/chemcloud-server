@@ -1,12 +1,12 @@
 from qcelemental.models.results import AtomicInput
 
-from terachem_cloud.workers.helpers import gradient_inputs
+from terachem_cloud.workers.task_canvas import _gradient_inputs
 
 
 def test_gradient_inputs(water):
     dh = 1
 
-    gradients = gradient_inputs(
+    gradients = _gradient_inputs(
         AtomicInput(molecule=water, model={"method": "fake"}, driver="hessian"), dh
     )
 

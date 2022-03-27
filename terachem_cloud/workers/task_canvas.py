@@ -3,7 +3,7 @@
 Use compute_tcc and pass AtomicInput to get back a signature that can be called
 asynchronously.
 """
-
+from typing import List
 
 from celery.canvas import Signature, group
 from qcelemental.models import AtomicInput, DriverEnum
@@ -11,7 +11,7 @@ from qcelemental.models import AtomicInput, DriverEnum
 from terachem_cloud import models
 from terachem_cloud.config import get_settings
 
-from .helpers import gradient_inputs
+# from .helpers import gradient_inputs
 from .tasks import compute as compute_task
 from .tasks import frequency_analysis as frequency_analysis_task
 from .tasks import hessian as hessian_task
@@ -21,7 +21,7 @@ settings = get_settings()
 
 def compute_tcc(
     input_data: AtomicInput,
-    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_PBS,
+    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_FE,
     **kwargs,
 ) -> Signature:
     """TeraChem Cloud specific algorithms
@@ -39,6 +39,7 @@ def compute_tcc(
     )
 
     if input_data.driver == DriverEnum.hessian:
+        # import pdb; pdb.set_trace()
         return parallel_hessian(input_data, engine, **kwargs)
     else:
         return parallel_frequency_analysis(input_data, engine, **kwargs)
@@ -46,7 +47,7 @@ def compute_tcc(
 
 def parallel_hessian(
     input_data: AtomicInput,
-    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_PBS,
+    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_FE,
     dh: float = settings.hessian_default_dh,
 ) -> Signature:
     """Create parallel hessian signature
@@ -67,7 +68,7 @@ def parallel_hessian(
         input_data.driver == DriverEnum.hessian
     ), f"input_data.driver should be '{DriverEnum.hessian}', got '{input_data.driver}'"
 
-    gradients = gradient_inputs(input_data, dh)
+    gradients = _gradient_inputs(input_data, dh)
     # Perform basic energy computation on unadjusted molecule as final item in group
     energy_calc = input_data.dict()
     energy_calc["driver"] = "energy"
@@ -79,7 +80,7 @@ def parallel_hessian(
 
 def parallel_frequency_analysis(
     input_data: AtomicInput,
-    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_PBS,
+    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_FE,
     dh: float = settings.hessian_default_dh,
     **kwargs,
 ) -> Signature:
@@ -105,3 +106,36 @@ def parallel_frequency_analysis(
     hessian_sig = parallel_hessian(AtomicInput(**hessian_inp), engine, dh)
     # | is celery chain operator
     return hessian_sig | frequency_analysis_task.s(**kwargs)
+
+
+def _gradient_inputs(
+    input_data: AtomicInput, dh: float = settings.hessian_default_dh
+) -> List[AtomicInput]:
+    """Create AtomicInput gradient calculations for a numerical hessian
+
+    Params:
+        input_data: AtomicInput with keywords specific to the gradient computations
+            that will comprise the hessian
+        dh: Offset for numerical hessian calculation
+
+    Returns:
+        Flat list of AtomicInput gradient calculations with dh offset for each geometry
+            value. The first AtomicInput represents a "forward" step by dh and the next
+            AtomicInput represents a "backward" step by dh and so on.
+    """
+    as_dict = input_data.dict()
+    as_dict["driver"] = "gradient"
+    as_gradient = AtomicInput(**as_dict)
+
+    gradient_calls = []
+    for i, row in enumerate(input_data.molecule.geometry):
+        for j, _ in enumerate(row):
+            forward, backward = as_gradient.copy(deep=True), as_gradient.copy(deep=True)
+
+            forward.molecule.geometry[i][j] += dh
+            backward.molecule.geometry[i][j] -= dh
+
+            gradient_calls.append(forward)
+            gradient_calls.append(backward)
+
+    return gradient_calls

@@ -1,4 +1,5 @@
 """A simple script to exercise the web app and celery to compute a result."""
+import json
 import sys
 from getpass import getpass
 from time import sleep
@@ -64,18 +65,19 @@ if __name__ == "__main__":
         data=atomic_input.json(),
         params={"engine": "psi4"},
     )
-    task_id = r1.json()
+    task_id = r1.json()["task_id"]
     print(f"Job sent! Task ID: {task_id}")
 
     # Check job results
     def _get_result(task_id, token):
-        result = httpx.get(
-            f"{HOST}{API_PREFIX}/compute/result/{task_id}",
+        result = httpx.post(
+            f"{HOST}{API_PREFIX}/compute/result",
             headers={"Authorization": f"Bearer {token}"},
+            data=json.dumps({"task_id": task_id}),
         )
         print(result)
         response = result.json()
-        return response["status"], response["result"]
+        return response["compute_status"], response["result"]
 
     status, result = _get_result(task_id, jwt)
     while status in {"PENDING", "STARTED"}:
@@ -85,9 +87,9 @@ if __name__ == "__main__":
         print("Waiting for result...")
 
     # Assure we can recreate models from results
-    if status == "SUCCESS":
+    if result["success"] is True:
         result = AtomicResult(**result)
-    elif status == "FAILURE":
+    else:
         result = FailedOperation(**result)
 
     print(result)
