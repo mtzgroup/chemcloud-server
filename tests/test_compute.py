@@ -49,9 +49,9 @@ def test_compute(settings, client, fake_auth, hydrogen, engine, model, keywords,
     _make_job_completion_assertions(as_dict, client, settings)
 
 
-# @pytest.mark.skip(
-#     "Skipping because must run with terachem_fe. Run when terachem_fe is available."
-# )
+@pytest.mark.skip(
+    "Skipping because must run with terachem_fe. Run when terachem_fe is available."
+)
 @pytest.mark.timeout(15)
 def test_compute_with_binary_extras(settings, client, fake_auth, hydrogen):
     """Testings as one function so we don't submit excess compute jobs.
@@ -256,34 +256,30 @@ def test_compute_procedure_group_limits(
     assert job_submission.status_code == status_codes.HTTP_413_REQUEST_ENTITY_TOO_LARGE
 
 
-# @pytest.mark.skip  # Comment out to run test
-# NOTE: Comment out and run when an available worker has access to terachem_pbs so it
-# doesn't take forever.
+# @pytest.mark.skip("Long test so skipping for brevity")  # Comment out to run test
 @pytest.mark.parametrize(
-    "driver,model,extras,group",
+    "driver,model,tcc_keywords,group",
     (
         (
             "hessian",
             {"method": "HF", "basis": "sto-3g"},
-            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            {"gradient_engine": "psi4"},
             False,
         ),
         (
             "hessian",
             {"method": "HF", "basis": "sto-3g"},
-            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            {"gradient_engine": "psi4"},
             True,
         ),
         (
             "properties",
             {"method": "HF", "basis": "sto-3g"},
             {
-                "tcc_kwargs": {
-                    "gradient_engine": "psi4",
-                    "energy": 1.5,
-                    "temperature": 310,
-                    "pressure": 1.2,
-                }
+                "gradient_engine": "psi4",
+                "energy": 1.5,
+                "temperature": 310,
+                "pressure": 1.2,
             },
             False,
         ),
@@ -291,11 +287,14 @@ def test_compute_procedure_group_limits(
 )
 @pytest.mark.timeout(450)
 def test_compute_tcc_engine(
-    settings, client, fake_auth, water, driver, model, extras, group
+    settings, client, fake_auth, water, driver, model, tcc_keywords, group
 ):
     """Test TeraChem Cloud specific methods"""
     atomic_input = AtomicInput(
-        molecule=water, driver=driver, model=model, extras=extras
+        molecule=water,
+        driver=driver,
+        model=model,
+        extras={settings.tcc_keywords: tcc_keywords},
     )
     if group:
         atomic_input = [atomic_input, atomic_input]
