@@ -14,8 +14,12 @@ from qcelemental.models import (
     OptimizationInput,
     OptimizationResult,
 )
+from qcelemental.models.common_models import DriverEnum
 from qcelemental.util.serialization import json_dumps as qcel_json_dumps
 from qcelemental.util.serialization import json_loads as qcel_json_loads
+from tcpb.config import TCFEKeywords
+
+from terachem_cloud.models import SupportedEngines
 
 from .config import get_settings
 
@@ -84,15 +88,64 @@ def compute_procedure(
 
 
 @celery_app.task
+def ar_wfn_to_ai(
+    result: Union[AtomicResult, FailedOperation],
+    driver: DriverEnum,
+) -> Union[AtomicInput, FailedOperation]:
+    """Convert AtomicResult with wavefunction data to AtomicInput using wf data
+
+    Params:
+        result: The result of a previous single-point calculation containing
+            wavefunction data
+        driver: The desired driver for the new AtomicInput
+
+    """
+    if isinstance(result, FailedOperation):
+        # Since failed compute will not raise exception, just return FailedOperation
+        return result
+
+    # Only support these known creators
+    assert result.provenance.creator in {SupportedEngines.TERACHEM_FE}
+
+    if result.provenance.creator == SupportedEngines.TERACHEM_FE:
+        # Wavefunction data in 'c0' or 'ca0' and 'cb0' native_files
+        assert result.native_files, "No natives files found!"
+        assert any(
+            [
+                key in {TCFEKeywords.c0, TCFEKeywords.ca0, TCFEKeywords.cb0}
+                for key in result.native_files.keys()
+            ]
+        ), "No wavefunction data found!"
+
+        extras = {}  # New extras for AtomicInput
+
+        if c0 := result.native_files.get(TCFEKeywords.c0):
+            extras[TCFEKeywords.c0] = c0
+        else:
+            extras[TCFEKeywords.ca0] = result.native_files[TCFEKeywords.ca0]
+            extras[TCFEKeywords.cb0] = result.native_files[TCFEKeywords.cb0]
+
+        return AtomicInput(
+            molecule=result.molecule,
+            driver=driver,
+            model=result.model,
+            keywords=result.keywords,
+        )
+
+
+@celery_app.task
 def hessian(
-    gradients: List[AtomicResult], dh: float
+    gradients: List[Union[AtomicResult, FailedOperation]], dh: float
 ) -> Union[AtomicResult, FailedOperation]:
     """Compute hessian in parallel from array of gradient computations
 
     Params:
         gradients: List of gradient AtomicResult objects alternating between a
             "forward" and "backward" computation. NOTE: The last computation on the
-            list is a basic energy calculation of the original geometry.
+            list is an energy calculation of the original geometry. It's used to
+            construct the final AtomicResult but substituting the hessian for the
+            return_result. This is done to provide the original geometry supplied by
+            the AtomicInput.
         dh: The displacement used for finite difference displacements of gradient
             geometries
 

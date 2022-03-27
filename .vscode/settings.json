@@ -6,6 +6,7 @@
         "dtype",
         "freqs",
         "httpx",
+        "kombu",
         "qcel",
         "qcelemental",
         "qcengine",

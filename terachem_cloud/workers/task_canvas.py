@@ -39,7 +39,6 @@ def compute_tcc(
     )
 
     if input_data.driver == DriverEnum.hessian:
-        # import pdb; pdb.set_trace()
         return parallel_hessian(input_data, engine, **kwargs)
     else:
         return parallel_frequency_analysis(input_data, engine, **kwargs)
@@ -74,7 +73,8 @@ def parallel_hessian(
     energy_calc["driver"] = "energy"
     gradients.append(AtomicInput(**energy_calc))
 
-    # | is chain operator in celery
+    # | is chain operator in celery; chaining a group to another task automatically
+    # upgrades it to a chord. The returned object below is a chord
     return group(compute_task.s(inp, engine) for inp in gradients) | hessian_task.s(dh)
 
 
@@ -109,6 +109,39 @@ def parallel_frequency_analysis(
 
 
 def _gradient_inputs(
+    input_data: AtomicInput, dh: float = settings.hessian_default_dh
+) -> List[AtomicInput]:
+    """Create AtomicInput gradient calculations for a numerical hessian
+
+    Params:
+        input_data: AtomicInput with keywords specific to the gradient computations
+            that will comprise the hessian
+        dh: Offset for numerical hessian calculation
+
+    Returns:
+        Flat list of AtomicInput gradient calculations with dh offset for each geometry
+            value. The first AtomicInput represents a "forward" step by dh and the next
+            AtomicInput represents a "backward" step by dh and so on.
+    """
+    as_dict = input_data.dict()
+    as_dict["driver"] = "gradient"
+    as_gradient = AtomicInput(**as_dict)
+
+    gradient_calls = []
+    for i, row in enumerate(input_data.molecule.geometry):
+        for j, _ in enumerate(row):
+            forward, backward = as_gradient.copy(deep=True), as_gradient.copy(deep=True)
+
+            forward.molecule.geometry[i][j] += dh
+            backward.molecule.geometry[i][j] -= dh
+
+            gradient_calls.append(forward)
+            gradient_calls.append(backward)
+
+    return gradient_calls
+
+
+def _gradient_inputs_2(
     input_data: AtomicInput, dh: float = settings.hessian_default_dh
 ) -> List[AtomicInput]:
     """Create AtomicInput gradient calculations for a numerical hessian

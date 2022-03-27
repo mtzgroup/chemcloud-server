@@ -221,7 +221,7 @@ def test_compute_procedure_group_limits(
     assert job_submission.status_code == status_codes.HTTP_413_REQUEST_ENTITY_TOO_LARGE
 
 
-@pytest.mark.skip  # Comment out to run test
+# @pytest.mark.skip  # Comment out to run test
 # NOTE: Comment out and run when an available worker has access to terachem_pbs so it
 # doesn't take forever.
 @pytest.mark.parametrize(
@@ -230,13 +230,13 @@ def test_compute_procedure_group_limits(
         (
             "hessian",
             {"method": "HF", "basis": "sto-3g"},
-            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            {"tcc_kwargs": {"gradient_engine": "terachem_fe"}},
             False,
         ),
         (
             "hessian",
             {"method": "HF", "basis": "sto-3g"},
-            {"tcc_kwargs": {"gradient_engine": "psi4"}},
+            {"tcc_kwargs": {"gradient_engine": "terachem_fe"}},
             True,
         ),
         (
@@ -244,7 +244,7 @@ def test_compute_procedure_group_limits(
             {"method": "HF", "basis": "sto-3g"},
             {
                 "tcc_kwargs": {
-                    "gradient_engine": "psi4",
+                    "gradient_engine": "terachem_fe",
                     "energy": 1.5,
                     "temperature": 310,
                     "pressure": 1.2,
