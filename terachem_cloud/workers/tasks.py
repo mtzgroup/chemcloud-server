@@ -87,6 +87,7 @@ def compute_procedure(
     return qcng.compute_procedure(input, procedure, raise_error=raise_error)
 
 
+# TODO: Work out this task...
 @celery_app.task
 def ar_wfn_to_ai(
     result: Union[AtomicResult, FailedOperation],
@@ -125,12 +126,13 @@ def ar_wfn_to_ai(
             extras[TCFEKeywords.ca0] = result.native_files[TCFEKeywords.ca0]
             extras[TCFEKeywords.cb0] = result.native_files[TCFEKeywords.cb0]
 
-        return AtomicInput(
-            molecule=result.molecule,
-            driver=driver,
-            model=result.model,
-            keywords=result.keywords,
-        )
+    return AtomicInput(
+        molecule=result.molecule,
+        driver=driver,
+        model=result.model,
+        keywords=result.keywords,
+        extras=extras,
+    )
 
 
 @celery_app.task
