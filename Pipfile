@@ -30,7 +30,7 @@ aiofiles = "*"
 pyberny = "*"
 qcengine = {ref = "feature-terachem-frontend-harness", git = "https://github.com/coltonbh/QCEngine.git"}
 geometric = {ref = "feature-logging-bug-fix", git = "https://github.com/coltonbh/geomeTRIC.git"}
-tcpb = ">=0.10.0"
+tcpb = ">=0.11.0"
 celery = {extras = ["redis"], version = "*"}
 cached-property = "*"
 qcelemental = "==0.24.0"
