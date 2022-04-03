@@ -1,10 +1,11 @@
+import json
 from base64 import b64decode, b64encode
-from json.decoder import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 
 import httpx
 from celery import group
 from celery.canvas import Signature
+from celery.result import AsyncResult, GroupResult, ResultBase, result_from_tuple
 from fastapi import HTTPException
 from fastapi import status as status_codes
 from qcelemental.models import (
@@ -15,7 +16,7 @@ from qcelemental.models import (
 )
 from tcpb.config import settings as tcpb_settings
 
-from terachem_cloud import config, models, task_models
+from terachem_cloud import config, models
 from terachem_cloud.workers import tasks
 from terachem_cloud.workers.task_canvas import compute_tcc
 
@@ -36,7 +37,7 @@ async def _external_request(
         )
     try:
         response_data = response.json()
-    except JSONDecodeError:
+    except json.JSONDecodeError:
         response_data = response.text
 
     try:
@@ -140,29 +141,46 @@ def _b64_to_bytes(input_data: Union[AtomicInput, OptimizationInput]) -> None:
         tcfe_config[key.split(B64_POSTFIX)[0]] = b64decode(value)
 
 
+def save_result(result: Union[AsyncResult, GroupResult]) -> None:
+    """Save result compute structure to backend"""
+    result.backend.set(result.id, json.dumps(result.as_tuple()))
+
+
+def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
+    """Restore result (including parents) from backend
+
+    Raises:
+        ValueError if result not found in backend
+    """
+    try:
+        return result_from_tuple(json.loads(tasks.celery_app.backend.get(result_id)))
+    except TypeError:
+        raise ValueError(f"Result id '{result_id}', not found.")
+
+
 def compute_inputs_async(
     input_data: Union[models.AtomicInputOrList, models.OptimizationInputOrList],
     package: Union[models.SupportedEngines, models.SupportedProcedures],
     queue: Optional[str] = None,
-) -> Union[task_models.GroupTask, task_models.Task]:
+) -> str:
     """Accept inputs_data and celery_task, begins task, return Task models"""
-    task: Union[task_models.GroupTask, task_models.Task]
 
     if isinstance(input_data, list):
         validate_group_length(input_data)
         for inp in input_data:
             _b64_to_bytes(inp)
 
-        c_task = group(
+        result = group(
             signature_from_input(inp, package) for inp in input_data
         ).apply_async(queue=queue)
-        task = task_models.GroupTask.from_celery(c_task)
 
     else:
         _b64_to_bytes(input_data)
-        c_task = signature_from_input(input_data, package).apply_async(queue=queue)
-        task = task_models.Task.from_celery(c_task)
-    return task
+        result = signature_from_input(input_data, package).apply_async(queue=queue)
+
+    # Save result structure to DB so can be rehydrated using only id
+    save_result(result)
+    return result.id
 
 
 def signature_from_input(
@@ -179,3 +197,11 @@ def signature_from_input(
         return tasks.compute.s(input_data, package)
     else:
         return tasks.compute_procedure.s(input_data, package)
+
+
+def delete_result(result: ResultBase) -> None:
+    """Delete Celery result(s) from backend"""
+    # Remove result definition
+    result.backend.delete(result.id)
+    # Remove all results and parents
+    result.forget()

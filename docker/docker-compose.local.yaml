@@ -57,10 +57,12 @@ services:
       # NOTE: Set path to license in .env file
       - ${TERACHEM_LICENSE_PATH:-/nothing/here}:/terachem/license.key
     deploy:
+      restart_policy:
+        condition: on-failure
       resources:
         reservations:
           devices:
-            - capabilities: [ "gpu" ]
+            - capabilities: ["gpu"]
 
   file-server:
     image: nginx:1.21.6-alpine
