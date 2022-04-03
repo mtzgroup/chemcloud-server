@@ -1,7 +1,6 @@
 from enum import Enum
 from typing import Any, List, Optional, Union
 
-from celery import states
 from numpy import ndarray
 from pydantic import AnyHttpUrl, BaseModel, Field
 from qcelemental.models import AtomicResult, FailedOperation, OptimizationResult
@@ -35,45 +34,20 @@ class SupportedProcedures(str, Enum):
     GEOMETRIC = "geometric"
 
 
-class TaskStatus(str, Enum):
-    """Tasks status for a submitted compute job.
+class TaskState(str, Enum):
+    """Tasks status for a submitted compute job"""
 
-    Wrapper around celery.states so that enums can be exposed on API endpoints.
-    """
-
-    # States from https://github.com/celery/celery/blob/master/celery/states.py
+    # States previously from https://github.com/celery/celery/blob/master/celery/states.py
+    # if I revert more more specific task states look at them again.
     #: Task state is unknown (assumed pending since you know the id).
-    PENDING = states.PENDING
-    #: Task was received by a worker (only used in events).
-    RECEIVED = states.RECEIVED
-    #: Task was started by a worker (:setting:`task_track_started`).
-    STARTED = states.STARTED
-    #: Task succeeded
-    SUCCESS = states.SUCCESS
-    #: Task failed
-    FAILURE = states.FAILURE
-    #: Task was revoked.
-    REVOKED = states.REVOKED
-    #: Task was rejected (only used in events).
-    REJECTED = states.REJECTED
-    #: Task is waiting for retry.
-    RETRY = states.RETRY
-    IGNORED = states.IGNORED
+    PENDING = "PENDING"
+    COMPLETE = "COMPLETE"
 
 
 class ResultBaseABC(BaseModel):
-    """Result Base class.
+    """Result Base class. Thin wrapper around celery ResultBase"""
 
-    Bridges the functionality required to describe the celery task (celery task ids)
-    and the results that the status and results of that celery task.
-
-    Result data objects and methods are separate from tasks so that the /result API
-    endpoint more explicitly defines inputs and outputs. I didn't want to have the
-    endpoint accept FutureResult objects with their possible .result and .status
-    properties, which make no sense when requesting an update.
-    """
-
-    compute_status: TaskStatus = TaskStatus.PENDING
+    state: TaskState
     result: Optional[Any] = None
 
     class Config:
@@ -111,18 +85,14 @@ class ResultBaseABC(BaseModel):
         }
 
 
-class FutureResult(ResultBaseABC):
-    """Represents status and result of celery AsyncResult"""
+class Result(ResultBaseABC):
+    """Status and result of compute tasks. Wrapper around celery AsyncResult"""
 
     result: Optional[PossibleResults] = None
 
 
-class FutureResultGroup(ResultBaseABC):
-    """Represents status and result of celery GroupResult
-
-    Modification:
-        - Added .result property that contains array of result values
-    """
+class ResultGroup(ResultBaseABC):
+    """Status and result of compute tasks. Wrapper around celery GroupResult"""
 
     result: Optional[List[PossibleResults]] = None
 

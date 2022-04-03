@@ -1,7 +1,5 @@
 """A simple script to exercise the web app and celery to compute a result."""
-import json
 import sys
-from getpass import getpass
 from time import sleep
 
 import httpx
@@ -29,8 +27,10 @@ if __name__ == "__main__":
 
     HOST = HOSTS[env]
     # Get auth token
-    username = input("Please enter your username: ")
-    password = getpass()
+    # username = input("Please enter your username: ")
+    # password = getpass()
+    username = "colton@coltonhicks.com"
+    password = "***REMOVED***"
     print("Getting auth token...")
     data = {
         "grant_type": "password",
@@ -65,25 +65,24 @@ if __name__ == "__main__":
         data=atomic_input.json(),
         params={"engine": "psi4"},
     )
-    task_id = r1.json()["task_id"]
+    task_id = r1.json()
     print(f"Job sent! Task ID: {task_id}")
 
     # Check job results
     def _get_result(task_id, token):
-        result = httpx.post(
-            f"{HOST}{API_PREFIX}/compute/result",
+        result = httpx.get(
+            f"{HOST}{API_PREFIX}/compute/result/{task_id}",
             headers={"Authorization": f"Bearer {token}"},
-            data=json.dumps({"task_id": task_id}),
         )
         print(result)
         response = result.json()
-        return response["compute_status"], response["result"]
+        return response["state"], response["result"]
 
     status, result = _get_result(task_id, jwt)
     while status in {"PENDING", "STARTED"}:
         sleep(1)
         status, result = _get_result(task_id, jwt)
-        print(f"Status: {status}")
+        print(f"State: {status}")
         print("Waiting for result...")
 
     # Assure we can recreate models from results

@@ -53,6 +53,7 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     # Only one concurrent worker process. One process may use multiple CPU cores anyways.
     worker_concurrency=1,
+    broker_connection_retry_on_startup=True,
 )
 
 # NOTE: Setting this value means celery will change ports for amqp to 5671 by default
