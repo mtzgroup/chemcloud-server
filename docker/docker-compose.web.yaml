@@ -33,6 +33,7 @@ services:
     env_file: rabbit.env
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       labels:
         - traefik.enable=true
