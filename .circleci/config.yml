@@ -122,6 +122,7 @@ jobs:
     steps:
       - checkout
       - run: pip install mypy pydantic
+      - run: python3 -m pip install types-requests
       - run:
           name: mypy
           command: mypy
