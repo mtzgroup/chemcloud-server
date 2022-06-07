@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # backend example: "rediss://:password123@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE"; #  pragma: allowlist secret
     celery_backend_connection_string: str = "redis://localhost/0"
     file_server_host: str = "http://localhost"
+    result_expires: int = 259200  # Seconds until results expire in backend
 
     class Config:
         _docker_secrets_dir = "/run/secrets"

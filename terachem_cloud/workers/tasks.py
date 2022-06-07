@@ -47,6 +47,7 @@ celery_app.conf.update(
     accept_content=["pickle"],
     result_serializer="pickle",
     task_track_started=True,
+    result_expires=settings.result_expires,
     # Cause workers to only receive and work on one task at a time (no prefetching of messages)
     # https://docs.celeryproject.org/en/stable/userguide/optimizing.html#prefetch-limits
     task_acks_late=True,

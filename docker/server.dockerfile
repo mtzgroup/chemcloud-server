@@ -24,4 +24,5 @@ COPY terachem_cloud/ ./terachem_cloud
 EXPOSE 8000
 
 # https://docs.gunicorn.org/en/stable/design.html#how-many-workers
-CMD ["sh", "-c", "gunicorn terachem_cloud.main:app -w 2 -k uvicorn.workers.UvicornWorker --keep-alive 650 -b 0.0.0.0:8000 --access-logfile -"]
+# Timeout to 60s for larger results that require more time to collect from redis
+CMD ["sh", "-c", "gunicorn terachem_cloud.main:app -w 2 -k uvicorn.workers.UvicornWorker --keep-alive 650 --timeout 60 -b 0.0.0.0:8000 --access-logfile -"]
