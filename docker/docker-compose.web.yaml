@@ -10,10 +10,6 @@ services:
       - traefik-public
     env_file: server.env
     deploy:
-      resources:
-        limits:
-          cpus: \"0.5\"
-          memory: 512M
       update_config:
         parallelism: 1
         order: start-first
