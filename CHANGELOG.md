@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.6.2]
+
+### Changed
+
+- Removed webserver memory constraints at docker level. Large results were crashing server because of 500MB limit. When (300MB+) results were pulled into memory server would require >500MB memory and would be terminated by process manager.
+- Increased gunicorn worker timeout from 30s -> 60s to accommodate larger results.
+- Set results to expire in 3 days instead of default 1 day in backend store.
+
 ## [0.6.1]
 
 ### Added
@@ -168,7 +176,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.6.1...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.6.2...HEAD
+[0.6.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.2
 [0.6.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.1
 [0.6.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.0
 [0.5.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.5.1
