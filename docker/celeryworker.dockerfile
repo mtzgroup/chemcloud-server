@@ -9,11 +9,15 @@ LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 # Install system packages
 # Need gcc and python3-dev for python psutil package
 # https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
-RUN conda install psi4=1.5 -c psi4 && \
+RUN conda install psi4=1.5 \
+    libint2=*=hc9558a2_9 \
+    pytest=5 \
+    pcmsolver=*=py39h6d17ec8_2 \
     # for psi4
-    conda install msgpack-python && \ 
-    conda install -c conda-forge rdkit=2020.09.5 && \
-    conda install -c conda-forge xtb-python=20.2 && \
+    msgpack-python \
+    rdkit=2020.09.5 \
+    xtb-python=20.2 \
+    -c psi4 -c conda-forge && \
     apt-get update && \
     apt-get install -y gcc python3-dev && \
     pip install pipenv
