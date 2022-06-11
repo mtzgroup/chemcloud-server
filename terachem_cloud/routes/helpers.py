@@ -3,22 +3,23 @@ from base64 import b64decode, b64encode
 from typing import Any, Dict, List, Optional, Union
 
 import httpx
-from celery import group
-from celery.canvas import Signature
+from bigqc import tasks
+from bigqc.algos import parallel_frequency_analysis, parallel_hessian
+from bigqc.app import bigqc
+from celery.canvas import Signature, group
 from celery.result import AsyncResult, GroupResult, ResultBase, result_from_tuple
 from fastapi import HTTPException
 from fastapi import status as status_codes
 from qcelemental.models import (
     AtomicInput,
     AtomicResult,
+    DriverEnum,
     OptimizationInput,
     OptimizationResult,
 )
 from tcpb.config import settings as tcpb_settings
 
 from terachem_cloud import config, models
-from terachem_cloud.workers import tasks
-from terachem_cloud.workers.task_canvas import compute_tcc
 
 settings = config.get_settings()
 B64_POSTFIX = "_b64"
@@ -153,7 +154,7 @@ def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
         ValueError if result not found in backend
     """
     try:
-        return result_from_tuple(json.loads(tasks.celery_app.backend.get(result_id)))
+        return result_from_tuple(json.loads(bigqc.backend.get(result_id)))
     except TypeError:
         raise ValueError(f"Result id '{result_id}', not found.")
 
@@ -194,9 +195,9 @@ def signature_from_input(
         return compute_tcc(input_data, engine, **tcc_kwargs)
 
     elif isinstance(input_data, AtomicInput):
-        return tasks.compute.s(input_data, package)
+        return tasks.compute.s(input_data, package.value)
     else:
-        return tasks.compute_procedure.s(input_data, package)
+        return tasks.compute_procedure.s(input_data, package.value)
 
 
 def delete_result(result: ResultBase) -> None:
@@ -205,3 +206,31 @@ def delete_result(result: ResultBase) -> None:
     result.backend.delete(result.id)
     # Remove all results and parents
     result.forget()
+
+
+def compute_tcc(
+    input_data: AtomicInput,
+    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_FE,
+    **kwargs,
+) -> Signature:
+    """Top level function for parallelized TeraChem Cloud algorithms
+
+    Use compute_tcc and pass AtomicInput to get back a signature that can be called
+    asynchronously.
+
+    Params:
+        input_data: Input specification; driver may be hessian or properties
+        engine: Compute engine to use for gradient calculations
+        kwargs: kwargs for parallel_hessian or parallel_frequency_analysis
+    """
+
+    SUPPORTED_DRIVERS = [DriverEnum.hessian, DriverEnum.properties]
+    assert input_data.driver in SUPPORTED_DRIVERS, (
+        f"Driver '{input_data.driver}' not supported. Supported drivers include: "
+        f"{SUPPORTED_DRIVERS}"
+    )
+
+    if input_data.driver == DriverEnum.hessian:
+        return parallel_hessian(input_data, engine, **kwargs)
+    else:
+        return parallel_frequency_analysis(input_data, engine, **kwargs)
