@@ -1,11 +1,11 @@
 from pathlib import Path
 
 import pytest
-import qcengine as qcng
 from fastapi.testclient import TestClient
 from qcelemental.models import (
     AtomicInput,
     AtomicResult,
+    Molecule,
     OptimizationInput,
     OptimizationResult,
 )
@@ -50,13 +50,36 @@ def test_data_dir():
 @pytest.fixture
 def hydrogen():
     """Hydrogen Molecule"""
-    return qcng.get_molecule("hydrogen")
+    return Molecule(
+        **{
+            "symbols": ["H", "H"],
+            "geometry": [0, 0, -0.65, 0.0, 0.0, 0.65],
+            "molecular_multiplicity": 1,
+            "connectivity": [[0, 1, 1]],
+        }
+    )
 
 
 @pytest.fixture
 def water():
     """Water Molecule"""
-    return qcng.get_molecule("water")
+    return Molecule(
+        **{
+            "geometry": [
+                0.0,
+                0.0,
+                -0.1294769411935893,
+                0.0,
+                -1.494187339479985,
+                1.0274465079245698,
+                0.0,
+                1.494187339479985,
+                1.0274465079245698,
+            ],
+            "symbols": ["O", "H", "H"],
+            "connectivity": [[0, 1, 1], [0, 2, 1]],
+        }
+    )
 
 
 @pytest.fixture
