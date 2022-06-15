@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.7.0]
+
+### Changed
+
+- Refactored all backend workers and middleware to a separate out the BigQC project. This project now comprises just a web layer on top of the BigQC engine. This change resulted in the need to change a few environment variables to reflect the change to BigQC. `CELERY_BROKER_CONNECTION_STRING` -> `BIGQC_BROKER_URL` and `CELERY_BACKEND_CONNECTION_STRING` -> `BIGQC_BACKEND_URL`.
+- Changed dependencies to reflect the refactor.
+
 ## [0.6.2]
 
 ### Changed
@@ -176,7 +183,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.6.2...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.0
 [0.6.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.2
 [0.6.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.1
 [0.6.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.0
