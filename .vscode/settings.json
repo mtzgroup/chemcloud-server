@@ -3,6 +3,7 @@
         "amqp",
         "amqps",
         "BERNY",
+        "bigqc",
         "dtype",
         "freqs",
         "httpx",

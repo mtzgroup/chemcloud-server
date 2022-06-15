@@ -9,8 +9,8 @@ services:
       - 8000:8000
     environment:
       # Connect to rabbit and redis over docker network instead of localhost
-      - CELERY_BROKER_CONNECTION_STRING=amqp://mq
-      - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+      - bigqc_broker_url=amqp://mq
+      - bigqc_backend_url=redis://redis/0
     env_file:
       - ../.env
     volumes:
@@ -18,32 +18,34 @@ services:
     command: uvicorn --host 0.0.0.0 --port 8000 terachem_cloud.main:app --reload
 
   worker:
-    build:
-      context: ../.
-      dockerfile: ./docker/celeryworker.dockerfile
+    image: coltonbh/bigqc-worker
     depends_on:
       - mq
       - redis
     environment:
-      - CELERY_BROKER_CONNECTION_STRING=amqp://mq
-      - CELERY_BACKEND_CONNECTION_STRING=redis://redis/0
+      - bigqc_broker_url=amqp://mq
+      - bigqc_backend_url=redis://redis/0
       - C_FORCE_ROOT=true # to run celery as root with pickle serializer
       - TERACHEM_FE_HOST=file-server
     env_file:
       - ../.env
-    volumes:
-      # Mount in code so service just has to be restarted instead of rebuilt
-      # when code changes
-      - ../terachem_cloud:/code/terachem_cloud
-    command: celery -A terachem_cloud.workers.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
+    # Run worker listening to default queue and private_queue
+    command: celery -A bigqc.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
   mq:
+    image: rabbitmq:3.8-management-alpine
+    # Must specify hostname since data is stored based on hostname and we don't want a random, docker-assigned
+    # hostname with each new restart of the service. This would result in any past messages stored by the
+    # former container in the volume to be unseen by the new container.
+    # https://hub.docker.com/_/rabbitmq/ under "How to use this image"
+    hostname: rmq-host1
     ports:
       # Open rabbit to localhost for dev container access
       - 5672:5672
       - 15672:15672
 
   redis:
+    image: redis:6-alpine
     ports:
       # Open redis to localhost for dev container access
       - 6379:6379
