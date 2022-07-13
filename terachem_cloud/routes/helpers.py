@@ -165,7 +165,6 @@ def compute_inputs_async(
     queue: Optional[str] = None,
 ) -> str:
     """Accept inputs_data and celery_task, begins task, return Task models"""
-
     if isinstance(input_data, list):
         validate_group_length(input_data)
         for inp in input_data:
@@ -188,10 +187,16 @@ def signature_from_input(
     input_data: Union[AtomicInput, models.OptimizationInput],
     package: Union[models.SupportedEngines, models.SupportedProcedures],
 ) -> Signature:
-    """Return the celery signature for a compute task"""
+    """Return the celery signature for a compute task
+
+    NOTE: Must pass enum.value to underlying functions so that celery doesn't try to
+        deserialize an object containing references to Enums that live in terachem_cloud
+    """
     if package == models.SupportedEngines.TCC:
         tcc_kwargs = input_data.extras.get(settings.tcc_keywords, {})
-        engine = tcc_kwargs.pop("gradient_engine", models.SupportedEngines.TERACHEM_FE)
+        engine = tcc_kwargs.pop(
+            "gradient_engine", models.SupportedEngines.TERACHEM_FE.value
+        )
         return compute_tcc(input_data, engine, **tcc_kwargs)
 
     elif isinstance(input_data, AtomicInput):
@@ -200,17 +205,9 @@ def signature_from_input(
         return tasks.compute_procedure.s(input_data, package.value)
 
 
-def delete_result(result: ResultBase) -> None:
-    """Delete Celery result(s) from backend"""
-    # Remove result definition
-    result.backend.delete(result.id)
-    # Remove all results and parents
-    result.forget()
-
-
 def compute_tcc(
     input_data: AtomicInput,
-    engine: models.SupportedEngines = models.SupportedEngines.TERACHEM_FE,
+    engine: str = models.SupportedEngines.TERACHEM_FE.value,
     **kwargs,
 ) -> Signature:
     """Top level function for parallelized TeraChem Cloud algorithms
@@ -220,7 +217,9 @@ def compute_tcc(
 
     Params:
         input_data: Input specification; driver may be hessian or properties
-        engine: Compute engine to use for gradient calculations
+        engine: Compute engine to use for gradient calculations. Must pass string rather
+            than Enum so that BigQC deserialization doesn't try to deserialize an object
+            containing Enums from qccloud package.
         kwargs: kwargs for parallel_hessian or parallel_frequency_analysis
     """
 
@@ -234,3 +233,11 @@ def compute_tcc(
         return parallel_hessian(input_data, engine, **kwargs)
     else:
         return parallel_frequency_analysis(input_data, engine, **kwargs)
+
+
+def delete_result(result: ResultBase) -> None:
+    """Delete Celery result(s) from backend"""
+    # Remove result definition
+    result.backend.delete(result.id)
+    # Remove all results and parents
+    result.forget()
