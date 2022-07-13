@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Pass only strings for default values to `compute_tcc` function that executes distributed algorithms. Passing `Enum` values caused celery to try and deserialize objects containing references to the `terachem_cloud` package where the `Enums` were defined.
+
 ## [0.7.1]
+
+### Changed
 
 - Update to BigQCv0.1.3
 
