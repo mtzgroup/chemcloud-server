@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.7.1]
+
 - Update to BigQCv0.1.3
 
 ## [0.7.0]
@@ -185,7 +187,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.7.0...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.1
 [0.7.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.0
 [0.6.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.2
 [0.6.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.6.1
