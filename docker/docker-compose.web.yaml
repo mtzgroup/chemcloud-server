@@ -17,11 +17,11 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.tcc-web-server.rule=Host(${WEBSERVER_TRAEFIK_HOST})
-        - traefik.http.routers.tcc-web-server.entrypoints=https
-        - traefik.http.routers.tcc-web-server.tls=true
-        - traefik.http.routers.tcc-web-server.tls.certresolver=le
-        - traefik.http.services.tcc-web-server-service.loadbalancer.server.port=8000
+        - traefik.http.routers.qcc-web-server.rule=Host(${WEBSERVER_TRAEFIK_HOST})
+        - traefik.http.routers.qcc-web-server.entrypoints=https
+        - traefik.http.routers.qcc-web-server.tls=true
+        - traefik.http.routers.qcc-web-server.tls.certresolver=le
+        - traefik.http.services.qcc-web-server-service.loadbalancer.server.port=8000
 networks:
   traefik-public:
     external: true

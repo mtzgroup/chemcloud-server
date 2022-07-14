@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 from fastapi.param_functions import Form
 from starlette.responses import RedirectResponse
 
-from terachem_cloud import config, models
-from terachem_cloud.auth import _get_matching_rsa_key, _validate_jwt
+from qccloud_server import config, models
+from qccloud_server.auth import _get_matching_rsa_key, _validate_jwt
 
 from .helpers import _auth0_token_request
 
@@ -42,7 +42,7 @@ async def token(
     form_data: OAuth2RequestForm = Depends(),
     settings: config.Settings = Depends(config.get_settings),
 ):
-    """Route for OAuth2 requests to TeraChem Cloud"""
+    """Route for OAuth2 requests to QC Cloud"""
     flow_model: Union[models.OAuth2PasswordFlow, models.OAuth2RefreshFlow]
 
     if form_data.grant_type == "password":
