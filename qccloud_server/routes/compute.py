@@ -3,8 +3,8 @@ from typing import Optional, Type, Union
 from celery.result import AsyncResult
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Path
 
-from terachem_cloud.config import get_settings
-from terachem_cloud.models import (
+from qccloud_server.config import get_settings
+from qccloud_server.models import (
     AtomicInputOrList,
     OptimizationInputOrList,
     Result,

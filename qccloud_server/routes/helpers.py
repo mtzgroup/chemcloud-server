@@ -19,7 +19,7 @@ from qcelemental.models import (
 )
 from tcpb.config import settings as tcpb_settings
 
-from terachem_cloud import config, models
+from qccloud_server import config, models
 
 settings = config.get_settings()
 B64_POSTFIX = "_b64"
@@ -123,7 +123,7 @@ def _bytes_to_b64(
 def _b64_to_bytes(input_data: Union[AtomicInput, OptimizationInput]) -> None:
     """Convert base64 encoded string values to bytes. Modifies inputs in place.
 
-    Because JSON does not have a bytes data type, binary data sent to TCC for
+    Because JSON does not have a bytes data type, binary data sent to QCC for
     processing is first encoded in a b64 string. This function converts these fields
     from to bytes before passing them to the celery backend, which currently operates
     on the pickle serializer and so can handle binary data.
@@ -190,14 +190,14 @@ def signature_from_input(
     """Return the celery signature for a compute task
 
     NOTE: Must pass enum.value to underlying functions so that celery doesn't try to
-        deserialize an object containing references to Enums that live in terachem_cloud
+        deserialize an object containing references to Enums that live in qccloud_server
     """
-    if package == models.SupportedEngines.TCC:
-        tcc_kwargs = input_data.extras.get(settings.tcc_keywords, {})
-        engine = tcc_kwargs.pop(
+    if package == models.SupportedEngines.QCC:
+        qcc_kwargs = input_data.extras.get(settings.qcc_keywords, {})
+        engine = qcc_kwargs.pop(
             "gradient_engine", models.SupportedEngines.TERACHEM_FE.value
         )
-        return compute_tcc(input_data, engine, **tcc_kwargs)
+        return compute_qcc(input_data, engine, **qcc_kwargs)
 
     elif isinstance(input_data, AtomicInput):
         return tasks.compute.s(input_data, package.value)
@@ -205,14 +205,14 @@ def signature_from_input(
         return tasks.compute_procedure.s(input_data, package.value)
 
 
-def compute_tcc(
+def compute_qcc(
     input_data: AtomicInput,
     engine: str = models.SupportedEngines.TERACHEM_FE.value,
     **kwargs,
 ) -> Signature:
-    """Top level function for parallelized TeraChem Cloud algorithms
+    """Top level function for parallelized QC Cloud algorithms
 
-    Use compute_tcc and pass AtomicInput to get back a signature that can be called
+    Use compute_qcc and pass AtomicInput to get back a signature that can be called
     asynchronously.
 
     Params:

@@ -14,8 +14,8 @@ services:
     env_file:
       - ../.env
     volumes:
-      - ../terachem_cloud:/code/terachem_cloud
-    command: uvicorn --host 0.0.0.0 --port 8000 terachem_cloud.main:app --reload
+      - ../qccloud_server:/code/qccloud_server
+    command: uvicorn --host 0.0.0.0 --port 8000 qccloud_server.main:app --reload
 
   worker:
     image: coltonbh/bigqc-worker

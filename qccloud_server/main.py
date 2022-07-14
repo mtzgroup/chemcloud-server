@@ -5,7 +5,7 @@ from fastapi import FastAPI, Security
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from terachem_cloud import __version__
+from qccloud_server import __version__
 
 from .auth import bearer_auth
 from .config import get_settings
@@ -30,7 +30,7 @@ tags_metadata = [
 
 
 app = FastAPI(
-    title="TeraChem Cloud",
+    title="Quantum Chemistry Cloud",
     description="⚛ Quantum Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)",
     version=__version__,
     openapi_tags=tags_metadata,
@@ -58,12 +58,12 @@ async def index():
 
 @app.get("/hello-world", tags=["hello world"])
 async def hello_world(name: Optional[str] = None):
-    return f"Welcome to TeraChem Cloud, {name or 'friend'}"
+    return f"Welcome to Quantum Chemistry Cloud, {name or 'friend'}"
 
 
 @app.get("/signup", include_in_schema=False)
 def signup(redirect_path: str = None):
-    """Convenience URL to sign up for TCC"""
+    """Convenience URL to sign up for QCC"""
     destination_url = "users/login?signup=true"
     if redirect_path:
         destination_url += f"&redirect_path={redirect_path}"
