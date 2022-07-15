@@ -10,32 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Changed distributed algorithms from being called `qcc` algorithms to `bigqc` algorithms to correctly identify where they are coming from.
 
-## [0.8.0]
+## [0.8.0] - 2022-07-14
 
 ### Changed
 
 - Updated project name from TeraChem Cloud to Quantum Chemistry Cloud
 
-## [0.7.2]
+## [0.7.2] - 2022-07-11
 
 ### Changed
 
 - Pass only strings for default values to `compute_tcc` function that executes distributed algorithms. Passing `Enum` values caused celery to try and deserialize objects containing references to the `terachem_cloud` package where the `Enums` were defined.
 
-## [0.7.1]
+## [0.7.1] - 2022-07-12
 
 ### Changed
 
 - Update to BigQCv0.1.3
 
-## [0.7.0]
+## [0.7.0] - 2022-06-14
 
 ### Changed
 
 - Refactored all backend workers and middleware to a separate out the BigQC project. This project now comprises just a web layer on top of the BigQC engine. This change resulted in the need to change a few environment variables to reflect the change to BigQC. `CELERY_BROKER_CONNECTION_STRING` -> `BIGQC_BROKER_URL` and `CELERY_BACKEND_CONNECTION_STRING` -> `BIGQC_BACKEND_URL`.
 - Changed dependencies to reflect the refactor.
 
-## [0.6.2]
+## [0.6.2] - 2022-06-02
 
 ### Changed
 
@@ -43,13 +43,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Increased gunicorn worker timeout from 30s -> 60s to accommodate larger results.
 - Set results to expire in 3 days instead of default 1 day in backend store.
 
-## [0.6.1]
+## [0.6.1] - 2022-04-25
 
 ### Added
 
 - Patched `geomeTRIC` to enable `transition=True` for json inputs used in `QCEngine`
 
-## [0.6.0]
+## [0.6.0] - 2022-04-02
 
 ### Changed
 
@@ -57,13 +57,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Removed much unnecessary internal code around managing Task state due to saving task structure to the DB so that
   clients only have to supply a single task ID regardless if the task is a batch or single calculation.
 
-## [0.5.1]
+## [0.5.1] - 2022-03-27
 
 ### Added
 
 - Base64 encode bytes input values submitted to terachem_fe by client
 
-## [0.5.0]
+## [0.5.0] - 2022-03-26
 
 ### Added
 
@@ -80,7 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated CircleCI python3.7->3.9.
 - Updated XStream TeraChem workers to new image.
 
-## [0.4.2]
+## [0.4.2] - 2021-06-11
 
 ### Added
 
@@ -91,13 +91,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Changed celery serializer from `json` to `pickle`. This allows chained methods to receive python data types directly, rather than serialized representations. Since users do not have direct access to the celery layer and can only submit json serialized (and validated) objects via the API I do not feel there are security risks.
 
-## [0.4.1]
+## [0.4.1] - 2021-06-07
 
 ### Added
 
 - Private queues for compute
 
-## [0.4.0]
+## [0.4.0] - 2021-06-04
 
 ### Added
 
@@ -131,7 +131,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Run compute tests on hydrogen instead of water for faster results
 
-## [0.3.3]
+## [0.3.3] - 2021-05-19
 
 ### Added
 
@@ -144,7 +144,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated `mypy` definitions on `Settings` object to pass `mypy` checks while still allowing tests to run on CircleCi without needing Auth0 configuration. I.e., the web application can be run without needing Auth0 config (for testing purposes).
 - pre-commit `mypy` now loads from GitHub repo instead of local `mypy` install.
 
-## [0.3.2]
+## [0.3.2] - 2021-04-06
 
 ### Added
 
