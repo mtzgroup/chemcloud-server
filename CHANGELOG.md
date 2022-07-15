@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.8.1] - 2022-07-15
+
 ### Changed
 
 - Changed distributed algorithms from being called `qcc` algorithms to `bigqc` algorithms to correctly identify where they are coming from.
@@ -205,7 +207,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/qccloud-server/compare/0.8.0...HEAD
+[unreleased]: https://github.com/mtzgroup/qccloud-server/compare/0.8.1...HEAD
+[0.8.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.8.1
 [0.8.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.8.0
 [0.7.2]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.7.2
 [0.7.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.7.1
