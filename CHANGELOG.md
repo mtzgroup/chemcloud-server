@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Changed distributed algorithms from being called `qcc` algorithms to `bigqc` algorithms to correctly identify where they are coming from.
+
 ## [0.8.0]
 
 ### Changed
@@ -54,7 +58,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   clients only have to supply a single task ID regardless if the task is a batch or single calculation.
 
 ## [0.5.1]
-
 
 ### Added
 

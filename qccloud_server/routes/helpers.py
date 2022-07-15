@@ -192,12 +192,12 @@ def signature_from_input(
     NOTE: Must pass enum.value to underlying functions so that celery doesn't try to
         deserialize an object containing references to Enums that live in qccloud_server
     """
-    if package == models.SupportedEngines.QCC:
-        qcc_kwargs = input_data.extras.get(settings.qcc_keywords, {})
-        engine = qcc_kwargs.pop(
+    if package == models.SupportedEngines.BIGQC:
+        bigqc_kwargs = input_data.extras.get(settings.bigqc_keywords, {})
+        engine = bigqc_kwargs.pop(
             "gradient_engine", models.SupportedEngines.TERACHEM_FE.value
         )
-        return compute_qcc(input_data, engine, **qcc_kwargs)
+        return compute_bigqc(input_data, engine, **bigqc_kwargs)
 
     elif isinstance(input_data, AtomicInput):
         return tasks.compute.s(input_data, package.value)
@@ -205,12 +205,12 @@ def signature_from_input(
         return tasks.compute_procedure.s(input_data, package.value)
 
 
-def compute_qcc(
+def compute_bigqc(
     input_data: AtomicInput,
     engine: str = models.SupportedEngines.TERACHEM_FE.value,
     **kwargs,
 ) -> Signature:
-    """Top level function for parallelized QC Cloud algorithms
+    """Top level function for parallelized BigQC algorithms
 
     Use compute_qcc and pass AtomicInput to get back a signature that can be called
     asynchronously.
