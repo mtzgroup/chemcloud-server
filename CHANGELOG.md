@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.8.0]
+
 ### Changed
 
 - Updated project name from TeraChem Cloud to Quantum Chemistry Cloud
@@ -52,6 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   clients only have to supply a single task ID regardless if the task is a batch or single calculation.
 
 ## [0.5.1]
+
 
 ### Added
 
@@ -199,7 +202,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.7.2...HEAD
+[unreleased]: https://github.com/mtzgroup/terachem-cloud/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.8.0
 [0.7.2]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.2
 [0.7.1]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.1
 [0.7.0]: https://github.com/mtzgroup/terachem-cloud/releases/tag/0.7.0
