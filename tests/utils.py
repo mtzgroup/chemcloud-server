@@ -4,7 +4,7 @@ from typing import Union
 import pytest
 from requests.exceptions import HTTPError
 
-from terachem_cloud.models import Result, ResultGroup, TaskState
+from qccloud_server.models import Result, ResultGroup, TaskState
 
 
 def _get_result(client, settings, task_id) -> Union[Result, ResultGroup]:

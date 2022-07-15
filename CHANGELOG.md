@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated project name from TeraChem Cloud to Quantum Chemistry Cloud
+
 ## [0.7.2]
 
 ### Changed
@@ -160,7 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - XStream deployment for both dev and prod now require GPUs to power Terachem. Deployment config for dev/prod was split into `docker-compose.xstream.dev.yaml` and `docker-compose.xstream.prod.yaml`.
 - TeraChem license.key docker secret to swarm on XStream
 - `architecture.md` to `/docs/development` to document core architectural decisions.
-- Links on user dashboard to `tccloud` python client, `/logout`, and a brief description of how to change password.
+- Links on user dashboard to `qccloud` python client, `/logout`, and a brief description of how to change password.
 - Links to `users/dashboard` on the main documentation page.
 - Forgotten `__init__.py` to `terachem_cloud` package. Added `__version__` to file. This causes `mypy` checks to fail as they were previously not inspecting this package fully due to missing `__init__.py`.
 - `TaskStatus` enum to hold task status values.

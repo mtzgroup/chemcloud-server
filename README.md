@@ -1,6 +1,6 @@
-# TeraChem Cloud
+# Quantum Chemistry Cloud
 
-Perform quantum calculations in the cloud. Interactive API documentation [here](https://tccloud.mtzlab.com/docs)
+Perform quantum calculations in the cloud. Interactive API documentation [here](https://qccloud.mtzlab.com/docs)
 
 ## Development
 
@@ -17,7 +17,7 @@ pipenv run pre-commit install # installs hooks for commit stage
 pipenv run pre-commit install --hook-type pre-push # install hooks for push stage
 ```
 
-### Run local TeraChem Cloud for dev
+### Run local Quantum Chemistry Cloud for dev
 
 Run webserver, redis backend, rabbitmq broker, and Psi4-powered non-GPU accelerated worker instance. This command will build images for the web server and for the celery worker. It will mount the local code into the webserver so that it hot-reloads any changes made to the codebase. The worker can actively pickup tasks and run them.
 
@@ -42,33 +42,33 @@ docker-compose -f docker/docker-compose.local.yaml up -d --build [services_of_in
 Run non-dockerized local bigqc worker
 
 ```sh
-pipenv run celery -A terachem_cloud.workers.tasks worker --loglevel=INFO
+pipenv run celery -A qccloud_server.workers.tasks worker --loglevel=INFO
 ```
 
 Run non-dockerized web server
 
 ```sh
-pipenv run uvicorn terachem_cloud.main:app --reload
+pipenv run uvicorn qccloud_server.main:app --reload
 ```
 
 ### Development on Fire (or any machine with GPUs)
 
 Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigQC` worker can send work to it. Simply include `terachem` and `file-server` in the list of `services_of_interest` in the `docker-compose` commands noted above.
 
-If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separation container and network it to the `TeraChem Cloud` stack. The additional `docker-compose.fire.yaml` file places all services on an external `tcc` network. Then when starting terachem via the docker command below it is also added to the network. The .env variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
+If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separation container and network it to the `QC Cloud` stack. The additional `docker-compose.fire.yaml` file places all services on an external `qcc` network. Then when starting terachem via the docker command below it is also added to the network. The .env variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
 
 ```sh
 docker-compose -f docker/docker-compose.local.yaml -f docker/docker-compose.fire.yaml up -d --build web-server mq redis worker
 
-docker run -d --rm -v terachem-scratch:/scratch -v /home/coltonbh/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="tcc" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
+docker run -d --rm -v terachem-scratch:/scratch -v /home/coltonbh/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="qcc" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
 
 # To stop worker
-docker stop tcc_worker
+docker stop qcc_worker
 ```
 
 ### Manage environment and Auth0 for local development
 
-Settings are managed in `terachem_cloud/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. If you need authentication to work for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly, though authentication-required endpoints will not work if hand-testing since a mocked auth system for local development has not been created.
+Settings are managed in `qccloud_server/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. If you need authentication to work for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly, though authentication-required endpoints will not work if hand-testing since a mocked auth system for local development has not been created.
 
 ```
 AUTH0_DOMAIN=
@@ -90,7 +90,7 @@ A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a
 ## Deployment
 
 - Full CI/CD is handled via [CircleCi](https://circleci.com). See `.circleci/config.yml` for details.
-- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/terachem-cloud-worker:testing` image that the CI/CD pipeline uses for tests. This worker image is a build of the `docker/celeryworker.dockerfile` image. CircleCi pulls this image from the `mtzgroup` Docker Hub account when it runs the CI/CD pipeline rather than building it from scratch each time since it takes ages to build the image on the small, free CircleCI servers.
+- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/qccloud-cloud-worker:testing` image that the CI/CD pipeline uses for tests. This worker image is a build of the `docker/celeryworker.dockerfile` image. CircleCi pulls this image from the `mtzgroup` Docker Hub account when it runs the CI/CD pipeline rather than building it from scratch each time since it takes ages to build the image on the small, free CircleCI servers.
 
 ### Web Services
 
