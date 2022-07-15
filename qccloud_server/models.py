@@ -17,18 +17,18 @@ PossibleResults = Union[SuccessfulResults, FailedOperation]
 
 
 class SupportedEngines(str, Enum):
-    """Compute engines currently supported by TeraChem Cloud"""
+    """Compute engines currently supported by QC Cloud"""
 
     PSI4 = "psi4"
     TERACHEM_FE = "terachem_fe"
     RDKIT = "rdkit"
     XTB = "xtb"
-    # TeraChem Cloud specific algorithms
-    TCC = "tcc"
+    # QC Cloud specific algorithms
+    QCC = "qcc"
 
 
 class SupportedProcedures(str, Enum):
-    """Procedures currently supported by TeraChem Cloud"""
+    """Procedures currently supported by QC Cloud"""
 
     BERNY = "berny"
     GEOMETRIC = "geometric"

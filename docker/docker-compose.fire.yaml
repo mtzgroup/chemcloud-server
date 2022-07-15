@@ -4,25 +4,25 @@ version: "3"
 services:
   web-server:
     networks:
-      - tcc
+      - qcc
   mq:
     networks:
-      - tcc
+      - qcc
 
   redis:
     networks:
-      - tcc
+      - qcc
 
   worker:
     volumes:
       - terachem-scratch:/scratch
     networks:
-      - tcc
+      - qcc
 
 volumes:
   terachem-scratch:
     external: true
 
 networks:
-  tcc:
+  qcc:
     external: true

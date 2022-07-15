@@ -10,9 +10,9 @@ from qcelemental.models import (
     OptimizationResult,
 )
 
-from terachem_cloud.auth import bearer_auth
-from terachem_cloud.config import get_settings
-from terachem_cloud.main import app
+from qccloud_server.auth import bearer_auth
+from qccloud_server.config import get_settings
+from qccloud_server.main import app
 
 
 @pytest.fixture(scope="session")
@@ -28,7 +28,7 @@ def fake_auth():
         return {
             "iss": "https://dev-mtzlab.us.auth0.com/",
             "sub": "auth0|5fb8828f1bda000075e14b0a",
-            "aud": "https://terachemcloud.dev.mtzlab.com",
+            "aud": "https://qccloud.dev.mtzlab.com",
             "iat": 1606866842,
             "exp": 1606953242,
             "azp": "lQvfKdlfxLE0E9mVEIl58Wi9gX2AwWop",  # pragma: allowlist secret
@@ -127,5 +127,5 @@ def opt_result(atomic_result, opt_input):
 
 @pytest.fixture(scope="session")
 def settings():
-    """TeraChem Cloud application settings"""
+    """QC Cloud application settings"""
     return get_settings()

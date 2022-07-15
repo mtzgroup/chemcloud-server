@@ -12,9 +12,9 @@ parameters:
     type: string
     default: mtzgroup
 
-  tcc_docker_repo:
+  qcc_docker_repo:
     type: string
-    default: terachem-cloud
+    default: qccloud-server
 
   server_stacks_directory:
     type: string
@@ -108,7 +108,7 @@ jobs:
           key: v2-pipfile-lock-{{checksum "Pipfile.lock"}}
       - run:
           name: isort
-          command: isort --check-only --diff terachem_cloud tests
+          command: isort --check-only --diff qccloud_server tests
   mypy:
     resource_class: small
     docker:
@@ -142,12 +142,6 @@ jobs:
         type: string
     docker:
       - image: cimg/base:2020.01
-        environment:
-          DOCKER_PROFILE: mtzgroup
-          DOCKER_REPO_TCC: terachem-cloud
-          DOCKER_REPO_TCC_WORKER: terachem-cloud-worker
-          WEBSERVER_DOCKERFILE: server.dockerfile
-          WORKER_DOCKERFILE: celeryworker.dockerfile
     steps:
       - checkout
       - setup_remote_docker:
@@ -184,14 +178,14 @@ jobs:
       - image: cimg/base:2020.01
         environment:
           DOCKER_COMPOSE_FILENAME: docker-compose.web.yaml
-          SERVER_FILEPATH: << pipeline.parameters.server_stacks_directory >>/tcc
+          SERVER_FILEPATH: << pipeline.parameters.server_stacks_directory >>/qcc
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - << parameters.ssh-fingerprint >>
       - full_image_name:
-          docker_repo: << pipeline.parameters.tcc_docker_repo >>
+          docker_repo: << pipeline.parameters.qcc_docker_repo >>
       - run:
           name: Fill docker-compose template with context
           command: |
@@ -213,7 +207,7 @@ jobs:
             ssh root@${MTZLAB_SWARM_HOST} ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin" #  pragma: allowlist secret
       - run:
           name: Deploy docker stack on server
-          command: ssh root@${MTZLAB_SWARM_HOST} "docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} tcc"
+          command: ssh root@${MTZLAB_SWARM_HOST} "docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} qcc"
 
 workflows:
   main:
@@ -250,7 +244,7 @@ workflows:
           requires:
             - test_code
             - build_web_approval
-          docker_repo: terachem-cloud
+          docker_repo: qccloud-server
           dockerfile_name: server.dockerfile
           filters:
             tags:

@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     max_batch_inputs: int = 100
     # Finite difference step
     hessian_default_dh: float = 5.0e-3
-    tcc_keywords: str = "tcc:keywords"
+    qcc_keywords: str = "qcc:keywords"
 
     # NOTE: Adding "" values as defaults so tests can run on CircleCi without having
     # to set these auth0 values
