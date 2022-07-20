@@ -1,6 +1,6 @@
 # bash-able variables for docker-compose.web.yaml
 
-WEBSERVER_TRAEFIK_HOST=\`qccloud.mtzlab.com\`,\`tccloud.mtzlab.com\`
+WEBSERVER_TRAEFIK_HOST=\`chemcloud.mtzlab.com\`,\`tccloud.mtzlab.com\`
 
 MQ_CONSOLE_TRAEFIK_HOST=\`rabbitmq.mtzlab.com\`
 

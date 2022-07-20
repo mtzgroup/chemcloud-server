@@ -10,9 +10,9 @@ from qcelemental.models import (
     OptimizationResult,
 )
 
-from qccloud_server.auth import bearer_auth
-from qccloud_server.config import get_settings
-from qccloud_server.main import app
+from chemcloud_server.auth import bearer_auth
+from chemcloud_server.config import get_settings
+from chemcloud_server.main import app
 
 
 @pytest.fixture(scope="session")
@@ -28,7 +28,7 @@ def fake_auth():
         return {
             "iss": "https://dev-mtzlab.us.auth0.com/",
             "sub": "auth0|5fb8828f1bda000075e14b0a",
-            "aud": "https://qccloud.dev.mtzlab.com",
+            "aud": "https://chemcloud.dev.mtzlab.com",
             "iat": 1606866842,
             "exp": 1606953242,
             "azp": "lQvfKdlfxLE0E9mVEIl58Wi9gX2AwWop",  # pragma: allowlist secret

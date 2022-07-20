@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 from fastapi.param_functions import Form
 from starlette.responses import RedirectResponse
 
-from qccloud_server import config, models
-from qccloud_server.auth import _get_matching_rsa_key, _validate_jwt
+from chemcloud_server import config, models
+from chemcloud_server.auth import _get_matching_rsa_key, _validate_jwt
 
 from .helpers import _auth0_token_request
 

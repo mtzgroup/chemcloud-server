@@ -19,10 +19,10 @@ COPY Pipfile Pipfile.lock ./
 # Install to system python, no need for pipenv virtual env
 RUN pipenv install --system --deploy
 COPY static ./static
-COPY qccloud_server/ ./qccloud_server
+COPY chemcloud_server/ ./chemcloud_server
 
 EXPOSE 8000
 
 # https://docs.gunicorn.org/en/stable/design.html#how-many-workers
 # Timeout to 60s for larger results that require more time to collect from redis
-CMD ["sh", "-c", "gunicorn qccloud_server.main:app -w 2 -k uvicorn.workers.UvicornWorker --keep-alive 650 --timeout 60 -b 0.0.0.0:8000 --access-logfile -"]
+CMD ["sh", "-c", "gunicorn chemcloud_server.main:app -w 2 -k uvicorn.workers.UvicornWorker --keep-alive 650 --timeout 60 -b 0.0.0.0:8000 --access-logfile -"]

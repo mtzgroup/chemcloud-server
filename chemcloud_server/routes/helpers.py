@@ -3,9 +3,9 @@ from base64 import b64decode, b64encode
 from typing import Any, Dict, List, Optional, Union
 
 import httpx
-from bigqc import tasks
-from bigqc.algos import parallel_frequency_analysis, parallel_hessian
-from bigqc.app import bigqc
+from bigchem import tasks
+from bigchem.algos import parallel_frequency_analysis, parallel_hessian
+from bigchem.app import bigchem
 from celery.canvas import Signature, group
 from celery.result import AsyncResult, GroupResult, ResultBase, result_from_tuple
 from fastapi import HTTPException
@@ -19,7 +19,7 @@ from qcelemental.models import (
 )
 from tcpb.config import settings as tcpb_settings
 
-from qccloud_server import config, models
+from chemcloud_server import config, models
 
 settings = config.get_settings()
 B64_POSTFIX = "_b64"
@@ -154,7 +154,7 @@ def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
         ValueError if result not found in backend
     """
     try:
-        return result_from_tuple(json.loads(bigqc.backend.get(result_id)))
+        return result_from_tuple(json.loads(bigchem.backend.get(result_id)))
     except TypeError:
         raise ValueError(f"Result id '{result_id}', not found.")
 
@@ -190,14 +190,14 @@ def signature_from_input(
     """Return the celery signature for a compute task
 
     NOTE: Must pass enum.value to underlying functions so that celery doesn't try to
-        deserialize an object containing references to Enums that live in qccloud_server
+        deserialize an object containing references to Enums that live in chemcloud_server
     """
-    if package == models.SupportedEngines.BIGQC:
-        bigqc_kwargs = input_data.extras.get(settings.bigqc_keywords, {})
-        engine = bigqc_kwargs.pop(
+    if package == models.SupportedEngines.BIGCHEM:
+        bigchem_kwargs = input_data.extras.get(settings.bigchem_keywords, {})
+        engine = bigchem_kwargs.pop(
             "gradient_engine", models.SupportedEngines.TERACHEM_FE.value
         )
-        return compute_bigqc(input_data, engine, **bigqc_kwargs)
+        return compute_bigchem(input_data, engine, **bigchem_kwargs)
 
     elif isinstance(input_data, AtomicInput):
         return tasks.compute.s(input_data, package.value)
@@ -205,12 +205,12 @@ def signature_from_input(
         return tasks.compute_procedure.s(input_data, package.value)
 
 
-def compute_bigqc(
+def compute_bigchem(
     input_data: AtomicInput,
     engine: str = models.SupportedEngines.TERACHEM_FE.value,
     **kwargs,
 ) -> Signature:
-    """Top level function for parallelized BigQC algorithms
+    """Top level function for parallelized BigChem algorithms
 
     Use compute_qcc and pass AtomicInput to get back a signature that can be called
     asynchronously.
@@ -218,8 +218,8 @@ def compute_bigqc(
     Params:
         input_data: Input specification; driver may be hessian or properties
         engine: Compute engine to use for gradient calculations. Must pass string rather
-            than Enum so that BigQC deserialization doesn't try to deserialize an object
-            containing Enums from qccloud package.
+            than Enum so that BigChem deserialization doesn't try to deserialize an object
+            containing Enums from chemcloud package.
         kwargs: kwargs for parallel_hessian or parallel_frequency_analysis
     """
 
