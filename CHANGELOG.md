@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.9.0] - 2022-07-19
+
 ### Changed
 
 - Changed projects name from `QCCloud` to `ChemCloud`
@@ -212,26 +214,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/qccloud-server/compare/0.8.1...HEAD
-[0.8.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.8.1
-[0.8.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.8.0
-[0.7.2]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.7.2
-[0.7.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.7.1
-[0.7.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.7.0
-[0.6.2]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.6.2
-[0.6.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.6.1
-[0.6.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.6.0
-[0.5.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.5.1
-[0.5.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.5.0
-[0.4.2]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.4.2
-[0.4.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.4.1
-[0.4.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.4.0
-[0.3.5]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.5
-[0.3.4]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.4
-[0.3.3]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.3
-[0.3.2]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.2
-[0.3.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.1
-[0.3.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.3.0
-[0.2.1]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.2.1
-[0.2.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.2.0
-[0.1.0]: https://github.com/mtzgroup/qccloud-server/releases/tag/0.1.0
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.0
+[0.8.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.8.1
+[0.8.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.8.0
+[0.7.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.7.2
+[0.7.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.7.1
+[0.7.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.7.0
+[0.6.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.6.2
+[0.6.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.6.1
+[0.6.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.6.0
+[0.5.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.5.1
+[0.5.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.5.0
+[0.4.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.4.2
+[0.4.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.4.1
+[0.4.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.4.0
+[0.3.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.5
+[0.3.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.4
+[0.3.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.3
+[0.3.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.2
+[0.3.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.1
+[0.3.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.3.0
+[0.2.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.2.1
+[0.2.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.2.0
+[0.1.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.1.0
