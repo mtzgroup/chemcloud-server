@@ -23,8 +23,8 @@ class SupportedEngines(str, Enum):
     TERACHEM_FE = "terachem_fe"
     RDKIT = "rdkit"
     XTB = "xtb"
-    # BigQC distributed algorithms
-    BIGQC = "bigqc"
+    # BigChem distributed algorithms
+    BIGCHEM = "bigchem"
 
 
 class SupportedProcedures(str, Enum):

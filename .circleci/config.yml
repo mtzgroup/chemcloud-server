@@ -12,9 +12,9 @@ parameters:
     type: string
     default: mtzgroup
 
-  qcc_docker_repo:
+  chemcloud_docker_repo:
     type: string
-    default: qccloud-server
+    default: chemcloud-server
 
   server_stacks_directory:
     type: string
@@ -50,8 +50,8 @@ jobs:
       - image: circleci/python:3.9
       - image: rabbitmq:3.8-alpine
       - image: redis:6-alpine
-      - image: coltonbh/bigqc-worker
-        command: celery -A bigqc.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
+      - image: coltonbh/bigchem-worker
+        command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
     steps:
       - checkout
       - restore_cache:
@@ -108,7 +108,7 @@ jobs:
           key: v2-pipfile-lock-{{checksum "Pipfile.lock"}}
       - run:
           name: isort
-          command: isort --check-only --diff qccloud_server tests
+          command: isort --check-only --diff chemcloud_server tests
   mypy:
     resource_class: small
     docker:
@@ -178,14 +178,14 @@ jobs:
       - image: cimg/base:2020.01
         environment:
           DOCKER_COMPOSE_FILENAME: docker-compose.web.yaml
-          SERVER_FILEPATH: << pipeline.parameters.server_stacks_directory >>/qcc
+          SERVER_FILEPATH: << pipeline.parameters.server_stacks_directory >>/chemcloud
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - << parameters.ssh-fingerprint >>
       - full_image_name:
-          docker_repo: << pipeline.parameters.qcc_docker_repo >>
+          docker_repo: << pipeline.parameters.chemcloud_docker_repo >>
       - run:
           name: Fill docker-compose template with context
           command: |
@@ -207,7 +207,7 @@ jobs:
             ssh root@${MTZLAB_SWARM_HOST} ESCAPED_DOCKERHUB_PASSWORD=${ESCAPED_DOCKERHUB_PASSWORD} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} "echo ${ESCAPED_DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin" #  pragma: allowlist secret
       - run:
           name: Deploy docker stack on server
-          command: ssh root@${MTZLAB_SWARM_HOST} "docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} qcc"
+          command: ssh root@${MTZLAB_SWARM_HOST} "docker stack deploy --prune --with-registry-auth -c ${SERVER_FILEPATH}/${DOCKER_COMPOSE_FILENAME} chemcloud"
 
 workflows:
   main:
@@ -244,7 +244,7 @@ workflows:
           requires:
             - test_code
             - build_web_approval
-          docker_repo: qccloud-server
+          docker_repo: chemcloud-server
           dockerfile_name: server.dockerfile
           filters:
             tags:

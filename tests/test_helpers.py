@@ -1,7 +1,7 @@
 from qcelemental.models import AtomicResult, OptimizationResult
 from tcpb.config import settings as tcpb_settings
 
-from qccloud_server.routes.helpers import _b64_to_bytes, _bytes_to_b64
+from chemcloud_server.routes.helpers import _b64_to_bytes, _bytes_to_b64
 
 
 def test_b64_to_bytes_atomic_input(atomic_input):

@@ -8,8 +8,8 @@ from qcelemental.models.common_models import Model
 
 HOSTS = {
     "local": "http://localhost:8000",
-    "dev": "https://qccloud.dev.mtzlab.com",
-    "prod": "https://qccloud.mtzlab.com",
+    "dev": "https://chemcloud.dev.mtzlab.com",
+    "prod": "https://chemcloud.mtzlab.com",
 }
 
 API_PREFIX = "/api/v1"

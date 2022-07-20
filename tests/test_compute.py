@@ -258,7 +258,7 @@ def test_compute_procedure_group_limits(
 
 @pytest.mark.skip("Long test so skipping for brevity")  # Comment out to run test
 @pytest.mark.parametrize(
-    "driver,model,bigqc_keywords,group",
+    "driver,model,bigchem_keywords,group",
     (
         (
             "hessian",
@@ -287,14 +287,14 @@ def test_compute_procedure_group_limits(
 )
 @pytest.mark.timeout(450)
 def test_compute_qcc_engine(
-    settings, client, fake_auth, water, driver, model, bigqc_keywords, group
+    settings, client, fake_auth, water, driver, model, bigchem_keywords, group
 ):
     """Test QC Cloud specific methods"""
     atomic_input = AtomicInput(
         molecule=water,
         driver=driver,
         model=model,
-        extras={settings.bigqc_keywords: bigqc_keywords},
+        extras={settings.bigchem_keywords: bigchem_keywords},
     )
     if group:
         atomic_input = [atomic_input, atomic_input]
@@ -303,7 +303,7 @@ def test_compute_qcc_engine(
     job_submission = client.post(
         f"{settings.api_v1_str}/compute",
         data=json_dumps(atomic_input),
-        params={"engine": "bigqc"},
+        params={"engine": "bigchem"},
     )
     as_dict = job_submission.json()
 

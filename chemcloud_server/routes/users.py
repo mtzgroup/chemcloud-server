@@ -5,8 +5,8 @@ from fastapi import APIRouter, Cookie, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jose import jwt
 
-from qccloud_server import config
-from qccloud_server.auth import _get_matching_rsa_key, _validate_jwt
+from chemcloud_server import config
+from chemcloud_server.auth import _get_matching_rsa_key, _validate_jwt
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +45,10 @@ async def dashboard(
                 <link rel="icon" href="/favicon.ico" type="image/icon">
             </head>
             <body>
-                <h3>✨ You are registered for Quantum Chemistry Cloud! Your username is: {id_payload['email']} ✨</h3>
+                <h3>✨ You are registered for ChemCloud! Your username is: {id_payload['email']} ✨</h3>
                 <ul>
-                    <li>Install the <a href="https://pypi.org/project/qccloud/" target="_blank">python client</a> and get coding!</li>
-                    <li>Check out the <a href="/docs">interactive docs</a> to learn more about Quantum Chemistry Cloud data types.</li>
+                    <li>Install the <a href="https://pypi.org/project/chemcloud/" target="_blank">python client</a> and get coding!</li>
+                    <li>Check out the <a href="/docs">interactive docs</a> to learn more about ChemCloud data types.</li>
                     <li>If you need to change your password please logout, then click "Dashboard", then click "Forgot Password".</li>
                     <li><a href="/users/logout">Logout</a></li>
                 </ul>
