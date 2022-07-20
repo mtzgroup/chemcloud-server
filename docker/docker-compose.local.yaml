@@ -9,27 +9,27 @@ services:
       - 8000:8000
     environment:
       # Connect to rabbit and redis over docker network instead of localhost
-      - bigqc_broker_url=amqp://mq
-      - bigqc_backend_url=redis://redis/0
+      - bigchem_broker_url=amqp://mq
+      - bigchem_backend_url=redis://redis/0
     env_file:
       - ../.env
     volumes:
-      - ../qccloud_server:/code/qccloud_server
-    command: uvicorn --host 0.0.0.0 --port 8000 qccloud_server.main:app --reload
+      - ../chemcloud_server:/code/chemcloud_server
+    command: uvicorn --host 0.0.0.0 --port 8000 chemcloud_server.main:app --reload
 
   worker:
-    image: coltonbh/bigqc-worker
+    image: coltonbh/bigchem-worker
     depends_on:
       - mq
       - redis
     environment:
-      - bigqc_broker_url=amqp://mq
-      - bigqc_backend_url=redis://redis/0
+      - bigchem_broker_url=amqp://mq
+      - bigchem_backend_url=redis://redis/0
       - TERACHEM_FE_HOST=file-server
     env_file:
       - ../.env
     # Run worker listening to default queue and private_queue
-    command: celery -A bigqc.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
+    command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
   mq:
     image: rabbitmq:3.8-management-alpine

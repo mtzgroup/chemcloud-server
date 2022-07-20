@@ -3,6 +3,7 @@
         "amqp",
         "amqps",
         "BERNY",
+        "bigchem",
         "bigqc",
         "dtype",
         "freqs",

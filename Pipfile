@@ -31,7 +31,7 @@ tcpb = ">=0.12.0"
 cached-property = "*"
 qcelemental = "==0.24.0"
 fastapi = "==0.65.1"
-bigqc = {ref = "0.1.3", git = "https://github.com/coltonbh/bigqc.git"}
+bigchem = {ref = "0.2.0", git = "https://github.com/coltonbh/bigchem.git"}
 
 [requires]
 python_version = "3.9"

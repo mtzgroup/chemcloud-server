@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.security.oauth2 import SecurityScopes
 from jose import jwt
 
-from qccloud_server import config
+from chemcloud_server import config
 
 from .config import get_settings
 
@@ -13,7 +13,7 @@ oauth2_password_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/oauth/token",
     scopes={
         "compute:public": "Perform computations and retrieve results as a public user.",
-        "compute:private": "Perform computations and retrieve results computed on private Quantum Chemistry Connect instances.",
+        "compute:private": "Perform computations and retrieve results computed on private ChemCloud Connect instances.",
     },
 )
 

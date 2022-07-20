@@ -1,6 +1,6 @@
-# Quantum Chemistry Cloud
+# ChemCloud
 
-Perform quantum calculations in the cloud. Interactive API documentation [here](https://qccloud.mtzlab.com/docs)
+Perform computational chemistry calculations via http requests/responses. Interactive API documentation [here](https://chemcloud.mtzlab.com/docs)
 
 ## Development
 
@@ -17,7 +17,7 @@ pipenv run pre-commit install # installs hooks for commit stage
 pipenv run pre-commit install --hook-type pre-push # install hooks for push stage
 ```
 
-### Run local Quantum Chemistry Cloud for dev
+### Run local ChemCloud for dev
 
 Run webserver, redis backend, rabbitmq broker, and Psi4-powered non-GPU accelerated worker instance. This command will build images for the web server and for the celery worker. It will mount the local code into the webserver so that it hot-reloads any changes made to the codebase. The worker can actively pickup tasks and run them.
 
@@ -39,21 +39,21 @@ For more granularity you can use docker to run various components of the service
 docker-compose -f docker/docker-compose.local.yaml up -d --build [services_of_interest]
 ```
 
-Run non-dockerized local bigqc worker
+Run non-dockerized local bigchem worker
 
 ```sh
-pipenv run celery -A qccloud_server.workers.tasks worker --loglevel=INFO
+pipenv run celery -A chemcloud_server.workers.tasks worker --loglevel=INFO
 ```
 
 Run non-dockerized web server
 
 ```sh
-pipenv run uvicorn qccloud_server.main:app --reload
+pipenv run uvicorn chemcloud_server.main:app --reload
 ```
 
 ### Development on Fire (or any machine with GPUs)
 
-Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigQC` worker can send work to it. Simply include `terachem` and `file-server` in the list of `services_of_interest` in the `docker-compose` commands noted above.
+Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigChem` worker can send work to it. Simply include `terachem` and `file-server` in the list of `services_of_interest` in the `docker-compose` commands noted above.
 
 If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separation container and network it to the `QC Cloud` stack. The additional `docker-compose.fire.yaml` file places all services on an external `qcc` network. Then when starting terachem via the docker command below it is also added to the network. The .env variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
 
@@ -68,7 +68,7 @@ docker stop qcc_worker
 
 ### Manage environment and Auth0 for local development
 
-Settings are managed in `qccloud_server/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. If you need authentication to work for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly, though authentication-required endpoints will not work if hand-testing since a mocked auth system for local development has not been created.
+Settings are managed in `chemcloud_server/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. If you need authentication to work for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly, though authentication-required endpoints will not work if hand-testing since a mocked auth system for local development has not been created.
 
 ```
 AUTH0_DOMAIN=
@@ -90,16 +90,15 @@ A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a
 ## Deployment
 
 - Full CI/CD is handled via [CircleCi](https://circleci.com). See `.circleci/config.yml` for details.
-- NOTE: If you add celery tasks you'll need to rebuild and push the `mtzgroup/qccloud-cloud-worker:testing` image that the CI/CD pipeline uses for tests. This worker image is a build of the `docker/celeryworker.dockerfile` image. CircleCi pulls this image from the `mtzgroup` Docker Hub account when it runs the CI/CD pipeline rather than building it from scratch each time since it takes ages to build the image on the small, free CircleCI servers.
 
 ### Web Services
 
 - In the directory on the server from which the `docker-compose.web.yaml` file will deploy, create the following files and populate with their correct secrets:
   - server.env
     - `BASE_URL=https://yourdomain.com`
-    - `BIGQC_BROKER_URL=amqp://${USERNAME}:${PASSWORD}@mq:5672` # pragma: allowlist secret
+    - `BIGCHEM_BROKER_URL=amqp://${USERNAME}:${PASSWORD}@mq:5672` # pragma: allowlist secret
       - Note that the host should correspond to the service name for the `rabbitmq` instance found in the `docker-compose.web.yaml` file since we want the web server to connect locally rather than over the open internet. Also, note we are connecting to the port on which `rabbitmq` is running _insecurely_ on the stack. Traefik is providing TLS termination for external services that must connect _securely_ to `rabbit`.
-    - `BIGQC_BACKEND_URL=redis://:${PASSWORD}@redis:6379/0`
+    - `BIGCHEM_BACKEND_URL=redis://:${PASSWORD}@redis:6379/0`
       - See note above for `rabbitmq`. Same logic applies.
     - `AUTH0_DOMAIN=xxx`
     - `AUTH0_CLIENT_ID=xxx`
@@ -114,7 +113,7 @@ A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a
 ### Workers
 
 - In the directory on the server from which the `docker-compose.worker.yaml` file will deploy, create the following files and populate with their correct secrets:
-  - `BIGQC_BROKER_URL=amqps://${USERNAME}:${PASSWORD}@rmq.dev.mtzlab.com:5671`
+  - `BIGCHEM_BROKER_URL=amqps://${USERNAME}:${PASSWORD}@rmq.dev.mtzlab.com:5671`
     - Note the amqpS protocol. Since we are connecting over the open internet we require TLS. Also note the use of the `5671` _secure_ port for `amqps` connections. This is the port on which `traefik` is listening for `amqps` connections.
-  - `BIGQC_BACKEND_URL=rediss://:${PASSWORD}@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE`
+  - `BIGCHEM_BACKEND_URL=rediss://:${PASSWORD}@redis.dev.mtzlab.com:6379/0?ssl_cert_reqs=CERT_NONE`
     - Same logic for the `rabbitmq` connection string applies here. Note that we do not verify the SSL certificate. This is because `traefik` is dynamically generating and renewing SSL certificates so we do not have a "permanent" certificate that we can place on the client and use for verification. Very low risk of man-in-the-middle attacks here.

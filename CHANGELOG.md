@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Changed projects name from `QCCloud` to `ChemCloud`
+- Updated `bigqc` to `bigchem`
+
 ## [0.8.1] - 2022-07-15
 
 ### Changed
