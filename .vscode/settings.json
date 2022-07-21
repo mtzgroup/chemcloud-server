@@ -15,12 +15,14 @@
         "qcelemental",
         "qcengine",
         "qcng",
+        "rabbitmq",
         "RDKIT",
         "reqs",
         "tcfe",
         "terachem",
         "Umberto's",
-        "UNPROCESSABLE"
+        "UNPROCESSABLE",
+        "uvicorn"
     ],
     "python.formatting.provider": "black"
 }
