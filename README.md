@@ -31,6 +31,12 @@ pipenv run uvicorn chemcloud_server.main:app --reload
 
 Check that your installation is working correctly by running the tests. If test fail see [note below](#testing-memory-allocation) about allocating enough memory for docker. A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of code coverage.
 
+First create an empty `.env` file in the root directory (only need to create this file once)
+
+```sh
+touch .env
+```
+
 ```sh
 pipenv run tests
 ```
@@ -38,12 +44,6 @@ pipenv run tests
 #### Run ChemCloud Server and BigChem Compute Backend
 
 Run the ChemCloud server and BigChem compute backend (rabbitmq, redis, and [psi4](https://psicode.org/)-powered worker instance). The following will build images for the web server and pull down the latest `BigChem` worker image. It will mount the local code into the web server so that it hot-reloads any changes made to the codebase. The worker can actively pickup tasks and run them. Authentication will not work until the correct environment variables are added to the `.env` file, see [Manage environment and Auth0 for local development](#manage-environment-and-auth0-for-local-development) below.
-
-First create an empty `.env` file in the root directory
-
-```sh
-touch .env
-```
 
 Start ChemCloud-server and BigChem compute backend.
 
