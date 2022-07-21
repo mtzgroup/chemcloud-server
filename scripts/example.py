@@ -1,5 +1,6 @@
 """A simple script to exercise the web app and celery to compute a result."""
 import sys
+from getpass import getpass
 from time import sleep
 
 import httpx
@@ -27,10 +28,8 @@ if __name__ == "__main__":
 
     HOST = HOSTS[env]
     # Get auth token
-    # username = input("Please enter your username: ")
-    # password = getpass()
-    username = "colton@coltonhicks.com"
-    password = "***REMOVED***"
+    username = input("Please enter your username: ")
+    password = getpass()
     print("Getting auth token...")
     data = {
         "grant_type": "password",
