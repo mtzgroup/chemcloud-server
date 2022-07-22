@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  web-server:
+  chemcloud:
     build:
       context: ../.
       dockerfile: ./docker/server.dockerfile
@@ -9,29 +9,30 @@ services:
       - 8000:8000
     environment:
       # Connect to rabbit and redis over docker network instead of localhost
-      - bigchem_broker_url=amqp://mq
-      - bigchem_backend_url=redis://redis/0
+      - bigchem_broker_url=amqp://bigchem-broker
+      - bigchem_backend_url=redis://bigchem-backend/0
     env_file:
       - ../.env
     volumes:
       - ../chemcloud_server:/code/chemcloud_server
     command: uvicorn --host 0.0.0.0 --port 8000 chemcloud_server.main:app --reload
 
-  worker:
+  bigchem-worker:
     image: coltonbh/bigchem-worker
     depends_on:
-      - mq
-      - redis
+      - bigchem-broker
+      - bigchem-backend
     environment:
-      - bigchem_broker_url=amqp://mq
-      - bigchem_backend_url=redis://redis/0
-      - TERACHEM_FE_HOST=file-server
+      - bigchem_broker_url=amqp://bigchem-broker
+      - bigchem_backend_url=redis://bigchem-backend/0
+      - TERACHEM_FE_HOST=terachem-frontend
+      - TERACHEM_PBS_HOST=terachem
     env_file:
       - ../.env
     # Run worker listening to default queue and private_queue
     command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
-  mq:
+  bigchem-broker:
     image: rabbitmq:3.8-management-alpine
     # Must specify hostname since data is stored based on hostname and we don't want a random, docker-assigned
     # hostname with each new restart of the service. This would result in any past messages stored by the
@@ -43,7 +44,7 @@ services:
       - 5672:5672
       - 15672:15672
 
-  redis:
+  bigchem-backend:
     image: redis:6-alpine
     ports:
       # Open redis to localhost for dev container access
@@ -51,6 +52,7 @@ services:
 
   terachem:
     image: mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80
+    hostname: terachem
     ports:
       - 11111:11111
     volumes:
@@ -65,13 +67,15 @@ services:
           devices:
             - capabilities: ["gpu"]
 
-  file-server:
-    image: nginx:1.21.6-alpine
+  terachem-frontend:
+    image: mtzgroup/terachem-frontend:0.2.0-noproxy
+    environment:
+      - WORKER_PROCESSES=1
+      - AUTOINDEX_FORMAT=json
     ports:
       - 8080:80
     volumes:
       - terachem-scratch:/usr/share/nginx/html
-      - ./nginx.local.conf:/etc/nginx/nginx.conf
 
 volumes:
   terachem-scratch:

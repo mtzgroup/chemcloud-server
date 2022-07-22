@@ -41,6 +41,8 @@ touch .env
 pipenv run tests
 ```
 
+Note that `pipenv run tests` automatically stops all docker containers after running the tests.
+
 #### Run ChemCloud Server and BigChem Compute Backend
 
 Run the ChemCloud server and BigChem compute backend (rabbitmq, redis, and [psi4](https://psicode.org/)-powered worker instance). The following will build images for the web server and pull down the latest `BigChem` worker image. It will mount the local code into the web server so that it hot-reloads any changes made to the codebase. The worker can actively pickup tasks and run them. Authentication will not work until the correct environment variables are added to the `.env` file, see [Manage environment and Auth0 for local development](#manage-environment-and-auth0-for-local-development) below.
@@ -51,7 +53,7 @@ Start ChemCloud-server and BigChem compute backend.
 pipenv run start
 ```
 
-To shutdown the application (note that `pipenv run tests` automatically shuts down the app after running the test):
+To shutdown the application:
 
 ```sh
 pipenv run stop
@@ -62,9 +64,9 @@ pipenv run stop
 For more granularity you can use docker to run various components of the service and run components outside of docker. A good development setup is to run the `BigChem` backend fully dockerized, then run the ChemCloud server in your local environment for easier control as you develop.
 
 ```sh
-# Will start a complete BigChem backend
-docker-compose -f docker/docker-compose.local.yaml up -d --build worker
-# Run ChemCloud server on your local machine; it will connect automatically to the BigChem broker and backend
+# Start BigChem backend
+docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d bigchem-worker
+# Run ChemCloud server on your local machine; it will connect automatically to the BigChem
 pipenv run uvicorn chemcloud_server.main:app --reload
 ```
 
@@ -72,7 +74,7 @@ Useful commands to control/run sub-components of the application:
 
 ```sh
 # To start desired services
-docker-compose -f docker/docker-compose.local.yaml up -d --build [services_of_interest]
+docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build [services_of_interest]
 ```
 
 ```sh
@@ -101,9 +103,15 @@ You may need 3GB+ of memory allocated to Docker in order for the tests to run co
 
 Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigChem` worker can send work to it. Simply include `terachem` and `file-server` in the list of `services_of_interest` in the `docker-compose` commands noted above. Or omit all service names to start them all by default.
 
+First either set the path to your TeraChem license in the `.env` as shown below or run `TeraChem` in unlicensed mode by commenting out ${TERACHEM_LICENSE_PATH} in `docker-compose.local.yaml`. Not taking one of these two actions will result in `TeraChem` entering an infinite loop looking for a license without notifying the end user. The `TeraChem` server will appears to be operational but will not respond to requests.
+
+```sh
+TERACHEM_LICENSE_PATH=/path/to/terachem/license/on/local/machine.key
+```
+
 ```sh
 # To run TeraChem and its associated file server on a machines with GPUs. This command starts all services defined in docker/docker-compose.local.yaml, including TeraChem in "server mode"
-docker-compose -f docker/docker-compose.local.yaml up -d --build
+docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build
 ```
 
 If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separate container and network it to the `ChemCloud` stack. The additional `docker-compose.extnet.yaml` file places all services on an external `chemcloud` network. Then when starting terachem via the docker command below it is also added to the network. The `.env` file variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
@@ -117,7 +125,7 @@ docker volume create terachem-scratch
 
 ```sh
 # To start all all services on an external docker network so additional services can be added to the network
-docker-compose -f docker/docker-compose.local.yaml -f docker/docker-compose.extnet.yaml up -d --build web-server mq redis worker file-server
+docker-compose --env-file .env -f docker/docker-compose.local.yaml -f docker/docker-compose.extnet.yaml up -d --build web-server mq redis worker file-server
 
 # Run Terachem as a separate container; attach it to the chemcloud docker network. Add path to your license
 docker run -d --rm -v terachem-scratch:/scratch -v ${PATH_TO_YOUR_TERACHEM_LICENSE}/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="chemcloud" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
