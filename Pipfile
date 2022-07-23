@@ -41,5 +41,5 @@ allow_prereleases = true
 
 [scripts]
 tests = "bash ./scripts/test.sh"
-start = "docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build web-server bigchem-worker"
+start = "docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build chemcloud bigchem-worker"
 stop = "docker-compose -f docker/docker-compose.local.yaml down"
