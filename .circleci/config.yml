@@ -136,10 +136,6 @@ jobs:
       docker_repo:
         description: The Docker repo name
         type: string
-      dockerfile_name:
-        description: The Dockerfile name to use for a build
-        default: Dockerfile
-        type: string
     docker:
       - image: cimg/base:2020.01
     steps:
@@ -154,7 +150,7 @@ jobs:
       - run:
           name: Build image
           command: |
-            docker build -t ${FULL_IMAGE_NAME} -f docker/<< parameters.dockerfile_name >> .
+            docker build -t ${FULL_IMAGE_NAME} .
       - run:
           name: Push image to Martinez Group Docker Hub
           command: |
@@ -245,7 +241,6 @@ workflows:
             - test_code
             - build_web_approval
           docker_repo: chemcloud-server
-          dockerfile_name: server.dockerfile
           filters:
             tags:
               only: /.*/ # required since prod_web_deploy requires this step and has tag filters

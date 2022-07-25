@@ -3,8 +3,8 @@ version: "3"
 services:
   chemcloud:
     build:
-      context: ../.
-      dockerfile: ./docker/server.dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 8000:8000
     environment:
@@ -12,9 +12,9 @@ services:
       - bigchem_broker_url=amqp://bigchem-broker
       - bigchem_backend_url=redis://bigchem-backend/0
     env_file:
-      - ../.env
+      - .env
     volumes:
-      - ../chemcloud_server:/code/chemcloud_server
+      - ./chemcloud_server:/code/chemcloud_server
     command: uvicorn --host 0.0.0.0 --port 8000 chemcloud_server.main:app --reload
 
   bigchem-worker:
@@ -28,7 +28,7 @@ services:
       - TERACHEM_FE_HOST=terachem-frontend
       - TERACHEM_PBS_HOST=terachem
     env_file:
-      - ../.env
+      - .env
     # Run worker listening to default queue and private_queue
     command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 

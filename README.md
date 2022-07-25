@@ -29,9 +29,9 @@ pipenv run uvicorn chemcloud_server.main:app --reload
 
 #### Run Tests
 
-Check that your installation is working correctly by running the tests. If test fail see [note below](#testing-memory-allocation) about allocating enough memory for docker. A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of code coverage.
+Check that your installation is working correctly by running the tests. If test fail see [note below](#testing-memory-allocation) about allocating enough memory for docker.
 
-First create an empty `.env` file in the root directory (only need to create this file once)
+Running tests uses the `docker-compose.yaml` service specification. To use `docker-compose` you must place a `.env` files in the root directory. You only need to do this once.
 
 ```sh
 touch .env
@@ -41,7 +41,7 @@ touch .env
 pipenv run tests
 ```
 
-Note that `pipenv run tests` automatically stops all docker containers after running the tests.
+A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of the test coverage. `pipenv run tests` automatically stops all docker containers after running the tests.
 
 #### Run ChemCloud Server and BigChem Compute Backend
 
@@ -66,7 +66,7 @@ For more granularity you can use docker to run various components of the service
 Start BigChem backend
 
 ```sh
-docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d bigchem-worker
+docker-compose up -d bigchem-worker
 ```
 
 Run ChemCloud server on your local machine; it will connect automatically to the BigChem
@@ -77,21 +77,21 @@ pipenv run uvicorn chemcloud_server.main:app --reload
 
 #### Useful commands to control/run sub-components of the application:
 
-Start desired services
+Start desired services found in `docker-compose.yaml`
 
 ```sh
-docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build [services_of_interest]
+docker-compose up -d --build [services_of_interest]
 ```
 
 Stop all services
 
 ```sh
-docker-compose -f docker/docker-compose.local.yaml down
+docker-compose down
 ```
 
 ### Manage environment and Auth0 for local development
 
-Settings are managed in `chemcloud_server/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. To enable authentication for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly. Outside of testing, authentication-protected endpoints (compute endpoints) will not work without auth setup. Set up an account on [Auth0](https://auth0.com/) and supply the required environment variables below and you'll have a fully functioning application with secure auth! On `Auth0` you should setup an [API(https://auth0.com/docs/get-started/apis) and a [Regular Web Application](https://auth0.com/docs/get-started/auth0-overview/create-applications/regular-web-apps) for your app type. The `API` needs to have `compute:public` and `compute:private` permissions (scopes) created.
+Settings are managed in `chemcloud_server/config` and the `Settings` object will automatically look for environment variables found in both the environment and a `.env` file. To enable authentication for local development add the following variables to a `.env` file in the root directory with their corresponding values. These values are not required for tests to run correctly. Outside of testing, authentication-protected endpoints (compute endpoints) will not work without auth setup. Set up an account on [Auth0](https://auth0.com/) and supply the required environment variables below and you'll have a fully functioning application with secure auth! On `Auth0` you should setup an [API(https://auth0.com/docs/get-started/apis) and register with it a [Regular Web Application](https://auth0.com/docs/get-started/auth0-overview/create-applications/regular-web-apps) as your app type. The `API` needs to have `compute:public` and `compute:private` permissions (scopes) created and assigned to users who perform computations. `ChemCloud` is currently configured to only check for the `compute:public` scope.
 
 ```
 AUTH0_DOMAIN=
@@ -110,19 +110,21 @@ You may need 3GB+ of memory allocated to Docker in order for the tests to run co
 
 Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigChem` worker can send work to it. Simply include `terachem` and `terachem-frontend` in the list of `services_of_interest` in the `docker-compose` commands noted above. Or omit all service names to start them all by default.
 
-First either set the path to your TeraChem license in the `.env` as shown below or run `TeraChem` in unlicensed mode by commenting out ${TERACHEM_LICENSE_PATH} in `docker-compose.local.yaml`. Not taking one of these two actions will result in `TeraChem` entering an infinite loop looking for a license without notifying the end user. The `TeraChem` server will appears to be operational but will not respond to requests.
+First either set the path to your TeraChem license in the `.env` as shown below or run `TeraChem` in unlicensed mode by commenting out ${TERACHEM_LICENSE_PATH} in `docker-compose.yaml`. Not taking one of these two actions will result in `TeraChem` entering an infinite loop looking for a license without notifying the end user. The `TeraChem` server will appear to be operational but will not respond to requests.
+
+In the `.env` file add:
 
 ```sh
 TERACHEM_LICENSE_PATH=/path/to/terachem/license/on/local/machine.key
 ```
 
-Run TeraChem and its associated file server on a machines with GPUs. This command starts all services defined in docker/docker-compose.local.yaml, including TeraChem in "server mode"
+Run TeraChem and its associated file server on a machines with GPUs. This command starts all services defined in the `docker-compose.yaml` file, including TeraChem in "server mode"
 
 ```sh
-docker-compose --env-file .env -f docker/docker-compose.local.yaml up -d --build
+docker-compose up -d --build
 ```
 
-If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separate container and network it to the `ChemCloud` stack. The additional `docker-compose.extnet.yaml` file places all services on an external `chemcloud` network. Then when starting terachem via the docker command below it is also added to the network. The `.env` file variable `TERACHEM_PBS_HOST` must be set to the name of the terachem container (named `terachem` below)
+If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separate container and network it to the `ChemCloud` stack. The additional `docker-compose.extnet.yaml` file places all services on an external `chemcloud` network. Then when starting `TeraChem` via the docker command below it is also added to the network.
 
 Create the chemcloud external network
 
@@ -139,10 +141,10 @@ docker volume create terachem-scratch
 Start all all services on an external docker network so additional services can be added to the network
 
 ```sh
-docker-compose --env-file .env -f docker/docker-compose.local.yaml -f docker/docker-compose.extnet.yaml up -d --build chemcloud mq redis worker terachem-frontend
+docker-compose -f docker-compose.yaml -f docker/docker-compose.extnet.yaml up -d --build chemcloud mq redis worker terachem-frontend
 ```
 
-Run Terachem as a separate container; attach it to the chemcloud docker network. Add path to your license
+Run Terachem as a separate container; attach it to the chemcloud docker network. Include the path to your license
 
 ```sh
 docker run -d --rm -v terachem-scratch:/scratch -v ${PATH_TO_YOUR_TERACHEM_LICENSE}/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="chemcloud" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
