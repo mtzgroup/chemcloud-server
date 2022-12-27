@@ -26,7 +26,10 @@ B64_POSTFIX = "_b64"
 
 
 async def _external_request(
-    method: str, url: str, headers: Dict[str, str] = None, data: Dict[str, Any] = None
+    method: str,
+    url: str,
+    headers: Optional[Dict[str, str]] = None,
+    data: Optional[Dict[str, Any]] = None,
 ) -> Dict[Any, Any]:
     async with httpx.AsyncClient() as client:
         # Has default timeout of 5 seconds
