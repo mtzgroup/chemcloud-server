@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -24,8 +24,8 @@ def _validate_jwt(
     *,
     algorithms: List[str],
     issuer: str,
-    audience: str = None,
-    security_scopes: SecurityScopes = None,
+    audience: Optional[str] = None,
+    security_scopes: Optional[SecurityScopes] = None,
 ) -> Dict[str, Any]:
     """Validate JWT using rsa_key; check scopes, return payload."""
     payload = jwt.decode(

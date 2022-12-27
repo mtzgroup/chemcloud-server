@@ -15,6 +15,7 @@ requests = "*"
 pytest-timeout = "*"
 autoflake = "*"
 types-requests = "*"
+colorama = "*"
 
 [packages]
 python-jose = {extras = ["cryptography"], version = "*"}
