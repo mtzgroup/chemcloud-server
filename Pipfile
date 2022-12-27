@@ -29,9 +29,9 @@ typing-extensions = "*"
 aiofiles = "*"
 tcpb = ">=0.12.0"
 cached-property = "*"
-qcelemental = "==0.24.0"
+qcelemental = "==0.25.1"
 fastapi = "==0.65.1"
-bigchem = {ref = "0.2.0", git = "https://github.com/coltonbh/bigchem.git"}
+bigchem = "==0.3.0"
 
 [requires]
 python_version = "3.9"

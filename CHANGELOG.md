@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated BigChem to `0.3.0` released on PyPi instead of building from GitHub.
+- Updated a bunch of packages in `Pipfile.lock`
+
 ## [0.9.0] - 2022-07-19
 
 ### Changed
