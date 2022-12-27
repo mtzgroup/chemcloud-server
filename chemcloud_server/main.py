@@ -62,7 +62,7 @@ async def hello_world(name: Optional[str] = None):
 
 
 @app.get("/signup", include_in_schema=False)
-def signup(redirect_path: str = None):
+def signup(redirect_path: Optional[str] = None):
     """Convenience URL to sign up for QCC"""
     destination_url = "users/login?signup=true"
     if redirect_path:

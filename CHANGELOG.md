@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.9.1]
+
+### Changed
+
+- Updated BigChem to `0.3.0` released on PyPi instead of building from GitHub.
+- Updated a bunch of packages in `Pipfile.lock`
+- Updated dependencies for `isort` and added explicit `Optional[]` typing for `mypy`
+
 ## [0.9.0] - 2022-07-19
 
 ### Changed
@@ -214,7 +222,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.9.0...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.9.1...HEAD
+[0.9.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.1
 [0.9.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.0
 [0.8.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.8.1
 [0.8.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.8.0
