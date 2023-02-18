@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "chemcloud-server"
+version = "0.10.0"
+description = "An HTTP API for BigChem"
+authors = ["Colton Hicks <github@coltonhicks.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "chemcloud_server"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+python-multipart = "^0.0.5"
+httpx = "^0.23.3"
+python-dotenv = "^0.21.1"
+gunicorn = "^20.1.0"
+uvicorn = "^0.20.0"
+uvloop = "^0.17.0"
+httptools = "^0.5.0"
+typing-extensions = "^4.5.0"
+aiofiles = "^23.1.0"
+tcpb = "^0.13.0"
+cached-property = "^1.5.2"
+qcelemental = "0.25.1"
+bigchem = "0.4.0"
+fastapi = "^0.92.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+mypy = "^1.0.1"
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+pytest = "^7.2.1"
+pre-commit = "^3.0.4"
+pytest-cov = "^4.0.0"
+pytest-timeout = "^2.1.0"
+autoflake = "^2.0.1"
+types-requests = "^2.28.11.13"
+colorama = "^0.4.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -157,7 +157,9 @@ def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
         ValueError if result not found in backend
     """
     try:
-        return result_from_tuple(json.loads(bigchem.backend.get(result_id)))
+        return result_from_tuple(
+            json.loads(bigchem.backend.get(result_id)), app=bigchem
+        )
     except TypeError:
         raise ValueError(f"Result id '{result_id}', not found.")
 

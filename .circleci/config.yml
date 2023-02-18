@@ -47,7 +47,7 @@ jobs:
   test_code:
     resource_class: medium
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.11
       - image: rabbitmq:3.8-alpine
       - image: redis:6-alpine
       - image: coltonbh/bigchem-worker
@@ -56,18 +56,18 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v2-pipfile-lock-{{checksum "Pipfile.lock"}}
-            - v2-pipfile-lock-
+            - v2-poetry-lock-{{checksum "poetry.lock"}}
+            - v2-poetry-lock-
       - run:
-          command: pipenv install --dev --system --deploy
           name: Install dependencies
+          command: POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --no-ansi
       - save_cache:
           paths:
             - ~/.local/bin/
-            - ~/.local/lib/python3.7/site-packages/
-          key: v2-pipfile-lock-{{checksum "Pipfile.lock"}}
+            - ~/.local/lib/python3.11/site-packages/
+          key: v2-poetry-lock-{{checksum "poetry.lock"}}
       - run:
-          command: pytest --cov-report html:test-reports/pytest/htmlcov --cov --junitxml=test-reports/pytest/junit.xml
+          command: python -m pytest --cov-report html:test-reports/pytest/htmlcov --cov --junitxml=test-reports/pytest/junit.xml
           name: Test
       - store_test_results: #  Uploads test results to CircleCI. These results will display in the Test Summary section of the CircleCI application.
           name: Store test results
@@ -79,7 +79,7 @@ jobs:
   flake8:
     resource_class: small
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.11
 
     steps:
       - checkout
@@ -91,28 +91,28 @@ jobs:
   isort:
     resource_class: small
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.11
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v2-pipfile-lock-{{checksum "Pipfile.lock"}}
-            - v2-pipfile-lock-
+            - v2-poetry-lock-{{checksum "poetry.lock"}}
+            - v2-poetry-lock-
       - run:
-          command: pipenv install --dev --system --deploy
+          command: POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --no-ansi
           name: Install dependencies
       - save_cache:
           paths:
             - ~/.local/bin/
-            - ~/.local/lib/python3.7/site-packages/
-          key: v2-pipfile-lock-{{checksum "Pipfile.lock"}}
+            - ~/.local/lib/python3.11/site-packages/
+          key: v2-poetry-lock-{{checksum "poetry.lock"}}
       - run:
           name: isort
-          command: isort --check-only --diff chemcloud_server tests
+          command: python -m isort --check-only --diff chemcloud_server tests
   mypy:
     resource_class: small
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run: pip install mypy pydantic types-requests
@@ -123,7 +123,7 @@ jobs:
   black:
     resource_class: small
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run: pip install black
