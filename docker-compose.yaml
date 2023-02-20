@@ -18,7 +18,7 @@ services:
     command: uvicorn --host 0.0.0.0 --port 8000 chemcloud_server.main:app --reload
 
   bigchem-worker:
-    image: coltonbh/bigchem-worker
+    image: mtzgroup/bigchem-worker
     depends_on:
       - bigchem-broker
       - bigchem-backend
