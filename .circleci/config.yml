@@ -50,7 +50,7 @@ jobs:
       - image: cimg/python:3.11
       - image: rabbitmq:3.8-alpine
       - image: redis:6-alpine
-      - image: coltonbh/bigchem-worker
+      - image: mtzgroup/bigchem-worker
         command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
     steps:
       - checkout

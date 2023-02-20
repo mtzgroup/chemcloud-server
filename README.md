@@ -1,6 +1,6 @@
 # ChemCloud Server
 
-Computational chemistry at cloud scale! ChemCloud Server exposes the [BigChem](https://github.com/coltonbh/bigchem) distributed compute system via API endpoints. Interactive API documentation [here](https://chemcloud.mtzlab.com/docs)
+Computational chemistry at cloud scale! ChemCloud Server exposes the [BigChem](https://github.com/mtzgroup/bigchem) distributed compute system via API endpoints. Interactive API documentation [here](https://chemcloud.mtzlab.com/docs)
 
 ## Development
 
