@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+- Changed `pipenv` for `poetry`
+- Updated python `3.9` -> `3.11`
+- Updated tests to only depend upon `httpx` and removed `requests` library
+- Updated BigChem to `0.4.0` and installing from PyPi now
+
 ## [0.9.1]
 
 ### Changed

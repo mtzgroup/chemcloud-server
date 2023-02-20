@@ -1,1 +1,4 @@
-__version__ = "0.9.1"
+# https://github.com/python-poetry/poetry/pull/2366#issuecomment-652418094
+from importlib import metadata
+
+__version__ = metadata.version(__name__)

@@ -17,6 +17,7 @@ from chemcloud_server.main import app
 
 @pytest.fixture(scope="session")
 def client():
+    """Client for making HTTP requests to the app"""
     return TestClient(app)
 
 

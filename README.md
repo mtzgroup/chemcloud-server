@@ -9,14 +9,14 @@ Computational chemistry at cloud scale! ChemCloud Server exposes the [BigChem](h
 #### Install packages
 
 ```sh
-pipenv install --dev
+poetry install
 ```
 
 #### Install pre-commit hooks
 
 ```sh
-pipenv run pre-commit install # installs hooks for commit stage
-pipenv run pre-commit install --hook-type pre-push # install hooks for push stage
+poetry run pre-commit install # installs hooks for commit stage
+poetry run pre-commit install --hook-type pre-push # install hooks for push stage
 ```
 
 #### Run ChemCloud Server
@@ -24,7 +24,7 @@ pipenv run pre-commit install --hook-type pre-push # install hooks for push stag
 Run the ChemCloud Server alone with no `BigChem` compute backend. Go to http://localhost:8000/docs to view interactive documentation.
 
 ```sh
-pipenv run uvicorn chemcloud_server.main:app --reload
+poetry run uvicorn chemcloud_server.main:app --reload
 ```
 
 #### Run Tests
@@ -38,10 +38,10 @@ touch .env
 ```
 
 ```sh
-pipenv run tests
+poetry run bash scripts/tests.sh
 ```
 
-A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of the test coverage. `pipenv run tests` automatically stops all docker containers after running the tests.
+A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of the test coverage. `poetry run bash scripts/tests.sh` automatically stops all docker containers after running the tests.
 
 #### Run ChemCloud Server and BigChem Compute Backend
 
@@ -50,13 +50,13 @@ Run the ChemCloud server and BigChem compute backend (rabbitmq, redis, and [psi4
 Start ChemCloud-server and BigChem compute backend.
 
 ```sh
-pipenv run start
+docker-compose up -d --build chemcloud bigchem-worker
 ```
 
 To shutdown the application:
 
 ```sh
-pipenv run stop
+docker-compose down
 ```
 
 ### More Advanced
@@ -72,7 +72,7 @@ docker-compose up -d bigchem-worker
 Run ChemCloud server on your local machine; it will connect automatically to the BigChem
 
 ```sh
-pipenv run uvicorn chemcloud_server.main:app --reload
+poetry run uvicorn chemcloud_server.main:app --reload
 ```
 
 #### Useful commands to control/run sub-components of the application:

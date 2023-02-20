@@ -2,7 +2,7 @@ from time import sleep
 from typing import Union
 
 import pytest
-from requests.exceptions import HTTPError
+from httpx import HTTPStatusError
 
 from chemcloud_server.models import Result, ResultGroup, TaskState
 
@@ -46,5 +46,5 @@ def _make_job_completion_assertions(task_id, client, settings) -> None:
         assert future_result.result.success is True
 
     # Assert result deleted from backend after retrieval
-    with pytest.raises(HTTPError):
+    with pytest.raises(HTTPStatusError):
         future_result = _get_result(client, settings, task_id)
