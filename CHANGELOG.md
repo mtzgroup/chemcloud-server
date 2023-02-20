@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.10.0]
+
 - Changed `pipenv` for `poetry`
 - Updated python `3.9` -> `3.11`
 - Updated tests to only depend upon `httpx` and removed `requests` library
@@ -227,7 +229,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.9.1...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.10.0
 [0.9.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.1
 [0.9.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.0
 [0.8.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.8.1
