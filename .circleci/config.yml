@@ -2,7 +2,7 @@
 
 # Basic functionality is that:
 #  1. All branches and tags trigger test_code
-#  2. All non tagged branches also trigger isort, mypy, black, flake8 (redundant to run these all on tagged branches)
+#  2. All non tagged branches also trigger isort, mypy, black, ruff (redundant to run these all on tagged branches)
 #  3. All branches and tags can be approved and deployed to dev
 #  4. Only branches tagged with tags using semvar (i.e., x.x.x) can be deployed to prod
 version: 2.1
@@ -76,17 +76,17 @@ jobs:
           name: Store artifacts
           path: test-reports
 
-  flake8:
+  ruff:
     resource_class: small
     docker:
       - image: cimg/python:3.11
 
     steps:
       - checkout
-      - run: pip install flake8
+      - run: pip install ruff
       - run:
-          name: flake8
-          command: flake8 --count
+          name: ruff
+          command: ruff check .
 
   isort:
     resource_class: small
@@ -118,7 +118,7 @@ jobs:
       - run: pip install mypy pydantic types-requests
       - run:
           name: mypy
-          command: mypy
+          command: mypy .
 
   black:
     resource_class: small
@@ -216,7 +216,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - flake8:
+      - ruff:
           filters:
             tags:
               only: /.*/

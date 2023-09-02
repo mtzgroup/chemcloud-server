@@ -19,6 +19,7 @@ services:
 
   bigchem-worker:
     image: mtzgroup/bigchem-worker
+    container_name: bigchem-worker
     depends_on:
       - bigchem-broker
       - bigchem-backend
@@ -29,6 +30,8 @@ services:
       - TERACHEM_PBS_HOST=terachem
     env_file:
       - .env
+    volumes:
+      - bigchem:/tmp/
     # Run worker listening to default queue and private_queue
     command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 
@@ -39,6 +42,7 @@ services:
     # former container in the volume to be unseen by the new container.
     # https://hub.docker.com/_/rabbitmq/ under "How to use this image"
     hostname: rmq-host1
+    container_name: bigchem-broker
     ports:
       # Open rabbit to localhost for dev container access
       - 5672:5672
@@ -46,39 +50,13 @@ services:
 
   bigchem-backend:
     image: redis:6-alpine
+    container_name: bigchem-backend
     ports:
       # Open redis to localhost for dev container access
       - 6379:6379
 
-  terachem:
-    image: mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80
-    hostname: terachem
-    ports:
-      - 11111:11111
-    volumes:
-      - terachem-scratch:/scratch
-      # NOTE: Set path to license in .env file
-      - ${TERACHEM_LICENSE_PATH:-/nothing/here}:/terachem/license.key
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        reservations:
-          devices:
-            - capabilities: ["gpu"]
-
-  terachem-frontend:
-    image: mtzgroup/terachem-frontend:0.2.0-noproxy
-    environment:
-      - WORKER_PROCESSES=1
-      - AUTOINDEX_FORMAT=json
-    ports:
-      - 8080:80
-    volumes:
-      - terachem-scratch:/usr/share/nginx/html
-
 volumes:
-  terachem-scratch:
+  bigchem:
 networks:
   # This is just a hack so docker works while my VPN is on
   # https://stackoverflow.com/questions/45692255/how-make-openvpn-work-with-docker

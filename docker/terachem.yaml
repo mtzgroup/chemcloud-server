@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  bigchem-worker:
+    image: mtzgroup/bigchem-worker:latest-terachem
+    volumes:
+      - ${TERACHEM_LICENSE_PATH:-/tmp/fake}:/opt/terachem/license.key
+    deploy:
+      resources:
+        reservations:
+          devices:
+            # More details: https://docs.docker.com/compose/gpu-support/
+            - driver: nvidia
+              # Uncomment to set device ids (default will use all)
+              # device_ids: ["0", "3"]
+              # Uncomment to set GPU count (default will use all)
+              # count: 3
+              capabilities: ["gpu"]

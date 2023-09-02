@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Added
+
+- Typos to pre-commit.
+- `pydantic-settings` packages as part of pydantic `v1` -> `v2` upgrade.
+- Added `x-max_batch_inputs` to OpenAPI schema so clients can query the max number of inputs they can send in a list.
+
+### Changed
+
+- Removed `QCElemental` models in favor of `qcio`.
+- Upgraded from pydantic `v1` -> `v2`.
+- Updated BigChem to latest version `0.5.x` and running jobs on the premise that exceptions will be raised by failed tasks.
+- Api prefix updated from `/api/v1/` -> `/api/v2/`
+- `/compute/results/` updated to `/compute/output/` to more closely match `qcop` nomenclature of "inputs" and "outputs."
+- Now returning the celery state directly as the `result.status` value. Need to decide how to handle status and result returning in the future (I think it can be significantly simplified), but for now this setup works.
+- Always install the latest version of `poetry` in the docker image.
+- Build BigChem in `/opt`.
+
+### Removed
+
+- `mypy.ini` and `setup.cfg` and moved all configuration to `pyproject.toml`.
+- `flake8` in favor of `ruff`.
+- `compute-procedure` endpoint as it's not longer needed with `qcio`.
+- Dropped `git`, `python3-dev`, and `gcc` from main docker image since `psutil` is no longer required (was required by `qcengine`)
+
 ## [0.10.1]
 
 ### Changed

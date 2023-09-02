@@ -1,11 +1,11 @@
 """A simple script to exercise the web app and celery to compute a result."""
 import sys
 from getpass import getpass
+from pathlib import Path
 from time import sleep
 
 import httpx
-from qcelemental.models import AtomicInput, AtomicResult, FailedOperation, Molecule
-from qcelemental.models.common_models import Model
+from qcio import Molecule, ProgramFailure, ProgramInput, SinglePointOutput
 
 HOSTS = {
     "local": "http://localhost:8000",
@@ -13,8 +13,10 @@ HOSTS = {
     "prod": "https://chemcloud.mtzlab.com",
 }
 
-API_PREFIX = "/api/v1"
-MOLECULE = "water"
+API_PREFIX = "/api/v2"
+current_dir = Path(__file__).resolve().parent
+MOLECULE = current_dir / "h2o.xyz"
+
 
 if __name__ == "__main__":
     # Set environment
@@ -42,18 +44,20 @@ if __name__ == "__main__":
         headers={"content-type": "application/x-www-form-urlencoded"},
         data=data,
     )
+    try:
+        r0.raise_for_status()
+    except httpx.HTTPStatusError:
+        print("Login information incorrect.")
+        sys.exit(1)
     jwt = r0.json()["access_token"]
 
     # Generate Inputs
-    print(f"Generating input for {MOLECULE}...")
-    molecule = Molecule.from_data(f"pubchem:{MOLECULE}")
-    model = Model(method="B3LYP", basis="6-31g")
-    driver = "energy"
-    atomic_input = AtomicInput(
+    print(f"Opening molecule structure: {MOLECULE}...")
+    molecule = Molecule.open(MOLECULE)
+    prog_inp = ProgramInput(
         molecule=molecule,
-        model=model,
-        driver=driver,
-        # keywords={"molden": True}
+        model={"method": "b3lyp", "basis": "6-31g"},
+        calctype="energy",
     )
 
     # POST compute job
@@ -61,34 +65,35 @@ if __name__ == "__main__":
     r1 = httpx.post(
         f"{HOST}{API_PREFIX}/compute",
         headers={"Authorization": f"Bearer {jwt}"},
-        data=atomic_input.json(),
-        params={"engine": "psi4"},
+        data=prog_inp.model_dump_json(),
+        params={"program": "terachem"},
     )
+    r1.raise_for_status()
     task_id = r1.json()
     print(f"Job sent! Task ID: {task_id}")
 
     # Check job results
     def _get_result(task_id, token):
         result = httpx.get(
-            f"{HOST}{API_PREFIX}/compute/result/{task_id}",
+            f"{HOST}{API_PREFIX}/compute/output/{task_id}",
             headers={"Authorization": f"Bearer {token}"},
         )
         print(result)
         response = result.json()
         return response["state"], response["result"]
 
-    status, result = _get_result(task_id, jwt)
+    status, output = _get_result(task_id, jwt)
     while status in {"PENDING", "STARTED"}:
         sleep(1)
-        status, result = _get_result(task_id, jwt)
+        status, output_dict = _get_result(task_id, jwt)
         print(f"State: {status}")
         print("Waiting for result...")
 
     # Assure we can recreate models from results
-    if result["success"] is True:
-        result = AtomicResult(**result)
+    if output_dict["success"] is True:
+        output = SinglePointOutput(**output_dict)
     else:
-        result = FailedOperation(**result)
+        output = ProgramFailure(**output_dict)
 
-    print(result)
-    print(getattr(result, "return_result", "Operation Failed!"))
+    print(output)
+    print(getattr(output, "return_result", "Operation Failed!"))

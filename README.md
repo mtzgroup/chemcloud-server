@@ -29,7 +29,7 @@ poetry run uvicorn chemcloud_server.main:app --reload
 
 #### Run Tests
 
-Check that your installation is working correctly by running the tests. If test fail see [note below](#testing-memory-allocation) about allocating enough memory for docker.
+Check that your installation is working correctly by running the tests. If tests fail see [note below](#testing-memory-allocation) about allocating enough memory for docker.
 
 Running tests uses the `docker-compose.yaml` service specification. To use `docker-compose` you must place a `.env` files in the root directory. You only need to do this once.
 
@@ -38,25 +38,25 @@ touch .env
 ```
 
 ```sh
-poetry run bash scripts/tests.sh
+bash scripts/tests.sh
 ```
 
-A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of the test coverage. `poetry run bash scripts/tests.sh` automatically stops all docker containers after running the tests.
+A test summary will be output to `/htmlcov`. Open `/htmlcov/index.html` to get a visual representation of the test coverage. `bash scripts/tests.sh` automatically stops all docker containers after running the tests.
 
 #### Run ChemCloud Server and BigChem Compute Backend
 
 Run the ChemCloud server and BigChem compute backend (rabbitmq, redis, and [psi4](https://psicode.org/)-powered worker instance). The following will build images for the web server and pull down the latest `BigChem` worker image. It will mount the local code into the web server so that it hot-reloads any changes made to the codebase. The worker can actively pickup tasks and run them. Authentication will not work until the correct environment variables are added to the `.env` file, see [Manage environment and Auth0 for local development](#manage-environment-and-auth0-for-local-development) below.
 
-Start ChemCloud-server and BigChem compute backend.
+Start ChemCloud-server and BigChem compute backend (NOTE: on older machines the `docker compose` command may be `docker-compose`, with a hyphen `-`).
 
 ```sh
-docker-compose up -d --build chemcloud bigchem-worker
+docker compose up -d --build
 ```
 
 To shutdown the application:
 
 ```sh
-docker-compose down
+docker compose down
 ```
 
 ### More Advanced
@@ -66,7 +66,7 @@ For more granularity you can use docker to run various components of the service
 Start BigChem backend
 
 ```sh
-docker-compose up -d bigchem-worker
+docker compose up -d bigchem-worker
 ```
 
 Run ChemCloud server on your local machine; it will connect automatically to the BigChem
@@ -80,13 +80,13 @@ poetry run uvicorn chemcloud_server.main:app --reload
 Start desired services found in `docker-compose.yaml`
 
 ```sh
-docker-compose up -d --build [services_of_interest]
+docker compose up -d --build [services-of-interest]
 ```
 
 Stop all services
 
 ```sh
-docker-compose down
+docker compose down
 ```
 
 ### Manage environment and Auth0 for local development
@@ -108,7 +108,11 @@ You may need 3GB+ of memory allocated to Docker in order for the tests to run co
 
 ### Development on a machine with Nvidia GPUs (to run TeraChem)
 
-Developing on a machine with GPUs means you can run `TeraChem` in server mode and the `BigChem` worker can send work to it. Simply include `terachem` and `terachem-frontend` in the list of `services_of_interest` in the `docker-compose` commands noted above. Or omit all service names to start them all by default.
+Developing on a machine with GPUs means you can run a `BigChem` worker containing TeraChem. Add `docker/terachem.yaml` to the `docker compose` command to run a BigChem worker with Terachem.
+
+```sh
+docker compose -f docker-compose.yaml -f docker/terachem.yaml up -d --build
+```
 
 First either set the path to your TeraChem license in the `.env` as shown below or run `TeraChem` in unlicensed mode by commenting out ${TERACHEM_LICENSE_PATH} in `docker-compose.yaml`. Not taking one of these two actions will result in `TeraChem` entering an infinite loop looking for a license without notifying the end user. The `TeraChem` server will appear to be operational but will not respond to requests.
 
@@ -116,44 +120,6 @@ In the `.env` file add:
 
 ```sh
 TERACHEM_LICENSE_PATH=/path/to/terachem/license/on/local/machine.key
-```
-
-Run TeraChem and its associated file server on a machines with GPUs. This command starts all services defined in the `docker-compose.yaml` file, including TeraChem in "server mode"
-
-```sh
-docker-compose up -d --build
-```
-
-If you can't run a modern version of `docker-compose` that has good GPU support, you can run the `TeraChem` worker as a separate container and network it to the `ChemCloud` stack. The additional `docker-compose.extnet.yaml` file places all services on an external `chemcloud` network. Then when starting `TeraChem` via the docker command below it is also added to the network.
-
-Create the chemcloud external network
-
-```sh
-docker network create --driver bridge chemcloud
-```
-
-Create the terachem-scratch external volume
-
-```sh
-docker volume create terachem-scratch
-```
-
-Start all all services on an external docker network so additional services can be added to the network
-
-```sh
-docker-compose -f docker-compose.yaml -f docker/docker-compose.extnet.yaml up -d --build chemcloud mq redis worker terachem-frontend
-```
-
-Run Terachem as a separate container; attach it to the chemcloud docker network. Include the path to your license
-
-```sh
-docker run -d --rm -v terachem-scratch:/scratch -v ${PATH_TO_YOUR_TERACHEM_LICENSE}/license.key:/terachem/license.key -p 11111:11111 --gpus '"device=0,1"' --network="chemcloud" --name terachem mtzgroup/terachem:1.9-2021.12-dev-arch-sm_52-sm_80 && docker logs terachem -f
-```
-
-Stop terachem
-
-```sh
-docker stop terachem
 ```
 
 ## Deployment
