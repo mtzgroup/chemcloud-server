@@ -2,6 +2,7 @@
 from typing import Optional
 
 from fastapi import FastAPI, Security
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -20,7 +21,7 @@ tags_metadata = [
     },
     {
         "name": "compute",
-        "description": "Submit compute requests and obtain results.",
+        "description": "Submit computations and obtain results.",
     },
     {
         "name": "hello world",
@@ -31,7 +32,10 @@ tags_metadata = [
 
 app = FastAPI(
     title="ChemCloud",
-    description="⚛ Computational Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)",
+    description=(
+        "⚛ Computational Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit "
+        "your [Dashboard](/users/dashboard)"
+    ),
     version=__version__,
     openapi_tags=tags_metadata,
 )
@@ -39,12 +43,12 @@ app = FastAPI(
 # Add routes
 app.include_router(
     oauth.router,
-    prefix=f"{settings.api_v1_str}{settings.api_oauth_prefix}",
+    prefix=f"{settings.api_v2_str}{settings.api_oauth_prefix}",
     tags=["auth"],
 )
 app.include_router(
     compute.router,
-    prefix=f"{settings.api_v1_str}{settings.api_compute_prefix}",
+    prefix=f"{settings.api_v2_str}{settings.api_compute_prefix}",
     dependencies=[Security(bearer_auth, scopes=["compute:public"])],
     tags=["compute"],
 )
@@ -58,7 +62,7 @@ async def index():
 
 @app.get("/hello-world", tags=["hello world"])
 async def hello_world(name: Optional[str] = None):
-    return f"Welcome to ChemCloud, {name or 'friend'}"
+    return f"Welcome to ChemCloud, {name or 'friend'}!"
 
 
 @app.get("/signup", include_in_schema=False)
@@ -71,3 +75,23 @@ def signup(redirect_path: Optional[str] = None):
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+
+# Append max_batch_inputs limit to OpenAPI schema so clients are aware of it
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        routes=app.routes,
+        description=app.description,
+    )
+    openapi_schema["tags"] = tags_metadata
+    openapi_schema["info"]["x-max_batch_inputs"] = settings.max_batch_inputs
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+# Ok to assign to a method here
+app.openapi = custom_openapi  # type: ignore

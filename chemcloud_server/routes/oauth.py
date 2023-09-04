@@ -15,12 +15,12 @@ router = APIRouter()
 class OAuth2RequestForm:
     """
     This is a dependency class, modeled after
-    fastapi.security.OAuth2PasswordRequestFormStrict; see fastapi objet for reference.
+    fastapi.security.OAuth2PasswordRequestFormStrict; see fastapi object for reference.
     """
 
     def __init__(
         self,
-        grant_type: str = Form(..., regex=r"password|refresh_token"),
+        grant_type: str = Form(..., pattern=r"password|refresh_token"),
         username: Optional[str] = Form(None),
         password: Optional[str] = Form(None),
         refresh_token: Optional[str] = Form(None),
@@ -42,7 +42,7 @@ async def token(
     form_data: OAuth2RequestForm = Depends(),
     settings: config.Settings = Depends(config.get_settings),
 ):
-    """Route for OAuth2 requests to QC Cloud"""
+    """Route for OAuth2 requests to ChemCloud"""
     flow_model: Union[models.OAuth2PasswordFlow, models.OAuth2RefreshFlow]
 
     if form_data.grant_type == "password":

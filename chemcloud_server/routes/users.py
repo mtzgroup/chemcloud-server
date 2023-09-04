@@ -54,7 +54,7 @@ async def dashboard(
                 </ul>
             </body>
         </html>
-    """
+    """  # noqa: E501
 
 
 @router.get(

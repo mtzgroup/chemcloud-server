@@ -5,7 +5,8 @@ from typing import Any, Dict, List
 
 import httpx
 from fastapi import HTTPException
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import AnyHttpUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -13,11 +14,12 @@ class Settings(BaseSettings):
 
     Never instantiate this class directly. Use the get_settings() method below.
 
-    Will read environment variables and docker secrets automatically and map to lowercase
-    https://pydantic-docs.helpmanual.io/usage/settings/
+    Will read environment variables and docker secrets automatically and map to
+    lowercase
+    https://docs.pydantic.dev/latest/usage/pydantic_settings/
     """
 
-    api_v1_str: str = "/api/v1"
+    api_v2_str: str = "/api/v2"
     api_compute_prefix: str = "/compute"
     api_oauth_prefix: str = "/oauth"
     users_prefix: str = "/users"
@@ -27,9 +29,6 @@ class Settings(BaseSettings):
     id_token_cookie_key: str = "id_token"
     refresh_token_cookie_key: str = "refresh_token"
     max_batch_inputs: int = 100
-    # Finite difference step
-    hessian_default_dh: float = 5.0e-3
-    bigchem_keywords: str = "bigchem:keywords"
 
     # NOTE: Adding "" values as defaults so tests can run on CircleCi without having
     # to set these auth0 values
@@ -42,11 +41,13 @@ class Settings(BaseSettings):
     jwks: List[Dict[str, Any]] = [{}]
     jwt_issuer: str = ""
 
-    class Config:
-        _docker_secrets_dir = "/run/secrets"
-        env_file = ".env"
-        if Path(_docker_secrets_dir).is_dir():
-            secrets_dir = _docker_secrets_dir
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        # If not in a docker container with secrets, /var/secrets will not exist
+        secrets_dir="/var/secrets" if Path("/var/secrets").is_dir() else None,
+        extra="allow",
+    )
 
 
 def _get_jwks(domain: str) -> List[Dict[str, str]]:
@@ -67,7 +68,7 @@ def get_settings():
     """
     # Add JWKs using auth0 settings
     initial_settings = Settings()
-    as_dict = initial_settings.dict()
+    as_dict = initial_settings.model_dump()
     if initial_settings.auth0_domain:
         as_dict["jwks"] = _get_jwks(initial_settings.auth0_domain)
         as_dict["jwt_issuer"] = f"https://{initial_settings.auth0_domain}/"

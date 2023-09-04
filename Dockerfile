@@ -1,4 +1,4 @@
-# Dockerfile for QC Cloud Web Server
+# Dockerfile for ChemCloud Web Server
 FROM python:3.11-slim
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319
 ENV PYTHONUNBUFFERED=1 \
@@ -7,21 +7,16 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    POETRY_VERSION=1.3.1 \
     # Install to system python, no need for venv
     POETRY_VIRTUALENVS_CREATE=false
 LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 
 # Install system packages
-# Need gcc and python3-dev for python psutil package
-# https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
 RUN apt-get update && \
-    apt-get install -y gcc git make python3-dev && \
-    python -m pip install --upgrade pip "poetry==$POETRY_VERSION"
-    
+    python -m pip install --upgrade pip poetry
 
 # Install application
-WORKDIR /code/
+WORKDIR /opt/
 COPY pyproject.toml poetry.lock README.md ./
 COPY static ./static
 COPY chemcloud_server/ ./chemcloud_server

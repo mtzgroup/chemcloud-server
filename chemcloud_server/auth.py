@@ -13,7 +13,10 @@ oauth2_password_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/oauth/token",
     scopes={
         "compute:public": "Perform computations and retrieve results as a public user.",
-        "compute:private": "Perform computations and retrieve results computed on private ChemCloud Connect instances.",
+        "compute:private": (
+            "Perform computations and retrieve results computed on private ChemCloud "
+            "Connect instances."
+        ),
     },
 )
 
