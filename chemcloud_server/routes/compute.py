@@ -4,6 +4,7 @@ from bigchem.canvas import group
 from celery.result import AsyncResult
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Path, Query
 from fastapi import status as status_codes
+from qcop.exceptions import QCOPBaseError
 
 from chemcloud_server.config import get_settings
 from chemcloud_server.exceptions import ResultNotFoundError
@@ -115,10 +116,13 @@ async def result(
         task_status = (
             TaskState.SUCCESS if future_res.successful() else TaskState.FAILURE
         )
-        output = future_res.get()
+
+        try:
+            output = future_res.get()
+        except QCOPBaseError as e:
+            output = e.program_failure
         # Remove result from backend AFTER function returns successfully
         background_tasks.add_task(delete_result, future_res)
-
     else:
         task_status = TaskState.PENDING
         output = None

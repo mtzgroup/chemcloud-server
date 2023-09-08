@@ -69,21 +69,21 @@ files = [
 
 [[package]]
 name = "bigchem"
-version = "0.5.3"
+version = "0.5.4"
 description = "A distributed system for scaling and parallelizing quantum chemistry calculations"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "bigchem-0.5.3-py3-none-any.whl", hash = "sha256:fc17f749a00bddbf89c4c1ae8b9b517d752160412c0b2189e5989e7fe2634e21"},
-    {file = "bigchem-0.5.3.tar.gz", hash = "sha256:38cd5679bff6091986b4fe7a51e0fa77fc9d6ee4cc90a27539445293a30c423b"},
+    {file = "bigchem-0.5.4-py3-none-any.whl", hash = "sha256:58879ada464d37da30151b4998d1941412b075f79dcf55aaae7c25d2c90ee286"},
+    {file = "bigchem-0.5.4.tar.gz", hash = "sha256:d1747da7c3948903bd844d6651991b09bedf712f56034192ea175c2bc46a69c0"},
 ]
 
 [package.dependencies]
 celery = {version = ">=5.2.7,<6.0.0", extras = ["redis"]}
 pydantic = ">=2.0.0"
 pydantic-settings = ">=2.0.3,<3.0.0"
-qcio = ">=0.5.0"
-qcop = ">=0.4.3"
+qcio = ">=0.6.0"
+qcop = ">=0.4.4"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1)"]
@@ -1297,13 +1297,13 @@ files = [
 
 [[package]]
 name = "qcio"
-version = "0.5.1"
+version = "0.6.1"
 description = "Beautiful and user friendly data structures for quantum chemistry."
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "qcio-0.5.1-py3-none-any.whl", hash = "sha256:258af8e93f17ec9a26053254e0fced7b14edaa043fa8ef9d4e99ac63e205d06c"},
-    {file = "qcio-0.5.1.tar.gz", hash = "sha256:15f6e573fd5e41d44a052de699317b1b1d8a38b5e2c896ffaa9db491d24ae84f"},
+    {file = "qcio-0.6.1-py3-none-any.whl", hash = "sha256:cee651927850f7fe6cbe5f92ab16a1dbd8d0529be9b7b6668784aa764254a6b4"},
+    {file = "qcio-0.6.1.tar.gz", hash = "sha256:2bb10d204ebf3079ed0e459bab22c6094199dc097f8b9ca31074c023705f52e1"},
 ]
 
 [package.dependencies]
@@ -1315,17 +1315,17 @@ typing-extensions = ">=4.7.1,<5.0.0"
 
 [[package]]
 name = "qcop"
-version = "0.4.3"
+version = "0.4.4"
 description = "A package for operating Quantum Chemistry programs using qcio standardized data structures."
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "qcop-0.4.3-py3-none-any.whl", hash = "sha256:edb8833af93f13ddcdbf44325ec884cdcaf93b79fd73ecedfa17f67981cad322"},
-    {file = "qcop-0.4.3.tar.gz", hash = "sha256:6e92cfe918f079353deaa010f106103e3a21bcb78f18de86893cbbf6a14fad5c"},
+    {file = "qcop-0.4.4-py3-none-any.whl", hash = "sha256:068c6e45c75c8f49f6e5b3befc9aa991223717cb649576c6efbfc536018709d3"},
+    {file = "qcop-0.4.4.tar.gz", hash = "sha256:4e3e5479fd1cea1a02561a1021c56e991953e7d744018d6e299aa473df61d55e"},
 ]
 
 [package.dependencies]
-qcio = ">=0.5.0"
+qcio = ">=0.6.0"
 qcparse = ">=0.5.0"
 
 [package.extras]
@@ -1642,4 +1642,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "40db61875e22003bbb386d57f5a8ca1a7ab3dd85c15c740c61c818e5535a8d8c"
+content-hash = "a3886dfb3376db1064083bc10e7f13c29cee74a0dc69630341568dd40d26afa9"
