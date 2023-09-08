@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.0] - 2023-09-08
+
 ### Added
 
 - Typos to pre-commit.
@@ -30,13 +32,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `compute-procedure` endpoint as it's not longer needed with `qcio`.
 - Dropped `git`, `python3-dev`, and `gcc` from main docker image since `psutil` is no longer required (was required by `qcengine`)
 
-## [0.10.1]
+## [0.10.1] - 2023-02-20
 
 ### Changed
 
 - Running BigChem containers from `mtzgroup` rather than `coltonbh`
 
-## [0.10.0]
+## [0.10.0] - 2023-02-20
 
 ### Changed
 
@@ -45,7 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated tests to only depend upon `httpx` and removed `requests` library
 - Updated BigChem to `0.4.0` and installing from PyPi now
 
-## [0.9.1]
+## [0.9.1] - 2022-12-27
 
 ### Changed
 
@@ -261,7 +263,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.10.1...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.0
 [0.10.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.10.1
 [0.10.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.10.0
 [0.9.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.9.1
