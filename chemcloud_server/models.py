@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
 from pydantic import AnyHttpUrl, BaseModel, Field
 from qcio import (
@@ -60,23 +60,12 @@ class TaskState(str, Enum):
     IGNORED = "IGNORED"
 
 
-class ResultBaseABC(BaseModel):
-    """Result Base class. Thin wrapper around celery ResultBase"""
+class Output(BaseModel):
+    """Status and result of compute tasks. Wrapper around celery AsyncResult and
+    GroupResult"""
 
     state: TaskState
-    result: Optional[Any] = None
-
-
-class Result(ResultBaseABC):
-    """Status and result of compute tasks. Wrapper around celery AsyncResult"""
-
-    result: Optional[QCIOOutputs] = None
-
-
-class ResultGroup(ResultBaseABC):
-    """Status and result of compute tasks. Wrapper around celery GroupResult"""
-
-    result: Optional[List[QCIOOutputs]] = None
+    result: Optional[Union[QCIOOutputs, List[QCIOOutputs]]] = None
 
 
 class OAuth2Base(BaseModel):
