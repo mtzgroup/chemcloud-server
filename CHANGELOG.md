@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.1] - 2023-09-16
+
 ### Fixed
 
 - Fixed `/compute/output/{task_id}` endpoint to properly return `*Output` or `ProgramFailure` objects for each calculation in a list of inputs.
@@ -271,7 +273,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.0...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.1...HEAD
+[0.11.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.1
 [0.11.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.0
 [0.10.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.10.1
 [0.10.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.10.0
