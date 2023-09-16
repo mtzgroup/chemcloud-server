@@ -1,7 +1,6 @@
-from typing import Optional, Type, Union
+from typing import Optional
 
 from bigchem.canvas import group
-from celery.result import AsyncResult
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Path, Query
 from fastapi import status as status_codes
 from qcop.exceptions import QCOPBaseError
@@ -9,9 +8,8 @@ from qcop.exceptions import QCOPBaseError
 from chemcloud_server.config import get_settings
 from chemcloud_server.exceptions import ResultNotFoundError
 from chemcloud_server.models import (
+    Output,
     QCIOInputsOrList,
-    Result,
-    ResultGroup,
     SupportedPrograms,
     TaskState,
 )
@@ -92,7 +90,7 @@ async def compute(
 @router.get(
     # NOTE: "/compute" prefix is prepended in top level main.py file
     "/output/{task_id}",
-    response_model=Union[ResultGroup, Result],  # type: ignore
+    response_model=Output,  # type: ignore
     response_description="A compute task's status and (if complete) return value.",
 )
 async def result(
@@ -102,7 +100,7 @@ async def result(
         title="The task id to query.",
         pattern=r"[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}",
     ),
-) -> Union[ResultGroup, Result]:
+) -> Output:
     """Retrieve a task's status and output (if complete)."""
     # Check for result in backend
     try:
@@ -116,18 +114,21 @@ async def result(
         task_status = (
             TaskState.SUCCESS if future_res.successful() else TaskState.FAILURE
         )
-
-        try:
-            output = future_res.get()
-        except QCOPBaseError as e:
-            output = e.program_failure
+        output = []
+        # Get list of AsyncResult objects or single AsyncResult object in a list
+        frs = getattr(future_res, "results", [future_res])
+        for fr in frs:
+            try:
+                output.append(fr.get())
+            except QCOPBaseError as e:
+                output.append(e.program_failure)
+        # If only one result, return it directly instead of a list
+        output = output[0] if len(output) == 1 else output
         # Remove result from backend AFTER function returns successfully
         background_tasks.add_task(delete_result, future_res)
+
     else:
         task_status = TaskState.PENDING
         output = None
 
-    fr_model: Union[Type[Result], Type[ResultGroup]] = (
-        Result if isinstance(future_res, AsyncResult) else ResultGroup
-    )
-    return fr_model(state=task_status, result=output)
+    return Output(state=task_status, result=output)

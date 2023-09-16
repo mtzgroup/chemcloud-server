@@ -7,7 +7,7 @@ from celery.states import READY_STATES
 from httpx import HTTPStatusError
 from pydantic import BaseModel
 
-from chemcloud_server.models import Result, ResultGroup, TaskState
+from chemcloud_server.models import Output, TaskState
 
 
 def json_dumps(obj: Union[BaseModel, list[BaseModel]]):
@@ -17,16 +17,14 @@ def json_dumps(obj: Union[BaseModel, list[BaseModel]]):
     return obj.model_dump_json()
 
 
-def _get_result(client, settings, task_id) -> Union[Result, ResultGroup]:
+def _get_result(client, settings, task_id) -> Output:
     # Check Status upon submission
     result = client.get(
         f"{settings.api_v2_str}/compute/output/{task_id}",
     )
     result.raise_for_status()
     as_dict = result.json()
-    if isinstance(as_dict["result"], list):
-        return ResultGroup(**as_dict)
-    return Result(**as_dict)
+    return Output(**as_dict)
 
 
 def _make_job_completion_assertions(task_id, client, settings) -> None:

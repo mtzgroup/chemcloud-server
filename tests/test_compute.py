@@ -1,14 +1,16 @@
 import json
+from time import sleep
 
 import pytest
+from celery.states import READY_STATES
 from fastapi import status as status_codes
+from httpx import HTTPStatusError
 from qcio import DualProgramInput, ProgramInput
 
-from tests.utils import _make_job_completion_assertions
+from chemcloud_server.models import TaskState
+from tests.utils import _get_result, _make_job_completion_assertions
 
 from .utils import json_dumps
-
-# from tcpb.config import settings as tcpb_settings
 
 
 def test_compute_requires_auth(settings, client):
@@ -266,3 +268,48 @@ def test_compute_bigchem_program(
     as_dict = job_submission.json()
 
     _make_job_completion_assertions(as_dict, client, settings)
+
+
+def test_compute_failed_and_successful_results_in_group(
+    settings, client, fake_auth, hydrogen
+):
+    """Test submitting a group of jobs with one failing and one succeeding."""
+    prog_input = ProgramInput(
+        molecule=hydrogen,
+        calctype="energy",
+        model={"method": "HF", "basis": "sto-3g"},
+    )
+    prog_input_fail = ProgramInput(
+        molecule=hydrogen,
+        calctype="energy",
+        model={"method": "HF", "basis": "bad-basis"},
+    )
+
+    # Submit Job
+    job_submission = client.post(
+        f"{settings.api_v2_str}/compute",
+        data=json_dumps([prog_input, prog_input_fail]),
+        params={"program": "psi4"},
+    )
+    task_id = job_submission.json()
+
+    future_result = _get_result(client, settings, task_id)
+
+    # Check that work gets done, AtomicResult-compatible data is returned
+
+    while future_result.state not in READY_STATES:
+        # No result while computation is happening
+        assert future_result.result is None
+        sleep(0.5)
+        future_result = _get_result(client, settings, task_id)
+
+    # If any result failed the state will be FAILURE
+    assert future_result.state == TaskState.FAILURE
+    assert future_result.result is not None
+
+    assert future_result.result[0].success is True
+    assert future_result.result[1].success is False
+
+    # Assert result deleted from backend after retrieval
+    with pytest.raises(HTTPStatusError):
+        future_result = _get_result(client, settings, task_id)
