@@ -10,7 +10,7 @@ from chemcloud_server import config
 from .config import get_settings
 
 oauth2_password_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/oauth/token",
+    tokenUrl="/api/v2/oauth/token",
     scopes={
         "compute:public": "Perform computations and retrieve results as a public user.",
         "compute:private": (

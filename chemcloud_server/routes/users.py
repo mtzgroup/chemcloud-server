@@ -62,7 +62,7 @@ async def dashboard(
     include_in_schema=False,
 )
 def login(
-    redirect_path: str = "/api/v1/oauth/auth0/callback",
+    redirect_path: str = "api/v2/oauth/auth0/callback",
     signup: Optional[bool] = False,
     settings: config.Settings = Depends(config.get_settings),
     scope: str = "openid profile email offline_access",

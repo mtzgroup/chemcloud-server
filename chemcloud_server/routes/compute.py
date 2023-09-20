@@ -14,7 +14,13 @@ from chemcloud_server.models import (
     TaskState,
 )
 
-from .helpers import delete_result, restore_result, save_dag, signature_from_input
+from .helpers import (
+    delete_result,
+    handle_exception,
+    restore_result,
+    save_dag,
+    signature_from_input,
+)
 
 settings = get_settings()
 
@@ -122,6 +128,8 @@ async def result(
                 output.append(fr.get())
             except QCOPBaseError as e:
                 output.append(e.program_failure)
+            except Exception as e:  # Handle all other exceptions
+                output.append(handle_exception(fr, e))
         # If only one result, return it directly instead of a list
         output = output[0] if len(output) == 1 else output
         # Remove result from backend AFTER function returns successfully

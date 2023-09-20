@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     auth0_client_id: str = ""
     auth0_client_secret: str = ""
     auth0_api_audience: str = ""
-    auth0_default_logout_route: str = "/docs"
+    auth0_default_logout_route: str = "docs"
     auth0_algorithms: List[str] = ["RS256"]
     jwks: List[Dict[str, Any]] = [{}]
     jwt_issuer: str = ""
