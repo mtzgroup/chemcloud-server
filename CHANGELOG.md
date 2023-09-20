@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- Fixed bug with `/v1/` -> `/v2/` change in API prefix and Auth0 callbacks.
+
+### Changed
+
+- Changed exception handing in `/compute/output/` endpoint to use celery result.traceback rather than traceback.format_exc() to capture the full traceback of the error.
+
 ## [0.11.1] - 2023-09-16
 
 ### Fixed

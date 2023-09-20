@@ -8,7 +8,7 @@ from bigchem.canvas import Signature
 from bigchem.tasks import compute
 from celery.result import AsyncResult, GroupResult, ResultBase, result_from_tuple
 from fastapi import HTTPException
-from qcio import CalcType, DualProgramInput, ProgramInput
+from qcio import CalcType, DualProgramInput, ProgramFailure, ProgramInput
 
 from chemcloud_server import config, models
 from chemcloud_server.exceptions import ResultNotFoundError
@@ -157,3 +157,19 @@ def delete_result(result: ResultBase) -> None:
     result.backend.delete(result.id)
     # Remove all results and parents
     result.forget()
+
+
+def handle_exception(
+    result: ResultBase,
+    exception: Exception,
+) -> ProgramFailure:
+    """Handle non QCIO exceptions raised by Celery tasks.
+
+    Params:
+        result: Celery result object
+        exception: Exception raised by Celery task
+    """
+    return ProgramFailure(
+        input_data=None,
+        traceback=result.traceback,
+    )
