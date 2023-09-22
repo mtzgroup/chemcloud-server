@@ -56,7 +56,7 @@ multi_line_output = 3
 use_parentheses = true
 
 [tool.ruff.per-file-ignores]
-'bigchem/__init__.py' = ['F405', 'F403']
+"chemcloud_server/routes/dashboard.py" = ["E501"]
 
 [tool.coverage.run]
 branch = true

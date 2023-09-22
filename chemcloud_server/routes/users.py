@@ -8,6 +8,8 @@ from jose import jwt
 from chemcloud_server import config
 from chemcloud_server.auth import _get_matching_rsa_key, _validate_jwt
 
+from .dashboard import dashboard_html
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -37,24 +39,7 @@ async def dashboard(
         logger.info("User not logged in. Redirecting to login...")
         return RedirectResponse(f"{settings.users_prefix}/login")
 
-    return f"""
-        <html>
-            <head>
-                <title>Dashboard</title>
-                <link rel="shortcut icon" href="/favicon.ico" type="image/icon">
-                <link rel="icon" href="/favicon.ico" type="image/icon">
-            </head>
-            <body>
-                <h3>✨ You are registered for ChemCloud! Your username is: {id_payload['email']} ✨</h3>
-                <ul>
-                    <li>Install the <a href="https://pypi.org/project/chemcloud/" target="_blank">python client</a> and get coding!</li>
-                    <li>Check out the <a href="/docs">interactive docs</a> to learn more about ChemCloud data types.</li>
-                    <li>If you need to change your password please logout, then click "Dashboard", then click "Forgot Password".</li>
-                    <li><a href="/users/logout">Logout</a></li>
-                </ul>
-            </body>
-        </html>
-    """  # noqa: E501
+    return dashboard_html.format(email=id_payload["email"])
 
 
 @router.get(
