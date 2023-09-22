@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.4] - 2023-09-22
+
+### Added
+
+- Added test for `propagate_wfn` passed to program adapters that do not support it. An updated in `qcop` and `bigchem` resolved this issue resulting in a `ProgramFailure` object being correctly added to the exception so it can be returned in the `/compute/output/{task_id}` endpoint.
+
 ### Changed
 
 - Updated dashboard styling to be more modern.
@@ -293,7 +299,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.3...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.4...HEAD
+[0.11.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.4
 [0.11.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.3
 [0.11.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.2
 [0.11.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.1
