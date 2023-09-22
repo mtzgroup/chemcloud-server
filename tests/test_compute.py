@@ -313,3 +313,21 @@ def test_compute_failed_and_successful_results_in_group(
     # Assert result deleted from backend after retrieval
     with pytest.raises(HTTPStatusError):
         future_result = _get_result(client, settings, task_id)
+
+
+def test_propagate_wfn_exception_handling(settings, client, fake_auth, hydrogen):
+    prog_input = DualProgramInput(
+        molecule=hydrogen,
+        calctype="optimization",
+        subprogram="psi4",
+        subprogram_args={"model": {"method": "hf", "basis": "sto-3g"}},
+    )
+    # Submit Job
+    job_submission = client.post(
+        f"{settings.api_v2_str}/compute",
+        data=json_dumps(prog_input),
+        params={"program": "geometric", "propagate_wfn": True},
+    )
+    as_dict = job_submission.json()
+
+    _make_job_completion_assertions(as_dict, client, settings, failure=True)

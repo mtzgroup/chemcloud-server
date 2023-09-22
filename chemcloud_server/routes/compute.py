@@ -14,13 +14,7 @@ from chemcloud_server.models import (
     TaskState,
 )
 
-from .helpers import (
-    delete_result,
-    handle_exception,
-    restore_result,
-    save_dag,
-    signature_from_input,
-)
+from .helpers import delete_result, restore_result, save_dag, signature_from_input
 
 settings = get_settings()
 
@@ -120,23 +114,21 @@ async def result(
         task_status = (
             TaskState.SUCCESS if future_res.successful() else TaskState.FAILURE
         )
-        output = []
+        prog_output = []
         # Get list of AsyncResult objects or single AsyncResult object in a list
         frs = getattr(future_res, "results", [future_res])
         for fr in frs:
             try:
-                output.append(fr.get())
+                prog_output.append(fr.get())
             except QCOPBaseError as e:
-                output.append(e.program_failure)
-            except Exception as e:  # Handle all other exceptions
-                output.append(handle_exception(fr, e))
+                prog_output.append(e.program_failure)
         # If only one result, return it directly instead of a list
-        output = output[0] if len(output) == 1 else output
+        prog_output = prog_output[0] if len(prog_output) == 1 else prog_output
         # Remove result from backend AFTER function returns successfully
         background_tasks.add_task(delete_result, future_res)
 
     else:
         task_status = TaskState.PENDING
-        output = None
+        prog_output = None
 
-    return Output(state=task_status, result=output)
+    return Output(state=task_status, result=prog_output)

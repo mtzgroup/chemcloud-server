@@ -27,7 +27,9 @@ def _get_result(client, settings, task_id) -> Output:
     return Output(**as_dict)
 
 
-def _make_job_completion_assertions(task_id, client, settings) -> None:
+def _make_job_completion_assertions(
+    task_id, client, settings, failure: bool = False
+) -> None:
     """All the assertions I want to make as a compute job proceeds.
 
     This starts at task retrieval (response from a /compute or /compute-procedure
@@ -35,25 +37,25 @@ def _make_job_completion_assertions(task_id, client, settings) -> None:
 
     """
 
-    future_result = _get_result(client, settings, task_id)
+    output = _get_result(client, settings, task_id)
 
     # Check that work gets done, AtomicResult-compatible data is returned
 
-    while future_result.state not in READY_STATES:
+    while output.state not in READY_STATES:
         # No result while computation is happening
-        assert future_result.result is None
+        assert output.result is None
         sleep(0.5)
-        future_result = _get_result(client, settings, task_id)
+        output = _get_result(client, settings, task_id)
 
-    assert future_result.state == TaskState.SUCCESS
-    assert future_result.result is not None
+    assert output.state == (TaskState.SUCCESS if not failure else TaskState.FAILURE)
+    assert output.result is not None
 
-    if isinstance(future_result.result, list):
-        for ar in future_result.result:
+    if isinstance(output.result, list):
+        for ar in output.result:
             assert ar.success is True
     else:
-        assert future_result.result.success is True
+        assert output.result.success is (True if not failure else False)
 
     # Assert result deleted from backend after retrieval
     with pytest.raises(HTTPStatusError):
-        future_result = _get_result(client, settings, task_id)
+        output = _get_result(client, settings, task_id)
