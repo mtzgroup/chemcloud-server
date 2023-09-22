@@ -69,13 +69,13 @@ files = [
 
 [[package]]
 name = "bigchem"
-version = "0.6.0"
+version = "0.6.1"
 description = "A distributed system for scaling and parallelizing quantum chemistry calculations"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "bigchem-0.6.0-py3-none-any.whl", hash = "sha256:3281ff34293d2f97c9b50a863ae9eb2b822395d0d6d5d4eb35a28209606f26b1"},
-    {file = "bigchem-0.6.0.tar.gz", hash = "sha256:fa890d99662e13521b9258c102c4bdd2a1070beb9bb6d72e446a07b64e2c390c"},
+    {file = "bigchem-0.6.1-py3-none-any.whl", hash = "sha256:e858496ec5edc4785a0a13ac961d6ebc6c1b7ad3e0d739f5135ceb8ef75c198d"},
+    {file = "bigchem-0.6.1.tar.gz", hash = "sha256:2f6fed4c0b1c8e768b86bf0d4addef146da97d199e355d573950a7c9d68a2fc3"},
 ]
 
 [package.dependencies]
@@ -83,7 +83,7 @@ celery = {version = ">=5.2.7,<6.0.0", extras = ["redis"]}
 pydantic = ">=2.0.0"
 pydantic-settings = ">=2.0.3,<3.0.0"
 qcio = ">=0.7.0"
-qcop = ">=0.4.4"
+qcop = ">=0.4.6"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1)"]
@@ -1315,18 +1315,18 @@ typing-extensions = ">=4.7.1,<5.0.0"
 
 [[package]]
 name = "qcop"
-version = "0.4.4"
-description = "A package for operating Quantum Chemistry programs using qcio standardized data structures."
+version = "0.4.6"
+description = "A package for operating Quantum Chemistry programs using qcio standardized data structures. Compatible with TeraChem, psi4, QChem, NWChem, ORCA, Molpro, geomeTRIC and many more."
 optional = false
-python-versions = ">=3.8.1,<4.0.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "qcop-0.4.4-py3-none-any.whl", hash = "sha256:068c6e45c75c8f49f6e5b3befc9aa991223717cb649576c6efbfc536018709d3"},
-    {file = "qcop-0.4.4.tar.gz", hash = "sha256:4e3e5479fd1cea1a02561a1021c56e991953e7d744018d6e299aa473df61d55e"},
+    {file = "qcop-0.4.6-py3-none-any.whl", hash = "sha256:18977e62d5a098a989cc1035e9f7d3ce8d5d612d09064aa7ee9e1bf87933cc74"},
+    {file = "qcop-0.4.6.tar.gz", hash = "sha256:cabc02d7754ca4cbbbf27ea8bf41d65c685c9b69a7be194e61b5367e5101a11e"},
 ]
 
 [package.dependencies]
 qcio = ">=0.6.0"
-qcparse = ">=0.5.0"
+qcparse = ">=0.5.1"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1)"]
@@ -1334,13 +1334,13 @@ qcengine = ["qcelemental (>=0.26.0)", "qcengine (>=0.27.0)"]
 
 [[package]]
 name = "qcparse"
-version = "0.5.0"
+version = "0.5.1"
 description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
 optional = false
-python-versions = ">=3.8.1,<4.0.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "qcparse-0.5.0-py3-none-any.whl", hash = "sha256:887c25701661b72e44be2b5dd3910bf78d67cdf58fa150c055c1addcabf539ca"},
-    {file = "qcparse-0.5.0.tar.gz", hash = "sha256:84e511ab3af3b0621e2a97c1abcc7cf400242d50194a44ab8071961166272e64"},
+    {file = "qcparse-0.5.1-py3-none-any.whl", hash = "sha256:b475e513223177449d82b12f2ca3c1d774c7558a1ad4721da4dea46162687d9b"},
+    {file = "qcparse-0.5.1.tar.gz", hash = "sha256:f0aefa6bb5434602df33f19a7213503f08c068ac574fd0ec03b94a12ced4b4d8"},
 ]
 
 [package.dependencies]
@@ -1642,4 +1642,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "78d54ac2ad3746b4d3e3d2e150d4793acd9ca44f66b4202bd5f3adf9a231d82d"
+content-hash = "9cb91c101bd20bf3259d21e1d86fc3be479570eb18de0c1a94c6b8f5cfeb0f9e"
