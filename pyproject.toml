@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chemcloud-server"
-version = "0.11.4"
+version = "0.11.5"
 description = "An HTTP API for BigChem"
 authors = ["Colton Hicks <github@coltonhicks.com>"]
 license = "MIT"
@@ -20,7 +20,7 @@ httptools = "^0.5.0"
 typing-extensions = "^4.5.0"
 aiofiles = "^23.1.0"
 cached-property = "^1.5.2"
-bigchem = ">=0.6.1"
+bigchem = ">=0.6.4"
 fastapi = ">=0.103.0"
 pydantic = ">=2.0.0"
 pydantic-settings = "^2.0.3"
