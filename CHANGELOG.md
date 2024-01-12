@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.5] - 2024-01-12
+
+### Fixed
+
+- Updated `bigchem` to `0.6.4` which incorporates `qcop` update that properly captures `geometric` exceptions.
+
 ## [0.11.4] - 2023-09-22
 
 ### Added
