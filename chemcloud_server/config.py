@@ -1,4 +1,5 @@
 """Settings and Configuration. Read more: https://fastapi.tiangolo.com/advanced/settings/"""
+
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
