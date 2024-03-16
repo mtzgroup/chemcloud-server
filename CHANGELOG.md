@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.11.6] - 2024-03-16
+
 ### Changed
 
 - Updated `bigchem` to `0.6.5` which incorporates `qcop 0.5.0` which raises exceptions by default and therefore changed the `compute` signature in BigChem by removing the `raise_exc=True` default argument.
@@ -310,7 +312,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.4...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.6...HEAD
+[0.11.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.6
+[0.11.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.5
 [0.11.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.4
 [0.11.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.3
 [0.11.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.2
