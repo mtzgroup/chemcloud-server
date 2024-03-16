@@ -1,4 +1,5 @@
 """A simple script to exercise the web app and celery to compute a result."""
+
 import sys
 from getpass import getpass
 from pathlib import Path

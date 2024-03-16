@@ -1,4 +1,5 @@
 """Main module for the FastAPI app. Also contains convenience paths that route """
+
 from typing import Optional
 
 from fastapi import FastAPI, Security

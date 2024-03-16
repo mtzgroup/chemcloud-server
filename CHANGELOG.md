@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated `bigchem` to `0.6.5` which incorporates `qcop 0.5.0` which raises exceptions by default and therefore changed the `compute` signature in BigChem by removing the `raise_exc=True` default argument.
+- Updated `black` from `23.x.x -> 24.x.x'.
+
 ## [0.11.5] - 2024-01-12
 
 ### Fixed
