@@ -1,6 +1,5 @@
 import json
 from time import sleep
-from typing import Union
 
 import pytest
 from celery.states import READY_STATES
@@ -10,7 +9,7 @@ from pydantic import BaseModel
 from chemcloud_server.models import Output, TaskState
 
 
-def json_dumps(obj: Union[BaseModel, list[BaseModel]]):
+def json_dumps(obj: BaseModel | list[BaseModel]):
     """Convenience function for serializing pydantic models to JSON"""
     if isinstance(obj, list):
         return json.dumps([m.model_dump() for m in obj])

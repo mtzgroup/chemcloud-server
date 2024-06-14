@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -23,13 +23,13 @@ oauth2_password_scheme = OAuth2PasswordBearer(
 
 def _validate_jwt(
     token: str,
-    rsa_key: Dict[str, str],
+    rsa_key: dict[str, str],
     *,
-    algorithms: List[str],
+    algorithms: list[str],
     issuer: str,
-    audience: Optional[str] = None,
-    security_scopes: Optional[SecurityScopes] = None,
-) -> Dict[str, Any]:
+    audience: str | None = None,
+    security_scopes: SecurityScopes | None = None,
+) -> dict[str, Any]:
     """Validate JWT using rsa_key; check scopes, return payload."""
     payload = jwt.decode(
         token,
@@ -48,7 +48,7 @@ def _validate_jwt(
     return payload
 
 
-def _get_matching_rsa_key(token: str, jwks: List[Dict[str, str]]) -> Dict[str, str]:
+def _get_matching_rsa_key(token: str, jwks: list[dict[str, str]]) -> dict[str, str]:
     """Find matching key, return fields for JWT decode"""
     # Return JWT header as dict
     unverified_header = jwt.get_unverified_header(token)
@@ -69,7 +69,7 @@ async def bearer_auth(
     security_scopes: SecurityScopes,
     token: str = Depends(oauth2_password_scheme),
     settings: config.Settings = Depends(get_settings),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Validates access token"""
     # Determine WWW-Authenticate header value
     if security_scopes.scopes:

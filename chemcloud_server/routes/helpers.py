@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional
 
 import httpx
 from bigchem.algos import parallel_frequency_analysis
@@ -20,9 +20,9 @@ settings = config.get_settings()
 async def _external_request(
     method: str,
     url: str,
-    headers: Optional[Dict[str, str]] = None,
-    data: Optional[Dict[str, Any]] = None,
-) -> Dict[Any, Any]:
+    headers: Optional[dict[str, str]] = None,
+    data: Optional[dict[str, Any]] = None,
+) -> dict[Any, Any]:
     async with httpx.AsyncClient() as client:
         # Has default timeout of 5 seconds
         response = await client.request(
@@ -50,7 +50,7 @@ async def _external_request(
 
 async def _auth0_token_request(
     flow_model: models.OAuth2Base, settings: config.Settings = config.get_settings()
-) -> Dict[Any, Any]:
+) -> dict[Any, Any]:
     """Main method for requesting tokens from Auth0
 
     Set audience to get back JWT instead of Opaque Token
@@ -69,7 +69,7 @@ async def _auth0_token_request(
     )
 
 
-def save_dag(result: Union[AsyncResult, GroupResult]) -> None:
+def save_dag(result: AsyncResult | GroupResult) -> None:
     """Save DAG of result (including parents) to backend.
 
     This makes it possible to just return the result id from the compute endpoint for
@@ -78,7 +78,7 @@ def save_dag(result: Union[AsyncResult, GroupResult]) -> None:
     result.backend.set(result.id, json.dumps(result.as_tuple()))
 
 
-def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
+def restore_result(result_id: str) -> AsyncResult | GroupResult:
     """Restore result (including parents) from backend
 
     Raises:
@@ -95,11 +95,12 @@ def restore_result(result_id: str) -> Union[AsyncResult, GroupResult]:
 def signature_from_input(
     program: models.SupportedPrograms,
     inp_obj: QCIOInputs,
-    compute_kwargs: Dict[str, Any],
+    compute_kwargs: dict[str, Any],
 ) -> Signature:
     """Return the celery signature for a compute task"""
     if program == models.SupportedPrograms.BIGCHEM:
         # Does not support compute_kwargs yet
+        assert isinstance(inp_obj, DualProgramInput)  # for mypy
         return compute_bigchem(inp_obj)
     else:
         # Must pass program.value to underlying functions so BigChem doesn't try to

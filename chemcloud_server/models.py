@@ -1,22 +1,35 @@
 from enum import Enum
-from typing import List, Optional, Union
+from typing import Optional, TypeAlias
 
 from pydantic import AnyHttpUrl, BaseModel, Field
 from qcio import (
     DualProgramInput,
     FileInput,
-    FileOutput,
-    OptimizationOutput,
-    ProgramFailure,
+    NoResults,
+    OptimizationResults,
     ProgramInput,
-    SinglePointOutput,
+    ProgramOutput,
+    SinglePointResults,
 )
 
 # Convenience types
-QCIOInputs = Union[ProgramInput, FileInput, DualProgramInput]
-QCIOInputsOrList = Union[QCIOInputs, List[QCIOInputs]]
-QCIOOutputs = Union[FileOutput, SinglePointOutput, OptimizationOutput, ProgramFailure]
-QCIOOutputsOrList = Union[QCIOOutputs, List[QCIOOutputs]]
+QCIOInputs: TypeAlias = ProgramInput | FileInput | DualProgramInput
+QCIOInputsOrList: TypeAlias = QCIOInputs | list[QCIOInputs]
+# Appears I must explicitly list all possible outputs here otherwise calling .model_dump
+# on an Output object will fail with when trying to return a response from /output/:
+# *** pydantic_core._pydantic_core.PydanticSerializationError: Error calling function `<lambda>`: TypeError: 'MockValSet' object cannot be converted to 'SchemaSerializer'  # noqa: E501
+# There may be a more clever dynamic way to do this but this is OK for now.
+QCIOOutputs: TypeAlias = (
+    ProgramOutput[FileInput, NoResults]
+    | ProgramOutput[ProgramInput, NoResults]
+    | ProgramOutput[ProgramInput, SinglePointResults]
+    | ProgramOutput[ProgramInput, OptimizationResults]
+    | ProgramOutput[DualProgramInput, NoResults]
+    | ProgramOutput[DualProgramInput, SinglePointResults]
+    | ProgramOutput[DualProgramInput, OptimizationResults]
+)
+
+QCIOOutputsOrList: TypeAlias = QCIOOutputs | list[QCIOOutputs]
 
 
 class SupportedPrograms(str, Enum):
@@ -65,7 +78,7 @@ class Output(BaseModel):
     GroupResult"""
 
     state: TaskState
-    result: Optional[Union[QCIOOutputs, List[QCIOOutputs]]] = None
+    result: Optional[QCIOOutputsOrList] = None
 
 
 class OAuth2Base(BaseModel):

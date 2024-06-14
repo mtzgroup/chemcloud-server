@@ -6,7 +6,7 @@ from pathlib import Path
 from time import sleep
 
 import httpx
-from qcio import Molecule, ProgramFailure, ProgramInput, SinglePointOutput
+from qcio import Molecule, ProgramInput, ProgramOutput
 
 HOSTS = {
     "local": "http://localhost:8000",
@@ -57,8 +57,8 @@ if __name__ == "__main__":
     molecule = Molecule.open(MOLECULE)
     prog_inp = ProgramInput(
         molecule=molecule,
-        model={"method": "b3lyp", "basis": "6-31g"},
-        calctype="energy",
+        model={"method": "b3lyp", "basis": "6-31g"},  # type: ignore
+        calctype="energy",  # type: ignore
     )
 
     # POST compute job
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     r1 = httpx.post(
         f"{HOST}{API_PREFIX}/compute",
         headers={"Authorization": f"Bearer {jwt}"},
-        data=prog_inp.model_dump_json(),
+        data=prog_inp.model_dump_json(),  # type: ignore
         params={"program": "terachem"},
     )
     r1.raise_for_status()
@@ -91,10 +91,7 @@ if __name__ == "__main__":
         print("Waiting for result...")
 
     # Assure we can recreate models from results
-    if output_dict["success"] is True:
-        output = SinglePointOutput(**output_dict)
-    else:
-        output = ProgramFailure(**output_dict)
+    output = ProgramOutput(**output_dict)
 
     print(output)
-    print(getattr(output, "return_result", "Operation Failed!"))
+    print(getattr(output.results, "energy", "Operation Failed!"))

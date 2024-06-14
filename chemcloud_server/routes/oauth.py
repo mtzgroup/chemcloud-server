@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 from fastapi import APIRouter, Depends
 from fastapi.param_functions import Form
@@ -43,7 +43,7 @@ async def token(
     settings: config.Settings = Depends(config.get_settings),
 ):
     """Route for OAuth2 requests to ChemCloud"""
-    flow_model: Union[models.OAuth2PasswordFlow, models.OAuth2RefreshFlow]
+    flow_model: models.OAuth2PasswordFlow | models.OAuth2RefreshFlow
 
     if form_data.grant_type == "password":
         assert form_data.username, "Must pass username"
