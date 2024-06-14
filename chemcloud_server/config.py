@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import httpx
 from fastapi import HTTPException
@@ -38,8 +38,8 @@ class Settings(BaseSettings):
     auth0_client_secret: str = ""
     auth0_api_audience: str = ""
     auth0_default_logout_route: str = "docs"
-    auth0_algorithms: List[str] = ["RS256"]
-    jwks: List[Dict[str, Any]] = [{}]
+    auth0_algorithms: list[str] = ["RS256"]
+    jwks: list[dict[str, Any]] = [{}]
     jwt_issuer: str = ""
 
     model_config = SettingsConfigDict(
@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     )
 
 
-def _get_jwks(domain: str) -> List[Dict[str, str]]:
+def _get_jwks(domain: str) -> list[dict[str, str]]:
     """Get JSON Web Keys used to validate tokens"""
     url = f"https://{domain}/.well-known/jwks.json"
     response = httpx.get(url)

@@ -32,6 +32,7 @@ services:
       - .env
     volumes:
       - bigchem:/tmp/
+    restart: on-failure
     # Run worker listening to default queue and private_queue
     command: celery -A bigchem.tasks worker -Q celery,private_queue --without-heartbeat --without-mingle --without-gossip --loglevel=INFO
 

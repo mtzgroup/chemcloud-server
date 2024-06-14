@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- 🚨 Renamed top-level argument to `/compute` `collect_wavefunction` to `collect_wfn` to match `qcop` nomenclature.
+- Updated to `BigChem 0.7.2` which uses latest Generics structures from `qcio`. Not a breaking change since the json representation of these objects is all the same as before; however, will bump major version since this feels like a shift to core data structures.
+- Updated a number of dependencies and subpackages to latest versions. (`poetry lock`)
+- Modernized typing syntax by removing `Dict`, `List`, `Union` declaration in favor of `dict`, `list`, `|`.
+
 ## [0.11.6] - 2024-03-16
 
 ### Changed
@@ -146,7 +153,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Removed webserver memory constraints at docker level. Large results were crashing server because of 500MB limit. When (300MB+) results were pulled into memory server would require >500MB memory and would be terminated by process manager.
+- Removed web server memory constraints at docker level. Large results were crashing server because of 500MB limit. When (300MB+) results were pulled into memory server would require >500MB memory and would be terminated by process manager.
 - Increased gunicorn worker timeout from 30s -> 60s to accommodate larger results.
 - Set results to expire in 3 days instead of default 1 day in backend store.
 

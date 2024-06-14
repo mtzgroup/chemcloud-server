@@ -8,11 +8,16 @@
         "calctype",
         "CALCTYPES",
         "chemcloud",
+        "dockerized",
         "dtype",
         "fastapi",
         "freqs",
         "httpx",
+        "kombu",
+        "maxiter",
+        "maxsteps",
         "psutil",
+        "pyberny",
         "qccloud",
         "qcel",
         "qcelemental",
@@ -29,5 +34,7 @@
         "UNPROCESSABLE",
         "uvicorn"
     ],
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
 }

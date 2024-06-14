@@ -23,8 +23,8 @@ def test_compute_requires_auth(settings, client):
     (
         ("psi4", {"method": "HF", "basis": "sto-3g"}, {}, False),
         ("rdkit", {"method": "UFF"}, {}, False),
-        ("xtb", {"method": "GFN2-xTB"}, {"accuracy": 1.0, "max_iterations": 20}, False),
-        ("xtb", {"method": "GFN2-xTB"}, {"accuracy": 1.0, "max_iterations": 20}, True),
+        ("xtb", {"method": "GFN2xTB"}, {"accuracy": 1.0, "max_iterations": 20}, False),
+        ("xtb", {"method": "GFN2xTB"}, {"accuracy": 1.0, "max_iterations": 20}, True),
     ),
 )
 @pytest.mark.timeout(65)
@@ -90,7 +90,7 @@ def test_compute_private_queue(settings, client, fake_auth, hydrogen):
     atomic_input = ProgramInput(
         molecule=hydrogen,
         calctype="energy",
-        model={"method": "GFN2-xTB"},
+        model={"method": "GFN2xTB"},
         keywords={"accuracy": 1.0, "max_iterations": 20},
     )
 
@@ -125,7 +125,7 @@ def test_compute_optimization_private_queue(
         keywords={"maxsteps": 2},
         subprogram="xtb",
         subprogram_args={
-            "model": {"method": "GFN2-xTB"},
+            "model": {"method": "GFN2xTB"},
         },
     )
 
