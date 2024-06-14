@@ -8,10 +8,10 @@ from qcop.exceptions import QCOPBaseError
 from chemcloud_server.config import get_settings
 from chemcloud_server.exceptions import ResultNotFoundError
 from chemcloud_server.models import (
-    Output,
-    QCIOInputsOrList,
+    ProgramInputsOrList,
+    ProgramOutputWrapper,
     SupportedPrograms,
-    TaskState,
+    TaskStatus,
 )
 
 from .helpers import delete_result, restore_result, save_dag, signature_from_input
@@ -29,7 +29,7 @@ router = APIRouter()
 async def compute(
     background_tasks: BackgroundTasks,
     program: SupportedPrograms,
-    inp_obj: QCIOInputsOrList,
+    inp_obj: ProgramInputsOrList,
     collect_stdout: bool = Query(
         True, description="Collect stdout from the computation."
     ),
@@ -90,7 +90,7 @@ async def compute(
 @router.get(
     # NOTE: "/compute" prefix is prepended in top level main.py file
     "/output/{task_id}",
-    response_model=Output,  # type: ignore
+    response_model=ProgramOutputWrapper,  # type: ignore
     response_description="A compute task's status and (if complete) return value.",
 )
 async def result(
@@ -100,7 +100,7 @@ async def result(
         title="The task id to query.",
         pattern=r"[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}",
     ),
-) -> Output:
+) -> ProgramOutputWrapper:
     """Retrieve a task's status and output (if complete)."""
     # Check for result in backend
     try:
@@ -111,7 +111,7 @@ async def result(
         )
     if future_res.ready():
         task_status = (
-            TaskState.SUCCESS if future_res.successful() else TaskState.FAILURE
+            TaskStatus.SUCCESS if future_res.successful() else TaskStatus.FAILURE
         )
         prog_output = []
         # Get list of AsyncResult objects or single AsyncResult object in a list
@@ -127,6 +127,6 @@ async def result(
         background_tasks.add_task(delete_result, future_res)
 
     else:
-        task_status = TaskState.PENDING
+        task_status = TaskStatus.PENDING
         prog_output = None
-    return Output(state=task_status, result=prog_output)
+    return ProgramOutputWrapper(status=task_status, program_output=prog_output)
