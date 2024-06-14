@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated to `BigChem 0.7.2` which uses latest Generics structures from `qcio`. Not a breaking change since the json representation of these objects is all the same as before; however, will bump major version since this feels like a shift to core data structures.
 - Updated a number of dependencies and subpackages to latest versions. (`poetry lock`)
 - Modernized typing syntax by removing `Dict`, `List`, `Union` declaration in favor of `dict`, `list`, `|`.
+- Renamed `TaskState` -> `TaskStatus`
+- Renamed `Output` to `ProgramOutputWrapper`.
+  - 🚨 Renamed attributes from `state` -> `status` and `result` -> `program_output`.
 
 ## [0.11.6] - 2024-03-16
 

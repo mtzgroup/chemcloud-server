@@ -73,7 +73,7 @@ if __name__ == "__main__":
     task_id = r1.json()
     print(f"Job sent! Task ID: {task_id}")
 
-    # Check job results
+    # Check job output
     def _get_result(task_id, token):
         result = httpx.get(
             f"{HOST}{API_PREFIX}/compute/output/{task_id}",
@@ -81,16 +81,16 @@ if __name__ == "__main__":
         )
         print(result)
         response = result.json()
-        return response["state"], response["result"]
+        return response["status"], response["program_output"]
 
     status, output = _get_result(task_id, jwt)
     while status in {"PENDING", "STARTED"}:
         sleep(1)
         status, output_dict = _get_result(task_id, jwt)
-        print(f"State: {status}")
+        print(f"Status: {status}")
         print("Waiting for result...")
 
-    # Assure we can recreate models from results
+    # Assure we can recreate models from outputs
     output = ProgramOutput(**output_dict)
 
     print(output)

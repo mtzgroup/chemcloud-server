@@ -6,7 +6,7 @@ from celery.states import READY_STATES
 from httpx import HTTPStatusError
 from pydantic import BaseModel
 
-from chemcloud_server.models import Output, TaskState
+from chemcloud_server.models import ProgramOutputWrapper, TaskStatus
 
 
 def json_dumps(obj: BaseModel | list[BaseModel]):
@@ -16,14 +16,14 @@ def json_dumps(obj: BaseModel | list[BaseModel]):
     return obj.model_dump_json()
 
 
-def _get_result(client, settings, task_id) -> Output:
+def _get_result(client, settings, task_id) -> ProgramOutputWrapper:
     # Check Status upon submission
     result = client.get(
         f"{settings.api_v2_str}/compute/output/{task_id}",
     )
     result.raise_for_status()
     as_dict = result.json()
-    return Output(**as_dict)
+    return ProgramOutputWrapper(**as_dict)
 
 
 def _make_job_completion_assertions(
@@ -40,20 +40,20 @@ def _make_job_completion_assertions(
 
     # Check that work gets done, AtomicResult-compatible data is returned
 
-    while output.state not in READY_STATES:
+    while output.status not in READY_STATES:
         # No result while computation is happening
-        assert output.result is None
+        assert output.program_output is None
         sleep(0.5)
         output = _get_result(client, settings, task_id)
 
-    assert output.state == (TaskState.SUCCESS if not failure else TaskState.FAILURE)
-    assert output.result is not None
+    assert output.status == (TaskStatus.SUCCESS if not failure else TaskStatus.FAILURE)
+    assert output.program_output is not None
 
-    if isinstance(output.result, list):
-        for ar in output.result:
+    if isinstance(output.program_output, list):
+        for ar in output.program_output:
             assert ar.success is True
     else:
-        assert output.result.success is (True if not failure else False)
+        assert output.program_output.success is (True if not failure else False)
 
     # Assert result deleted from backend after retrieval
     with pytest.raises(HTTPStatusError):

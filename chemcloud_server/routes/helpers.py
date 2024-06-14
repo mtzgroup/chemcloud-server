@@ -12,7 +12,7 @@ from qcio import CalcType, DualProgramInput, ProgramInput
 
 from chemcloud_server import config, models
 from chemcloud_server.exceptions import ResultNotFoundError
-from chemcloud_server.models import QCIOInputs
+from chemcloud_server.models import ProgramInputs
 
 settings = config.get_settings()
 
@@ -94,7 +94,7 @@ def restore_result(result_id: str) -> AsyncResult | GroupResult:
 
 def signature_from_input(
     program: models.SupportedPrograms,
-    inp_obj: QCIOInputs,
+    inp_obj: ProgramInputs,
     compute_kwargs: dict[str, Any],
 ) -> Signature:
     """Return the celery signature for a compute task"""

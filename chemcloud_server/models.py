@@ -13,13 +13,14 @@ from qcio import (
 )
 
 # Convenience types
-QCIOInputs: TypeAlias = ProgramInput | FileInput | DualProgramInput
-QCIOInputsOrList: TypeAlias = QCIOInputs | list[QCIOInputs]
+ProgramInputs: TypeAlias = FileInput | ProgramInput | DualProgramInput
+ProgramInputsOrList: TypeAlias = ProgramInputs | list[ProgramInputs]
 # Appears I must explicitly list all possible outputs here otherwise calling .model_dump
-# on an Output object will fail with when trying to return a response from /output/:
+# on a ProgramOutputWrapper object will fail with when trying to return a response from
+# /output/ with the following error:
 # *** pydantic_core._pydantic_core.PydanticSerializationError: Error calling function `<lambda>`: TypeError: 'MockValSet' object cannot be converted to 'SchemaSerializer'  # noqa: E501
 # There may be a more clever dynamic way to do this but this is OK for now.
-QCIOOutputs: TypeAlias = (
+ProgramOutputs: TypeAlias = (
     ProgramOutput[FileInput, NoResults]
     | ProgramOutput[ProgramInput, NoResults]
     | ProgramOutput[ProgramInput, SinglePointResults]
@@ -28,12 +29,12 @@ QCIOOutputs: TypeAlias = (
     | ProgramOutput[DualProgramInput, SinglePointResults]
     | ProgramOutput[DualProgramInput, OptimizationResults]
 )
-
-QCIOOutputsOrList: TypeAlias = QCIOOutputs | list[QCIOOutputs]
+ProgramOutputsOrList: TypeAlias = ProgramOutputs | list[ProgramOutputs]
 
 
 class SupportedPrograms(str, Enum):
-    """Compute programs currently supported by this instance of ChemCloud.
+    """
+    Compute programs currently supported by this instance of ChemCloud.
 
     NOTE: To add more just make sure your BigChem instance has the program installed and
         then add the program name here. This SupportedPrograms filter exists so that
@@ -49,7 +50,7 @@ class SupportedPrograms(str, Enum):
     BIGCHEM = "bigchem"
 
 
-class TaskState(str, Enum):
+class TaskStatus(str, Enum):
     """Tasks status for a submitted compute job"""
 
     # States from https://github.com/celery/celery/blob/master/celery/states.py
@@ -73,12 +74,20 @@ class TaskState(str, Enum):
     IGNORED = "IGNORED"
 
 
-class Output(BaseModel):
-    """Status and result of compute tasks. Wrapper around celery AsyncResult and
-    GroupResult"""
+class ProgramOutputWrapper(BaseModel):
+    """
+    Status and ProgramOutput(s) of a compute task. Main object returned by
+    /compute/output/{task_id} in response to a query for a task's status and output.
 
-    state: TaskState
-    result: Optional[QCIOOutputsOrList] = None
+    Args:
+        status: The status of the task as reported by celery.
+        program_output: The ProgramOutput object for the task. If the task is a group,
+            this will be a list of ProgramOutputs. If the task is a single task, this
+            will be a single ProgramOutput.
+    """
+
+    status: TaskStatus
+    program_output: Optional[ProgramOutputsOrList] = None
 
 
 class OAuth2Base(BaseModel):

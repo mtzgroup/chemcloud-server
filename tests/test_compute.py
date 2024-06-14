@@ -7,7 +7,7 @@ from fastapi import status as status_codes
 from httpx import HTTPStatusError
 from qcio import DualProgramInput, ProgramInput
 
-from chemcloud_server.models import TaskState
+from chemcloud_server.models import TaskStatus
 from tests.utils import _get_result, _make_job_completion_assertions
 
 from .utils import json_dumps
@@ -297,18 +297,18 @@ def test_compute_failed_and_successful_results_in_group(
 
     # Check that work gets done, AtomicResult-compatible data is returned
 
-    while future_result.state not in READY_STATES:
+    while future_result.status not in READY_STATES:
         # No result while computation is happening
-        assert future_result.result is None
+        assert future_result.program_output is None
         sleep(0.5)
         future_result = _get_result(client, settings, task_id)
 
     # If any result failed the state will be FAILURE
-    assert future_result.state == TaskState.FAILURE
-    assert future_result.result is not None
+    assert future_result.status == TaskStatus.FAILURE
+    assert future_result.program_output is not None
 
-    assert future_result.result[0].success is True
-    assert future_result.result[1].success is False
+    assert future_result.program_output[0].success is True
+    assert future_result.program_output[1].success is False
 
     # Assert result deleted from backend after retrieval
     with pytest.raises(HTTPStatusError):
