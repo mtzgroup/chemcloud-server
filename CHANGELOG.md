@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.12.0] - 2024-06-14
+
 ### Changed
 
-- 🚨 Renamed top-level argument to `/compute` `collect_wavefunction` to `collect_wfn` to match `qcop` nomenclature.
 - Updated to `BigChem 0.7.2` which uses latest Generics structures from `qcio`. Not a breaking change since the json representation of these objects is all the same as before; however, will bump major version since this feels like a shift to core data structures.
+- 🚨 Renamed top-level argument to `/compute` `collect_wavefunction` to `collect_wfn` to match `qcop` nomenclature.
 - Updated a number of dependencies and subpackages to latest versions. (`poetry lock`)
 - Modernized typing syntax by removing `Dict`, `List`, `Union` declaration in favor of `dict`, `list`, `|`.
 - Renamed `TaskState` -> `TaskStatus`
@@ -322,7 +324,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.11.6...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.12.0...HEAD
+[0.12.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.12.0
 [0.11.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.6
 [0.11.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.5
 [0.11.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.4
