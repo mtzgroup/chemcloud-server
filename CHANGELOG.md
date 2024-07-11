@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.13.0] - 2024-07-10
+
+### Changed
+
+- 🚨 Updated to `BigChem 0.8.0` which uses new `qcio` `Structure` in place of `Molecule`.
+
 ## [0.12.0] - 2024-06-14
 
 ### Changed
@@ -324,7 +330,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.12.0...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.13.0...HEAD
+[0.13.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.13.0
 [0.12.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.12.0
 [0.11.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.6
 [0.11.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.11.5
