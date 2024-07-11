@@ -3,8 +3,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -92,8 +92,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -181,8 +181,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -270,8 +270,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -359,8 +359,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -446,8 +446,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -535,8 +535,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -624,8 +624,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -713,8 +713,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -802,8 +802,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -891,8 +891,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -980,8 +980,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1069,8 +1069,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1158,8 +1158,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1247,8 +1247,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1336,8 +1336,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1425,8 +1425,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1514,8 +1514,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],
@@ -1603,8 +1603,8 @@
     "id": null,
     "schema_name": "qcschema_output",
     "schema_version": 1,
-    "molecule": {
-      "schema_name": "qcschema_molecule",
+    "structure": {
+      "schema_name": "qcschema_structure",
       "schema_version": 2,
       "validated": true,
       "symbols": ["O", "H", "H"],

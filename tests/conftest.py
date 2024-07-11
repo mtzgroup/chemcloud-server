@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from qcio import Molecule, ProgramInput
+from qcio import ProgramInput, Structure
 
 from chemcloud_server.auth import bearer_auth
 from chemcloud_server.config import get_settings
@@ -44,8 +44,8 @@ def test_data_dir():
 
 @pytest.fixture
 def hydrogen():
-    """Hydrogen Molecule"""
-    return Molecule(
+    """Hydrogen Structure"""
+    return Structure(
         **{
             "symbols": ["H", "H"],
             "geometry": [0, 0, -0.65, 0.0, 0.0, 0.65],
@@ -57,8 +57,8 @@ def hydrogen():
 
 @pytest.fixture
 def water():
-    """Water Molecule"""
-    return Molecule(
+    """Water Structure"""
+    return Structure(
         **{
             "geometry": [
                 0.0,
@@ -80,7 +80,7 @@ def water():
 @pytest.fixture
 def program_input(water):
     return ProgramInput(
-        molecule=water, calctype="energy", model={"method": "HF", "basis": "sto-3g"}
+        structure=water, calctype="energy", model={"method": "HF", "basis": "sto-3g"}
     )
 
 

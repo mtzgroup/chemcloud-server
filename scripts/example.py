@@ -6,7 +6,7 @@ from pathlib import Path
 from time import sleep
 
 import httpx
-from qcio import Molecule, ProgramInput, ProgramOutput
+from qcio import ProgramInput, ProgramOutput, Structure
 
 HOSTS = {
     "local": "http://localhost:8000",
@@ -53,10 +53,10 @@ if __name__ == "__main__":
     jwt = r0.json()["access_token"]
 
     # Generate Inputs
-    print(f"Opening molecule structure: {MOLECULE}...")
-    molecule = Molecule.open(MOLECULE)
+    print(f"Opening structure structure: {MOLECULE}...")
+    structure = Structure.open(MOLECULE)
     prog_inp = ProgramInput(
-        molecule=molecule,
+        structure=structure,
         model={"method": "b3lyp", "basis": "6-31g"},  # type: ignore
         calctype="energy",  # type: ignore
     )

@@ -69,21 +69,21 @@ files = [
 
 [[package]]
 name = "bigchem"
-version = "0.7.2"
+version = "0.8.0"
 description = "A distributed system for scaling and parallelizing quantum chemistry calculations"
 optional = false
 python-versions = "<4.0.0,>=3.8.1"
 files = [
-    {file = "bigchem-0.7.2-py3-none-any.whl", hash = "sha256:005c8c0430e55944690895853942277efcf62d559addb4117d7de882c702f9c7"},
-    {file = "bigchem-0.7.2.tar.gz", hash = "sha256:da0e97d6ee9ebb721a9f9d86691e9a5e607f11575cc97527ed1e6df075ba6019"},
+    {file = "bigchem-0.8.0-py3-none-any.whl", hash = "sha256:f038f1500e203db28989302d8c6908c10c90bf06a9baeae860b94426818157e9"},
+    {file = "bigchem-0.8.0.tar.gz", hash = "sha256:161518011ed881962f538313ad09cb4af58e09390b2515b171e70a80ba3c6d72"},
 ]
 
 [package.dependencies]
 celery = {version = ">=5.3.4,<6.0.0", extras = ["redis"]}
 pydantic = ">=2.0.0,<3.0.0"
 pydantic-settings = ">=2.0.3,<3.0.0"
-qcio = ">=0.9.3,<0.10.0"
-qcop = ">=0.6.2,<0.7.0"
+qcio = ">=0.10.1,<0.11.0"
+qcop = ">=0.7.1,<0.8.0"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1,<2.0.0)"]
@@ -1526,13 +1526,13 @@ files = [
 
 [[package]]
 name = "qcio"
-version = "0.9.3"
+version = "0.10.1"
 description = "Beautiful and user friendly data structures for quantum chemistry."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcio-0.9.3-py3-none-any.whl", hash = "sha256:8199f78cef3f63b573610e62733a61d3c7db408481e5a8f47a30896bb5c1e800"},
-    {file = "qcio-0.9.3.tar.gz", hash = "sha256:e38027e68aa05f6b9c6e735dd2262ca14d368bf80432f091ee33bbea74245c75"},
+    {file = "qcio-0.10.1-py3-none-any.whl", hash = "sha256:70abf1c323d88f2807d6d82d6f1b88ceca39e0f4197e09ed6fca43c29d248297"},
+    {file = "qcio-0.10.1.tar.gz", hash = "sha256:831d5971ee3df9e5abc268f8e78c7b89979d29c3d91da7723b31bc41bf60250d"},
 ]
 
 [package.dependencies]
@@ -1542,20 +1542,23 @@ pyyaml = ">=6.0,<7.0"
 toml = ">=0.10.2,<0.11.0"
 typing-extensions = ">=4.7.1,<5.0.0"
 
+[package.extras]
+rdkit = ["rdkit (>=2022.3.3)"]
+
 [[package]]
 name = "qcop"
-version = "0.6.2"
+version = "0.7.1"
 description = "A package for operating Quantum Chemistry programs using qcio standardized data structures. Compatible with TeraChem, psi4, QChem, NWChem, ORCA, Molpro, geomeTRIC and many more."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcop-0.6.2-py3-none-any.whl", hash = "sha256:094b8b85050aa8440f9c6ae1c2093aa26beded4e8d5e6b5a2312e2b3ffb1789a"},
-    {file = "qcop-0.6.2.tar.gz", hash = "sha256:4722629ae88c9aa86220d4564d6b196a9e08f36111707aa47e4477e8b2e6f685"},
+    {file = "qcop-0.7.1-py3-none-any.whl", hash = "sha256:dee8df1f802964ba6d96ddc218c45a7edd6b7f8025659902f9e88e4ef1816ed2"},
+    {file = "qcop-0.7.1.tar.gz", hash = "sha256:f01d5fee4775478d2a5b32ea722d4b53f707972737ecac5bbc5957817092e0cb"},
 ]
 
 [package.dependencies]
-qcio = ">=0.9.0,<0.10.0"
-qcparse = ">=0.5.2,<0.6.0"
+qcio = ">=0.10.1,<0.11.0"
+qcparse = ">=0.6.0,<0.7.0"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1,<2.0.0)"]
@@ -1563,18 +1566,18 @@ qcengine = ["qcelemental (>=0.26.0,<0.27.0)", "qcengine (>=0.27.0,<0.28.0)"]
 
 [[package]]
 name = "qcparse"
-version = "0.5.3"
+version = "0.6.0"
 description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcparse-0.5.3-py3-none-any.whl", hash = "sha256:c399e94f03983259c94bb6e99aa64b1d20392cfcf325321bea3d5da1a649a530"},
-    {file = "qcparse-0.5.3.tar.gz", hash = "sha256:6449dc31d9349791e44fe19c18b1b0eb0c50a2f104bc3ad7348d5fb203efcd0c"},
+    {file = "qcparse-0.6.0-py3-none-any.whl", hash = "sha256:5637e9e7417cf22f93d1378e0802b602a00d085f129ab76ae67558e2cfcf46ba"},
+    {file = "qcparse-0.6.0.tar.gz", hash = "sha256:d5d166a0d58518e8664bbf11df517d2d00483488dd8815f52aa8bf824d510b05"},
 ]
 
 [package.dependencies]
 pydantic = ">=2.0.0"
-qcio = ">=0.7.1"
+qcio = ">=0.10.0"
 
 [[package]]
 name = "redis"
@@ -2169,4 +2172,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4eb93e5150ca53b4b75d5e7dd77699fadcab770f8510e2e23e7fff189adc3372"
+content-hash = "40e3e18e806cc13a41d98d448e1ad65a2941496ae30f31905b5108206ef4f827"

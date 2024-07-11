@@ -133,7 +133,7 @@ def compute_bigchem(
     # Construct program input
     prog_inp = ProgramInput(
         calctype=inp_obj.calctype,
-        molecule=inp_obj.molecule,
+        structure=inp_obj.structure,
         **inp_obj.subprogram_args.model_dump(),
     )
 
