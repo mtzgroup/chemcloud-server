@@ -39,7 +39,7 @@ def test_compute(
     worker waiting up for 8 seconds (or longer) to retry connecting.
     """
     prog_inp = ProgramInput(
-        molecule=hydrogen, calctype="energy", model=model, keywords=keywords
+        structure=hydrogen, calctype="energy", model=model, keywords=keywords
     )
     if group:
         # Make list of inputs
@@ -67,7 +67,7 @@ def test_compute_with_binary_extras(settings, client, fake_auth, hydrogen):
     """
     invalid_utf8_bytes = b"\xC0\xBF\xC0\xBF\xC0\xBF\xC0\xBF\xC0\xBF"
     prog_inp = ProgramInput(
-        molecule=hydrogen,
+        structure=hydrogen,
         calctype="energy",
         model={"method": "HF", "basis": "sto-3g"},
         files={"binary_input": invalid_utf8_bytes},
@@ -88,7 +88,7 @@ def test_compute_with_binary_extras(settings, client, fake_auth, hydrogen):
 def test_compute_private_queue(settings, client, fake_auth, hydrogen):
     """Test private queue computing"""
     atomic_input = ProgramInput(
-        molecule=hydrogen,
+        structure=hydrogen,
         calctype="energy",
         model={"method": "GFN2xTB"},
         keywords={"accuracy": 1.0, "max_iterations": 20},
@@ -121,7 +121,7 @@ def test_compute_optimization_private_queue(
     """
     optimization_input = DualProgramInput(
         calctype="optimization",
-        molecule=hydrogen,
+        structure=hydrogen,
         keywords={"maxsteps": 2},
         subprogram="xtb",
         subprogram_args={
@@ -181,7 +181,7 @@ def test_compute_optimization(
     """
     optimization_input = DualProgramInput(
         calctype="optimization",
-        molecule=hydrogen,
+        structure=hydrogen,
         keywords=keywords,
         subprogram=subprogram,
         subprogram_args={"model": model},
@@ -250,7 +250,7 @@ def test_compute_bigchem_program(
 ):
     """Test BigChem algorithms."""
     prog_input = DualProgramInput(
-        molecule=water,
+        structure=water,
         calctype=calctype,
         keywords=keywords,
         subprogram=subprogram,
@@ -275,12 +275,12 @@ def test_compute_failed_and_successful_results_in_group(
 ):
     """Test submitting a group of jobs with one failing and one succeeding."""
     prog_input = ProgramInput(
-        molecule=hydrogen,
+        structure=hydrogen,
         calctype="energy",
         model={"method": "HF", "basis": "sto-3g"},
     )
     prog_input_fail = ProgramInput(
-        molecule=hydrogen,
+        structure=hydrogen,
         calctype="energy",
         model={"method": "HF", "basis": "bad-basis"},
     )
@@ -317,7 +317,7 @@ def test_compute_failed_and_successful_results_in_group(
 
 def test_propagate_wfn_exception_handling(settings, client, fake_auth, hydrogen):
     prog_input = DualProgramInput(
-        molecule=hydrogen,
+        structure=hydrogen,
         calctype="optimization",
         subprogram="psi4",
         subprogram_args={"model": {"method": "hf", "basis": "sto-3g"}},
