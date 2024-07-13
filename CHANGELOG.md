@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated qcio (0.10.1 -> 0.10.2). `Structure.ids` -> `Structure.identifiers`
+- Updated qcop (0.7.1 -> 0.7.3)
+- Updated bigchem (0.8.0 -> 0.8.1)
+
 ## [0.13.0] - 2024-07-10
 
 ### Changed
