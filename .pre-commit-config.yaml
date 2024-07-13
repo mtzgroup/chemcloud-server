@@ -31,7 +31,8 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
-        additional_dependencies: [tokenize-rt==3.2.0, pydantic>=2.0.0]
+        additional_dependencies:
+          [tokenize-rt==3.2.0, pydantic>=2.0.0, types-toml]
   - repo: https://github.com/crate-ci/typos
     rev: v1.16.10
     hooks:

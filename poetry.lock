@@ -69,25 +69,25 @@ files = [
 
 [[package]]
 name = "bigchem"
-version = "0.8.0"
+version = "0.8.1"
 description = "A distributed system for scaling and parallelizing quantum chemistry calculations"
 optional = false
 python-versions = "<4.0.0,>=3.8.1"
 files = [
-    {file = "bigchem-0.8.0-py3-none-any.whl", hash = "sha256:f038f1500e203db28989302d8c6908c10c90bf06a9baeae860b94426818157e9"},
-    {file = "bigchem-0.8.0.tar.gz", hash = "sha256:161518011ed881962f538313ad09cb4af58e09390b2515b171e70a80ba3c6d72"},
+    {file = "bigchem-0.8.1-py3-none-any.whl", hash = "sha256:95eba5d39927e129877a7905d021e50c670f0e0c92a5032419cf851416838c49"},
+    {file = "bigchem-0.8.1.tar.gz", hash = "sha256:5c757a8da61e89a69d5853c6f0137503e6b020fea8ae5e98a5827bed55c75582"},
 ]
 
 [package.dependencies]
 celery = {version = ">=5.3.4,<6.0.0", extras = ["redis"]}
 pydantic = ">=2.0.0,<3.0.0"
 pydantic-settings = ">=2.0.3,<3.0.0"
-qcio = ">=0.10.1,<0.11.0"
-qcop = ">=0.7.1,<0.8.0"
+qcop = ">=0.7.3,<0.8.0"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1,<2.0.0)"]
 qcengine = ["qcengine (>=0.27.0,<0.28.0)"]
+xtb = ["xtb (>=22.1,<23.0)"]
 
 [[package]]
 name = "billiard"
@@ -1526,13 +1526,13 @@ files = [
 
 [[package]]
 name = "qcio"
-version = "0.10.1"
+version = "0.10.2"
 description = "Beautiful and user friendly data structures for quantum chemistry."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcio-0.10.1-py3-none-any.whl", hash = "sha256:70abf1c323d88f2807d6d82d6f1b88ceca39e0f4197e09ed6fca43c29d248297"},
-    {file = "qcio-0.10.1.tar.gz", hash = "sha256:831d5971ee3df9e5abc268f8e78c7b89979d29c3d91da7723b31bc41bf60250d"},
+    {file = "qcio-0.10.2-py3-none-any.whl", hash = "sha256:26b170447dce209a3a1ea344c2b3e9f234de3c2a1010479ad470b31a6e5eda7d"},
+    {file = "qcio-0.10.2.tar.gz", hash = "sha256:27649fa3022fe575a5d5460768b2e0bfeedd7adb86d8945d084f757d7c098132"},
 ]
 
 [package.dependencies]
@@ -1547,22 +1547,23 @@ rdkit = ["rdkit (>=2022.3.3)"]
 
 [[package]]
 name = "qcop"
-version = "0.7.1"
+version = "0.7.3"
 description = "A package for operating Quantum Chemistry programs using qcio standardized data structures. Compatible with TeraChem, psi4, QChem, NWChem, ORCA, Molpro, geomeTRIC and many more."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcop-0.7.1-py3-none-any.whl", hash = "sha256:dee8df1f802964ba6d96ddc218c45a7edd6b7f8025659902f9e88e4ef1816ed2"},
-    {file = "qcop-0.7.1.tar.gz", hash = "sha256:f01d5fee4775478d2a5b32ea722d4b53f707972737ecac5bbc5957817092e0cb"},
+    {file = "qcop-0.7.3-py3-none-any.whl", hash = "sha256:f022471874097d7b7234af23ebc5eb71ca11de735dac8d3fdf73eaa0b3a2977e"},
+    {file = "qcop-0.7.3.tar.gz", hash = "sha256:bb7c4aa32dc915e4b61b791249a9f573fa892dde5a7a20f881c29a5d51fe0128"},
 ]
 
 [package.dependencies]
-qcio = ">=0.10.1,<0.11.0"
+qcio = ">=0.10.2,<0.11.0"
 qcparse = ">=0.6.0,<0.7.0"
 
 [package.extras]
 geometric = ["geometric (>=1.0.1,<2.0.0)"]
 qcengine = ["qcelemental (>=0.26.0,<0.27.0)", "qcengine (>=0.27.0,<0.28.0)"]
+xtb = ["xtb (>=22.1,<23.0)"]
 
 [[package]]
 name = "qcparse"
@@ -1763,6 +1764,17 @@ files = [
 
 [package.dependencies]
 urllib3 = ">=2"
+
+[[package]]
+name = "types-toml"
+version = "0.10.8.20240310"
+description = "Typing stubs for toml"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-toml-0.10.8.20240310.tar.gz", hash = "sha256:3d41501302972436a6b8b239c850b26689657e25281b48ff0ec06345b8830331"},
+    {file = "types_toml-0.10.8.20240310-py3-none-any.whl", hash = "sha256:627b47775d25fa29977d9c70dc0cbab3f314f32c8d8d0c012f2ef5de7aaec05d"},
+]
 
 [[package]]
 name = "typing-extensions"
@@ -2172,4 +2184,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "40e3e18e806cc13a41d98d448e1ad65a2941496ae30f31905b5108206ef4f827"
+content-hash = "d591a00290d9618560db9571e31ca8e8d8866224b8dbd4047a145e2f42a58455"

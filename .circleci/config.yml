@@ -115,10 +115,15 @@ jobs:
       - image: cimg/python:3.11
     steps:
       - checkout
-      - run: pip install mypy pydantic types-requests
+      - run:
+          name: Install poetry
+          command: pip install poetry
+      - run:
+          name: Install project
+          command: poetry install --no-interaction --no-ansi
       - run:
           name: mypy
-          command: mypy .
+          command: poetry run mypy .
 
   black:
     resource_class: small
