@@ -5,7 +5,7 @@ from pydantic import AnyHttpUrl, BaseModel, Field
 from qcio import (
     DualProgramInput,
     FileInput,
-    NoResults,
+    Files,
     OptimizationResults,
     ProgramInput,
     ProgramOutput,
@@ -21,11 +21,11 @@ ProgramInputsOrList: TypeAlias = ProgramInputs | list[ProgramInputs]
 # *** pydantic_core._pydantic_core.PydanticSerializationError: Error calling function `<lambda>`: TypeError: 'MockValSet' object cannot be converted to 'SchemaSerializer'  # noqa: E501
 # There may be a more clever dynamic way to do this but this is OK for now.
 ProgramOutputs: TypeAlias = (
-    ProgramOutput[FileInput, NoResults]
-    | ProgramOutput[ProgramInput, NoResults]
+    ProgramOutput[FileInput, Files]
+    | ProgramOutput[ProgramInput, Files]
     | ProgramOutput[ProgramInput, SinglePointResults]
     | ProgramOutput[ProgramInput, OptimizationResults]
-    | ProgramOutput[DualProgramInput, NoResults]
+    | ProgramOutput[DualProgramInput, Files]
     | ProgramOutput[DualProgramInput, SinglePointResults]
     | ProgramOutput[DualProgramInput, OptimizationResults]
 )

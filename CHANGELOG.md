@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated to [qcio ^0.11.0](https://github.com/coltonbh/qcop/blob/master/CHANGELOG.md#080---2024-07-19) which removes `NoResult` and moves `.files` from `ProgramOutput` to `ProgramOutput.results`.
+
 ## [0.14.0] - 2024-07-12
 
 ### Changed
