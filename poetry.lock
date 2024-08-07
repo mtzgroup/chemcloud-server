@@ -1526,13 +1526,13 @@ files = [
 
 [[package]]
 name = "qcio"
-version = "0.11.0"
+version = "0.11.7"
 description = "Beautiful and user friendly data structures for quantum chemistry."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "qcio-0.11.0-py3-none-any.whl", hash = "sha256:fecc984cb7a6af58956b9025d9043bdb62fb3c86041ae0fc2bd380c4448f39c9"},
-    {file = "qcio-0.11.0.tar.gz", hash = "sha256:084f31b4241346a1d44e34c3b49333c44d2f8f83b0e572b4bade3d6dc0807490"},
+    {file = "qcio-0.11.7-py3-none-any.whl", hash = "sha256:f8949b636a10a188d5d76b574f6f700cd4e13ed133352f93fd7bc04137b28867"},
+    {file = "qcio-0.11.7.tar.gz", hash = "sha256:65cd93d26986a5effc470445a1f5b518bd7f44c194a928ab1a9e34cc3a647422"},
 ]
 
 [package.dependencies]
@@ -1543,6 +1543,8 @@ toml = ">=0.10.2,<0.11.0"
 typing-extensions = ">=4.7.1,<5.0.0"
 
 [package.extras]
+all = ["ipython (>=8.0.0)", "matplotlib (>=3.0.0)", "openbabel-wheel (>=3.1.1.19,<4.0.0.0)", "py3Dmol (>=2.2.1)", "rdkit (>=2022.3.3)"]
+openbabel = ["openbabel-wheel (>=3.1.1.19,<4.0.0.0)"]
 rdkit = ["rdkit (>=2022.3.3)"]
 view = ["ipython (>=8.0.0)", "matplotlib (>=3.0.0)", "py3Dmol (>=2.2.1)"]
 
@@ -2185,4 +2187,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3485ae564f81554883014e3a544bb145f61d0c805572742a3245dff625584741"
+content-hash = "393ade65513f9d37737a5125fc89c7f9783d966bdce7c07a9c6d20fb514a0191"
