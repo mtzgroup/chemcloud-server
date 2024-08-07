@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.14.1] - 2024-08-07
+
 ### Changed
 
 - Updated to [qcio ^0.11.7](https://github.com/coltonbh/qcop/blob/master/CHANGELOG.md#080---2024-07-19) which removes `NoResult` and moves `.files` from `ProgramOutput` to `ProgramOutput.results`.
@@ -342,7 +344,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.0...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.1...HEAD
+[0.14.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.1
 [0.14.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.0
 [0.13.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.13.0
 [0.12.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.12.0
