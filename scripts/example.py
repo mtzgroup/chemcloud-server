@@ -55,6 +55,7 @@ if __name__ == "__main__":
     # Generate Inputs
     print(f"Opening structure structure: {MOLECULE}...")
     structure = Structure.open(MOLECULE)
+    assert isinstance(structure, Structure)
     prog_inp = ProgramInput(
         structure=structure,
         model={"method": "b3lyp", "basis": "6-31g"},  # type: ignore

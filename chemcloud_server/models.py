@@ -46,6 +46,7 @@ class SupportedPrograms(str, Enum):
     RDKIT = "rdkit"
     XTB = "xtb"
     GEOMETRIC = "geometric"
+    CREST = "crest"
     # BigChem distributed algorithms
     BIGCHEM = "bigchem"
 
