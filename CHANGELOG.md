@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.14.2] - 2024-09-12
+
 ### Changed
 
 - Upgraded BigChem 0.9.0 -> 0.10.0.
@@ -353,7 +355,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.1...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.2...HEAD
+[0.14.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.2
 [0.14.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.1
 [0.14.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.0
 [0.13.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.13.0
