@@ -4,7 +4,12 @@ on:
   push:
     tags:
       - "*" # Match any tag
-  workflow_dispatch: # Enable manual triggering
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name to create release for"
+        required: true
+        default: ""
 
 jobs:
   create-release:
