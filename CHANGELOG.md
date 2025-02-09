@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- Removed type aliasing of `ProgramOutput` generic types that was required for earlier versions of `pydantic` but was now causing `SinglePointResults` objects (or `ProgramInput` objects) to get consumed as `Files` (or `FileInput`) objects since that type was listed first and could consume the `SinglePointResults` data.
+
 ## [0.14.3] - 2025-02-08
 
 ### Changed

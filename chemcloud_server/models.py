@@ -5,31 +5,14 @@ from pydantic import AnyHttpUrl, BaseModel, Field
 from qcio import (
     DualProgramInput,
     FileInput,
-    Files,
-    OptimizationResults,
     ProgramInput,
     ProgramOutput,
-    SinglePointResults,
 )
 
 # Convenience types
 ProgramInputs: TypeAlias = FileInput | ProgramInput | DualProgramInput
 ProgramInputsOrList: TypeAlias = ProgramInputs | list[ProgramInputs]
-# Appears I must explicitly list all possible outputs here otherwise calling .model_dump
-# on a ProgramOutputWrapper object will fail with when trying to return a response from
-# /output/ with the following error:
-# *** pydantic_core._pydantic_core.PydanticSerializationError: Error calling function `<lambda>`: TypeError: 'MockValSet' object cannot be converted to 'SchemaSerializer'  # noqa: E501
-# There may be a more clever dynamic way to do this but this is OK for now.
-ProgramOutputs: TypeAlias = (
-    ProgramOutput[FileInput, Files]
-    | ProgramOutput[ProgramInput, Files]
-    | ProgramOutput[ProgramInput, SinglePointResults]
-    | ProgramOutput[ProgramInput, OptimizationResults]
-    | ProgramOutput[DualProgramInput, Files]
-    | ProgramOutput[DualProgramInput, SinglePointResults]
-    | ProgramOutput[DualProgramInput, OptimizationResults]
-)
-ProgramOutputsOrList: TypeAlias = ProgramOutputs | list[ProgramOutputs]
+ProgramOutputOrList: TypeAlias = ProgramOutput | list[ProgramOutput]
 
 
 class SupportedPrograms(str, Enum):
@@ -88,7 +71,7 @@ class ProgramOutputWrapper(BaseModel):
     """
 
     status: TaskStatus
-    program_output: Optional[ProgramOutputsOrList] = None
+    program_output: Optional[ProgramOutputOrList] = None
 
 
 class OAuth2Base(BaseModel):
