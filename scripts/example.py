@@ -67,7 +67,7 @@ if __name__ == "__main__":
     r1 = httpx.post(
         f"{HOST}{API_PREFIX}/compute",
         headers={"Authorization": f"Bearer {jwt}"},
-        data=prog_inp.model_dump_json(),  # type: ignore
+        content=prog_inp.model_dump_json(),  # type: ignore
         params={"program": "terachem"},
     )
     r1.raise_for_status()

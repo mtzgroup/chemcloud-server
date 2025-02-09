@@ -1,5 +1,5 @@
 # Dockerfile for ChemCloud Web Server
-FROM python:3.11-slim
+FROM python:3.13-slim
 # https://github.com/awslabs/amazon-sagemaker-examples/issues/319
 ENV PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
