@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chemcloud-server"
-version = "0.14.3"
+version = "0.14.4"
 description = "An HTTP API for BigChem"
 authors = ["Colton Hicks <github@coltonhicks.com>"]
 license = "MIT"

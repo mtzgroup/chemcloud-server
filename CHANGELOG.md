@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.14.4] - 2025-02-08
+
 ### Fixed
 
 - Removed type aliasing of `ProgramOutput` generic types that was required for earlier versions of `pydantic` but was now causing `SinglePointResults` objects (or `ProgramInput` objects) to get consumed as `Files` (or `FileInput`) objects since that type was listed first and could consume the `SinglePointResults` data.
@@ -368,7 +370,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.3...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.4...HEAD
+[0.14.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.4
 [0.14.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.3
 [0.14.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.2
 [0.14.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.1
