@@ -48,7 +48,7 @@ def test_compute(
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(prog_inp),
+        content=json_dumps(prog_inp),
         params={"program": program},
     )
     as_dict = job_submission.json()
@@ -76,7 +76,7 @@ def test_compute_with_binary_extras(settings, client, fake_auth, hydrogen):
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(prog_inp),
+        content=json_dumps(prog_inp),
         params={"program": "psi4"},
     )
     as_dict = job_submission.json()
@@ -97,7 +97,7 @@ def test_compute_private_queue(settings, client, fake_auth, hydrogen):
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(atomic_input),
+        content=json_dumps(atomic_input),
         params={"program": "xtb", "queue": "private_queue"},
     )
     as_dict = job_submission.json()
@@ -132,7 +132,7 @@ def test_compute_optimization_private_queue(
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(optimization_input),
+        content=json_dumps(optimization_input),
         params={"program": "geometric", "queue": "private_queue"},
     )
     as_dict = job_submission.json()
@@ -144,20 +144,20 @@ def test_compute_optimization_private_queue(
     (
         (
             "geometric",
-            {"maxiter": 2},
+            {"maxiter": 5},
             "psi4",
             {"method": "HF", "basis": "sto-3g"},
             False,
         ),
         (
             "geometric",
-            {"maxiter": 2},
+            {"maxiter": 5},
             "psi4",
             {"method": "HF", "basis": "sto-3g"},
             False,
         ),
-        ("geometric", {"maxiter": 2}, "rdkit", {"method": "UFF"}, False),
-        ("geometric", {"maxiter": 2}, "rdkit", {"method": "UFF"}, True),
+        ("geometric", {"maxiter": 5}, "rdkit", {"method": "UFF"}, False),
+        ("geometric", {"maxiter": 5}, "rdkit", {"method": "UFF"}, True),
     ),
 )
 @pytest.mark.timeout(65)
@@ -192,7 +192,7 @@ def test_compute_optimization(
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(optimization_input),
+        content=json_dumps(optimization_input),
         params={"program": program},
     )
     as_dict = job_submission.json()
@@ -212,7 +212,7 @@ def test_compute_group_limits(settings, client, fake_auth, hydrogen, program_inp
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json.dumps([inp.model_dump() for inp in too_big_list]),
+        content=json.dumps([inp.model_dump() for inp in too_big_list]),
         params={"program": "psi4"},
     )
     assert job_submission.status_code == status_codes.HTTP_413_REQUEST_ENTITY_TOO_LARGE
@@ -262,7 +262,7 @@ def test_compute_bigchem_program(
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(prog_input),
+        content=json_dumps(prog_input),
         params={"program": "bigchem"},
     )
     as_dict = job_submission.json()
@@ -288,7 +288,7 @@ def test_compute_failed_and_successful_results_in_group(
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps([prog_input, prog_input_fail]),
+        content=json_dumps([prog_input, prog_input_fail]),
         params={"program": "psi4"},
     )
     task_id = job_submission.json()
@@ -325,7 +325,7 @@ def test_propagate_wfn_exception_handling(settings, client, fake_auth, hydrogen)
     # Submit Job
     job_submission = client.post(
         f"{settings.api_v2_str}/compute",
-        data=json_dumps(prog_input),
+        content=json_dumps(prog_input),
         params={"program": "geometric", "propagate_wfn": True},
     )
     as_dict = job_submission.json()

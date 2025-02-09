@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Removed `black` and `isort` in favor of `ruff`.
+- Upgraded to Python 3.13 for docker container.
+- Moved code quality checks from CircleCI to GitHub actions.
+- Fixed a few `httpx` calls to use the new API (`content=` vs `data=` for text/bytes data).
+
 ## [0.14.2] - 2024-09-12
 
 ### Changed
