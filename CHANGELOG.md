@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.14.5] - 2025-02-14
+
 ### Fixed
 
 - Random `410` errors caused (presumably) by using a `BackgroundTask` in the `/compute` endpoint to set the `task_id` in celery's backend. I suspect that when users query `/compute/output/{task_id}` right after submitting a big batch it's possible the `BackgroundTask` hasn't set the `task_id` in celery's backend yet and so the spurious `410` is returned due to a race condition.
@@ -374,7 +376,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.4...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.5...HEAD
+[0.14.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.5
 [0.14.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.4
 [0.14.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.3
 [0.14.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.2
