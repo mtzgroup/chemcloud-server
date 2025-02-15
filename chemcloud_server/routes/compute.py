@@ -27,7 +27,6 @@ router = APIRouter()
     response_description="Task ID for the requested computation.",
 )
 async def compute(
-    background_tasks: BackgroundTasks,
     program: SupportedPrograms,
     inp_obj: ProgramInputsOrList,
     collect_stdout: bool = Query(
@@ -83,7 +82,7 @@ async def compute(
         )
 
     # Save result structure to DB so can be rehydrated using only id
-    background_tasks.add_task(save_dag, future_res)
+    save_dag(future_res)
     return future_res.id
 
 
