@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Fixed
+
+- Random `410` errors caused (presumably) by using a `BackgroundTask` in the `/compute` endpoint to set the `task_id` in celery's backend. I suspect that when users query `/compute/output/{task_id}` right after submitting a big batch it's possible the `BackgroundTask` hasn't set the `task_id` in celery's backend yet and so the spurious `410` is returned due to a race condition.
+
 ## [0.14.4] - 2025-02-08
 
 ### Fixed
