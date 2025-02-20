@@ -1,4 +1,4 @@
-"""Main module for the FastAPI app. Also contains convenience paths that route """
+"""Main module for the FastAPI app. Also contains convenience paths that route"""
 
 from typing import Optional
 
@@ -34,8 +34,13 @@ tags_metadata = [
 app = FastAPI(
     title="ChemCloud",
     description=(
-        "⚛ Computational Chemistry at Cloud Scale ⚛ [Signup here](/signup) or visit "
-        "your [Dashboard](/users/dashboard)"
+"""
+⚛️ Computational Chemistry at Cloud Scale 
+        
+✨ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)
+        
+💻 User documentation is available [here](https://mtzgroup.github.io/chemcloud-client/)
+"""
     ),
     version=__version__,
     openapi_tags=tags_metadata,
