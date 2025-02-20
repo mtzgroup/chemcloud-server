@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.14.6] - 2025-02-19
+
+### Added
+
+- Link to `chemcloud` client user documentation to `/docs` webpage.
+
 ## [0.14.5] - 2025-02-14
 
 ### Fixed
@@ -376,7 +382,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.5...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.6...HEAD
+[0.14.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.6
 [0.14.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.5
 [0.14.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.4
 [0.14.3]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.3
