@@ -310,6 +310,12 @@ def test_compute_failed_and_successful_results_in_group(
     assert future_result.program_output[0].success is True
     assert future_result.program_output[1].success is False
 
+    # Delete the task
+    result = client.delete(
+        f"{settings.api_v2_str}/compute/output/{task_id}",
+    )
+    result.raise_for_status()
+
     # Assert result deleted from backend after retrieval
     with pytest.raises(HTTPStatusError):
         future_result = _get_result(client, settings, task_id)

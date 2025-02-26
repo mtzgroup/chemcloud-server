@@ -55,6 +55,16 @@ def _make_job_completion_assertions(
     else:
         assert output.program_output.success is (True if not failure else False)
 
-    # Assert result deleted from backend after retrieval
+    # Assert result is still available after retrieval
+    output = _get_result(client, settings, task_id)
+    assert output.status == (TaskStatus.SUCCESS if not failure else TaskStatus.FAILURE)
+    assert output.program_output is not None
+
+    # Delete the task
+    result = client.delete(
+        f"{settings.api_v2_str}/compute/output/{task_id}",
+    )
+    result.raise_for_status()
+    # Check that the task is deleted
     with pytest.raises(HTTPStatusError):
         output = _get_result(client, settings, task_id)

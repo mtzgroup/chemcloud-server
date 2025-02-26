@@ -93,7 +93,6 @@ async def compute(
     response_description="A compute task's status and (if complete) return value.",
 )
 async def result(
-    background_tasks: BackgroundTasks,
     task_id: str = Path(
         ...,
         title="The task id to query.",
@@ -106,7 +105,8 @@ async def result(
         future_res = restore_result(task_id)
     except ResultNotFoundError:  # Result already deleted from backend
         raise HTTPException(
-            status_code=410, detail="Result has already been deleted from server"
+            status_code=status_codes.HTTP_410_GONE,
+            detail="Result has already been deleted from server",
         )
     if future_res.ready():
         task_status = (
@@ -122,10 +122,31 @@ async def result(
                 prog_output.append(e.program_output)
         # If only one result, return it directly instead of a list
         prog_output = prog_output[0] if len(prog_output) == 1 else prog_output
-        # Remove result from backend AFTER function returns successfully
-        background_tasks.add_task(delete_result, future_res)
 
     else:
         task_status = TaskStatus.PENDING
         prog_output = None
     return ProgramOutputWrapper(status=task_status, program_output=prog_output)
+
+
+@router.delete(
+    "/output/{task_id}",
+    status_code=status_codes.HTTP_202_ACCEPTED,
+)
+async def delete(
+    background_tasks: BackgroundTasks,
+    task_id: str = Path(
+        ...,
+        title="The task id to delete.",
+        pattern=r"[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}",
+    ),
+) -> None:
+    """Delete a task's result from the server."""
+    try:
+        future_res = restore_result(task_id)
+    except ResultNotFoundError:
+        raise HTTPException(
+            status_code=410, detail="Result has already been deleted from server"
+        )
+    # Asynchronously delete result from backend
+    background_tasks.add_task(delete_result, future_res)
