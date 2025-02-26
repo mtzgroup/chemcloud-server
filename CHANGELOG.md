@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.15.0] - 2025-02-25
+
 ### Added
 
 - Endpoint for deleting results.
@@ -391,7 +393,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.14.6...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.15.0...HEAD
+[0.15.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.0
 [0.14.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.6
 [0.14.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.5
 [0.14.4]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.4
