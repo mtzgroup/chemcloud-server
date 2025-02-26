@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Added
+
+- Endpoint for deleting results.
+
+### Changed
+
+- The server no longer deletes results automatically after returning them to end users. It was possible that the server would return the data to the reverse proxy (i.e., the request was fully successful from the server's standpoint) and then a network issue between the client and the reverse proxy would result in incomplete data transmission (this could also happen without a reverse proxy in place; the application writes its response to the OS socket and will consider the transmission successful). When the client would re-request the data, a `410` would be raised because the server had already deleted the data. Data is now only deleted upon confirmation from the client (via a delete request) that the data has been completely received.
+- Updated dependency packages.
+
 ## [0.14.6] - 2025-02-19
 
 ### Added
