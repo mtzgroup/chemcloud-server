@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Updated from BigChem `0.10.0 -> 0.10.7` to use the latest exceptions in qcop `0.10.1`. This aims to eliminate the possibility of `.program_output = None` when capturing exceptions raised in BigChem.
+
 ## [0.15.0] - 2025-02-25
 
 ### Added
