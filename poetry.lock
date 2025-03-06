@@ -76,21 +76,21 @@ files = [
 
 [[package]]
 name = "bigchem"
-version = "0.10.3"
+version = "0.10.7"
 description = "A distributed system for scaling and parallelizing quantum chemistry calculations"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "bigchem-0.10.3-py3-none-any.whl", hash = "sha256:7f2c82319802d83b667f0bb0daaccd2d28dd80195125f815a99fc0da6e1d3e76"},
-    {file = "bigchem-0.10.3.tar.gz", hash = "sha256:811d1b1931d1f63f4b46e69722c72115aafe40ee2302a2e8acf30cd2c01ced9f"},
+    {file = "bigchem-0.10.7-py3-none-any.whl", hash = "sha256:a72d5b839582a11318578ce826b9f1ba23ee910ac7a1813090cfb193af50a633"},
+    {file = "bigchem-0.10.7.tar.gz", hash = "sha256:1243a4f5e28505d8ad793d37c2bfc797e7d9c5dde86b7f102c078ddf70bb9fdd"},
 ]
 
 [package.dependencies]
 celery = {version = ">=5.3.4,<6.0.0", extras = ["redis"]}
 pydantic = ">=2.0.0,<3.0.0"
 pydantic-settings = ">=2.0.3,<3.0.0"
-qcop = ">=0.9.1"
+qcop = ">=0.10.1"
 
 [package.extras]
 all = ["geometric (>=1.0.1,<2.0.0)", "qcengine (>=0.28.0,<0.29.0)"]
@@ -1406,14 +1406,14 @@ view = ["ipython (>=8.0.0)", "matplotlib (>=3.0.0)", "py3Dmol (>=2.2.1)", "rdkit
 
 [[package]]
 name = "qcop"
-version = "0.9.6"
+version = "0.10.1"
 description = "A package for operating Quantum Chemistry programs using qcio standardized data structures. Compatible with TeraChem, psi4, QChem, NWChem, ORCA, Molpro, geomeTRIC and many more."
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "qcop-0.9.6-py3-none-any.whl", hash = "sha256:008af6391794bc193adaedb9c3932363a7c246b86e41962df32489e7e6d1b2b9"},
-    {file = "qcop-0.9.6.tar.gz", hash = "sha256:68e335da4435df83abdb42a096d9ce246e15679a5b779ec7e1f5c68dc0675015"},
+    {file = "qcop-0.10.1-py3-none-any.whl", hash = "sha256:ce91d265ecfc6b6382586a806dc9a8b8196700c752745f0ab59c91910715bd63"},
+    {file = "qcop-0.10.1.tar.gz", hash = "sha256:eee038e6512d358dec17b70721a7f95e125c3c96c021d8e204ab7c9f0a1aeb4e"},
 ]
 
 [package.dependencies]
@@ -1429,14 +1429,14 @@ xtb = ["xtb (>=22.1,<23.0)"]
 
 [[package]]
 name = "qcparse"
-version = "0.7.3"
+version = "0.7.4"
 description = "A package for parsing Quantum Chemistry program file outputs into structured qcio data objects."
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "qcparse-0.7.3-py3-none-any.whl", hash = "sha256:656555b71c589569803706f1e0b335fcc3df4096fa183e5dc6bd977f24e3c93d"},
-    {file = "qcparse-0.7.3.tar.gz", hash = "sha256:a1143e817a7b45ff6c2dab37f9898dbf5197780b262c5e046968c04b9a6548e9"},
+    {file = "qcparse-0.7.4-py3-none-any.whl", hash = "sha256:dde9b973b86fabf5fa62a4023ff369b9498e18f4b409351f771ebcf7ac08d181"},
+    {file = "qcparse-0.7.4.tar.gz", hash = "sha256:f81bbaa9106dcc124884e607b7fc6a089108d844c3e38e23487264ae6fdbaa04"},
 ]
 
 [package.dependencies]
@@ -1760,4 +1760,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "264addf2962152bd3193c1bf16c9c05ca3961a4bb3bd912c2705ef80169cd942"
+content-hash = "2e967f2e73a006cb046185ed55c33ba0302dec5a8d08c555616f1ebe49818fa5"
