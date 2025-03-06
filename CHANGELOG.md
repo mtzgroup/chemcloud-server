@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.15.1] - 2025-03-05
+
 ### Changed
 
 - Updated from BigChem `0.10.0 -> 0.10.7` to use the latest exceptions in qcop `0.10.1`. This aims to eliminate the possibility of `.program_output = None` when capturing exceptions raised in BigChem.
@@ -397,7 +399,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.15.0...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.15.1...HEAD
+[0.15.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.1
 [0.15.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.0
 [0.14.6]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.6
 [0.14.5]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.14.5
