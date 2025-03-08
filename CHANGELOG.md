@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+###
+
+- logfire for monitoring logs.
+
 ## [0.15.1] - 2025-03-05
 
 ### Changed

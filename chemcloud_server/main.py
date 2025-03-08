@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+import logfire
 from fastapi import FastAPI, Security
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import RedirectResponse
@@ -34,7 +35,7 @@ tags_metadata = [
 app = FastAPI(
     title="ChemCloud",
     description=(
-"""
+        """
 ⚛️ Computational Chemistry at Cloud Scale 
         
 ✨ [Signup here](/signup) or visit your [Dashboard](/users/dashboard)
@@ -45,6 +46,10 @@ app = FastAPI(
     version=__version__,
     openapi_tags=tags_metadata,
 )
+
+# Configure logfire
+logfire.configure(token=get_settings().logfire_write_token)
+logfire.instrument_fastapi(app, capture_headers=True)
 
 # Add routes
 app.include_router(
