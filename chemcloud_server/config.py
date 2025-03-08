@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     auth0_algorithms: list[str] = ["RS256"]
     jwks: list[dict[str, Any]] = [{}]
     jwt_issuer: str = ""
+    logfire_write_token: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
