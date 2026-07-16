@@ -6,7 +6,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      # Connect to rabbit and redis over docker network instead of localhost
+      # Connect to rabbit and redis over the compose network instead of localhost.
       - bigchem_broker_url=amqp://bigchem-broker
       - bigchem_backend_url=redis://bigchem-backend/0
     env_file:
@@ -16,7 +16,7 @@ services:
     command: uvicorn --host 0.0.0.0 --port 8000 chemcloud_server.main:app --reload
 
   bigchem-worker:
-    image: mtzgroup/bigchem-worker
+    image: mtzgroup/bigchem-worker:0.11.0
     container_name: bigchem-worker
     depends_on:
       - bigchem-broker

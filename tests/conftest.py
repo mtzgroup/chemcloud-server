@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from qcio import ProgramInput, Structure
+from qcdata import ProgramInput, Structure
 
 from chemcloud_server.auth import bearer_auth
 from chemcloud_server.config import get_settings
@@ -12,7 +12,7 @@ from chemcloud_server.main import app
 @pytest.fixture(scope="session")
 def client():
     """Client for making HTTP requests to the app"""
-    return TestClient(app)
+    return TestClient(app, headers={"content-type": "application/json"})
 
 
 @pytest.fixture(scope="function")

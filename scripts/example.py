@@ -6,7 +6,7 @@ from pathlib import Path
 from time import sleep
 
 import httpx
-from qcio import ProgramInput, ProgramOutput, Structure
+from qcdata import ProgramInput, ProgramOutput, Structure
 
 HOSTS = {
     "local": "http://localhost:8000",
@@ -95,4 +95,4 @@ if __name__ == "__main__":
     output = ProgramOutput(**output_dict)
 
     print(output)
-    print(getattr(output.results, "energy", "Operation Failed!"))
+    print(getattr(output.data, "energy", "Operation Failed!"))

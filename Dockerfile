@@ -7,21 +7,19 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    # Install to system python, no need for venv
-    POETRY_VIRTUALENVS_CREATE=false
+    UV_PROJECT_ENVIRONMENT=/usr/local
 LABEL maintainer="Colton Hicks <colton@coltonhicks.com>"
 
 # Install system packages
 RUN apt-get update && \
-    python -m pip install --upgrade pip poetry
+    python -m pip install --upgrade pip uv
 
 # Install application
 WORKDIR /opt/
-COPY pyproject.toml poetry.lock README.md ./
+COPY pyproject.toml uv.lock README.md ./
 COPY static ./static
 COPY chemcloud_server/ ./chemcloud_server
-# Install to system python, no need for pipenv virtual env
-RUN poetry install --only main --no-interaction --no-ansi
+RUN uv sync --frozen --no-dev
 
 EXPOSE 8000
 
