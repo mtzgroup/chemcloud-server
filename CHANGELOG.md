@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+## [0.16.0] - 2026-07-15
+
 ### Changed
 
 - Replaced `qcio`/`qcop` dependencies with `qcdata`/`qccompute`.
@@ -410,7 +412,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   3. `/compute/result/{task_id}` to request a result delivered as an AtomicResult object.
 - Auth provided by Auth0.
 
-[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.15.2...HEAD
+[unreleased]: https://github.com/mtzgroup/chemcloud-server/compare/0.16.0...HEAD
+[0.16.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.16.0
 [0.15.2]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.2
 [0.15.1]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.1
 [0.15.0]: https://github.com/mtzgroup/chemcloud-server/releases/tag/0.15.0
