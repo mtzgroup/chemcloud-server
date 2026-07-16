@@ -5,7 +5,7 @@ import pytest
 from celery.states import READY_STATES
 from fastapi import status as status_codes
 from httpx import HTTPStatusError
-from qcio import DualProgramInput, ProgramInput
+from qcdata import DualProgramInput, ProgramInput
 
 from chemcloud_server.models import TaskStatus
 from tests.utils import _get_result, _make_job_completion_assertions

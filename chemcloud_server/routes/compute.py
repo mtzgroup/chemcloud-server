@@ -3,7 +3,7 @@ from typing import Optional
 from bigchem.canvas import group
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Path, Query
 from fastapi import status as status_codes
-from qcop.exceptions import QCOPBaseError
+from qccompute.exceptions import QCComputeBaseError
 
 from chemcloud_server.config import get_settings
 from chemcloud_server.exceptions import ResultNotFoundError
@@ -55,7 +55,7 @@ async def compute(
 ) -> str:
     """Submit a computation: ProgramInput, DualProgramInput (or list) and computation
     program."""
-    compute_kwargs = dict(  # kwargs for qcio.compute function
+    compute_kwargs = dict(  # kwargs for qccompute.compute function
         collect_stdout=collect_stdout,
         collect_files=collect_files,
         collect_wfn=collect_wfn,
@@ -118,8 +118,8 @@ async def result(
         for fr in frs:
             try:
                 prog_output.append(fr.get())
-            except QCOPBaseError as e:
-                prog_output.append(e.program_output)
+            except QCComputeBaseError as e:
+                prog_output.append(e.prog_output)
         # If only one result, return it directly instead of a list
         prog_output = prog_output[0] if len(prog_output) == 1 else prog_output
 

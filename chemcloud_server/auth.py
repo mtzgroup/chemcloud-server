@@ -54,15 +54,14 @@ def _get_matching_rsa_key(token: str, jwks: list[dict[str, str]]) -> dict[str, s
     unverified_header = jwt.get_unverified_header(token)
     for key in jwks:
         if key["kid"] == unverified_header["kid"]:
-            rsa_key = {
+            return {
                 "kty": key["kty"],
                 "kid": key["kid"],
                 "use": key["use"],
                 "n": key["n"],
                 "e": key["e"],
             }
-        return rsa_key
-    raise ValueError(f"No matching key found for token '{token}' in keys {jwks}")
+    raise jwt.JWTError("Unable to find appropriate key")
 
 
 async def bearer_auth(

@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import toml
 
@@ -10,16 +11,30 @@ def get_repo_url():
     try:
         with open("pyproject.toml", "r") as file:
             pyproject = toml.load(file)
-        repo_url = pyproject["tool"]["poetry"]["repository"]
+        repo_url = pyproject["project"]["urls"]["Repository"]
         return repo_url
     except KeyError:
         return input("Enter the repository URL (e.g., https://github.com/user/repo): ")
 
 
-def update_version_with_poetry(version):
-    """Update the version in pyproject.toml using Poetry."""
+def update_version(version):
+    """Update the version in pyproject.toml."""
     print("Updating version in pyproject.toml...")
-    subprocess.run(["poetry", "version", version], check=True)
+    pyproject_path = Path("pyproject.toml")
+    lines = pyproject_path.read_text().splitlines(keepends=True)
+    in_project = False
+    for index, line in enumerate(lines):
+        if line.strip() == "[project]":
+            in_project = True
+            continue
+        if in_project and line.startswith("["):
+            break
+        if in_project and line.startswith("version = "):
+            lines[index] = f'version = "{version}"\n'
+            break
+    else:
+        raise RuntimeError("Could not find [project] version in pyproject.toml")
+    pyproject_path.write_text("".join(lines))
 
 
 def update_changelog(version, repo_url):
@@ -81,8 +96,6 @@ def confirm_version(version: str):
 
 def main():
     """Main entry point for the script."""
-    from pathlib import Path
-
     if len(sys.argv) != 2:
         print("Usage: release.py <version>")
         sys.exit(1)
@@ -93,7 +106,7 @@ def main():
     original_changelog = Path("CHANGELOG.md").read_text()
 
     repo_url = get_repo_url()
-    update_version_with_poetry(version)
+    update_version(version)
     update_changelog(version, repo_url)
     if confirm_version(version):
         print("Proceeding with the release...")

@@ -8,7 +8,7 @@ from bigchem.canvas import Signature
 from bigchem.tasks import compute
 from celery.result import AsyncResult, GroupResult, ResultBase, result_from_tuple
 from fastapi import HTTPException
-from qcio import CalcType, DualProgramInput, ProgramInput
+from qcdata import CalcType, DualProgramInput, ProgramInput
 
 from chemcloud_server import config, models
 from chemcloud_server.exceptions import ResultNotFoundError

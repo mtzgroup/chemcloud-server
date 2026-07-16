@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, TypeAlias
 
 from pydantic import AnyHttpUrl, BaseModel, Field
-from qcio import (
+from qcdata import (
     DualProgramInput,
     FileInput,
     ProgramInput,

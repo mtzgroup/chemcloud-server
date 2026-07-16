@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [unreleased]
 
+### Changed
+
+- Replaced `qcio`/`qcop` dependencies with `qcdata`/`qccompute`.
+- Replaced Poetry project metadata and scripts with uv configuration, using the local editable BigChem checkout for development.
+
 ## [0.15.2] - 2025-03-07
 
 ### Added
